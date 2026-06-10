@@ -1,0 +1,71 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	wv_identify_input(wv_identify_input)
+	wv_prepare_source_files(wv_prepare_source_files)
+	wv_validate_script(wv_validate_script)
+	wv_repair_script(wv_repair_script)
+	wv_validate_outline(wv_validate_outline)
+	wv_repair_outline(wv_repair_outline)
+	wv_checkpoint_plan(wv_checkpoint_plan)
+	wv_scaffold_presentation(wv_scaffold_presentation)
+	wv_remove_example_chapter(wv_remove_example_chapter)
+	wv_build_chapter_1(wv_build_chapter_1)
+	wv_validate_chapter_1(wv_validate_chapter_1)
+	wv_repair_chapter_1(wv_repair_chapter_1)
+	wv_checkpoint_chapter_1(wv_checkpoint_chapter_1)
+	wv_build_chapter_n(wv_build_chapter_n)
+	wv_validate_chapter_n(wv_validate_chapter_n)
+	wv_repair_chapter_n(wv_repair_chapter_n)
+	wv_checkpoint_chapter_n(wv_checkpoint_chapter_n)
+	wv_checkpoint_remaining_batch(wv_checkpoint_remaining_batch)
+	wv_transition_to_phase3(wv_transition_to_phase3)
+	wv_checkpoint_audio(wv_checkpoint_audio)
+	wv_extract_narrations(wv_extract_narrations)
+	wv_checkpoint_audio_segments(wv_checkpoint_audio_segments)
+	wv_synthesize_audio(wv_synthesize_audio)
+	wv_report_audio_anomalies(wv_report_audio_anomalies)
+	wv_recording_guidance(wv_recording_guidance)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> wv_identify_input;
+	wv_build_chapter_1 --> wv_validate_chapter_1;
+	wv_build_chapter_n --> wv_validate_chapter_n;
+	wv_transition_to_phase3 --> wv_checkpoint_audio;
+	wv_checkpoint_audio -.-> wv_extract_narrations;
+	wv_checkpoint_audio -.-> wv_recording_guidance;
+	wv_checkpoint_audio_segments --> wv_synthesize_audio;
+	wv_checkpoint_chapter_1 --> wv_remove_example_chapter;
+	wv_checkpoint_chapter_n -.-> wv_transition_to_phase3;
+	wv_checkpoint_chapter_n -.-> wv_build_chapter_n;
+	wv_checkpoint_plan --> wv_scaffold_presentation;
+	wv_checkpoint_remaining_batch --> wv_transition_to_phase3;
+	wv_extract_narrations --> wv_checkpoint_audio_segments;
+	wv_identify_input --> wv_prepare_source_files;
+	wv_prepare_source_files --> wv_validate_script;
+	wv_scaffold_presentation --> wv_build_chapter_1;
+	wv_remove_example_chapter -.-> wv_build_chapter_n;
+	wv_remove_example_chapter -.-> wv_transition_to_phase3;
+	wv_repair_chapter_1 --> wv_validate_chapter_1;
+	wv_repair_chapter_n --> wv_validate_chapter_n;
+	wv_repair_outline --> wv_validate_outline;
+	wv_repair_script --> wv_validate_script;
+	wv_report_audio_anomalies --> wv_recording_guidance;
+	wv_synthesize_audio --> wv_report_audio_anomalies;
+	wv_validate_chapter_1 -.-> wv_checkpoint_chapter_1;
+	wv_validate_chapter_1 -.-> wv_repair_chapter_1;
+	wv_validate_chapter_n -.-> wv_checkpoint_chapter_n;
+	wv_validate_chapter_n -.-> wv_checkpoint_remaining_batch;
+	wv_validate_chapter_n -.-> wv_build_chapter_n;
+	wv_validate_chapter_n -.-> wv_repair_chapter_n;
+	wv_validate_outline -.-> wv_checkpoint_plan;
+	wv_validate_outline -.-> wv_repair_outline;
+	wv_validate_script -.-> wv_repair_script;
+	wv_validate_script -.-> wv_validate_outline;
+	wv_recording_guidance --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

@@ -1,0 +1,20 @@
+[project]
+name = "ezto-agent"
+version = "0.1.0"
+description = "LangGraph-based execution engine for web-video-presentation skill"
+requires-python = ">=3.10"
+dependencies = [
+    "langgraph>=1.1.0",
+    "langgraph-checkpoint>=4.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

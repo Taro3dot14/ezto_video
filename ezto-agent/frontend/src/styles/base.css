@@ -1,0 +1,1580 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  background: #0d0b09;
+  color: #f5f0e5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App ── */
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Page layout ── */
+.page {
+  flex: 1;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: #ff4a2b;
+  color: #fff;
+  border-color: #ff4a2b;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #e63e1f;
+}
+.btn-secondary {
+  background: transparent;
+  color: #f5f0e5;
+  border-color: #2f2a25;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #1a1714;
+}
+.btn-ghost {
+  background: transparent;
+  color: #7a7972;
+  border-color: transparent;
+  padding: 6px 12px;
+}
+.btn-ghost:hover {
+  color: #f5f0e5;
+}
+.btn-lg {
+  padding: 14px 32px;
+  font-size: 17px;
+}
+.btn-close {
+  background: transparent;
+  color: #7a7972;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ── Error ── */
+.error-box {
+  background: rgba(255, 74, 43, 0.1);
+  border: 1px solid #ff4a2b;
+  color: #ff4a2b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+/* ── Home page ── */
+.home-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.home-content {
+  max-width: 640px;
+}
+.home-title {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.home-title-en {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-style: italic;
+}
+.home-title-cn {
+  font-size: 22px;
+  color: #7a7972;
+  font-weight: 400;
+}
+.home-desc {
+  font-size: 16px;
+  color: #ece4d2;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+.home-actions {
+  margin-bottom: 48px;
+}
+.home-phases {
+  text-align: left;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.phase-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #7a7972;
+}
+.phase-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1a1714;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f5f0e5;
+  flex-shrink: 0;
+}
+
+/* ── New project page ── */
+.np-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.np-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+.np-input-type {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.radio-label input[type="radio"] {
+  accent-color: #ff4a2b;
+}
+.np-textarea {
+  width: 100%;
+  padding: 14px;
+  background: #1a1714;
+  border: 1px solid #2f2a25;
+  border-radius: 8px;
+  color: #f5f0e5;
+  font-size: 14px;
+  line-height: 1.7;
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: 20px;
+}
+.np-textarea:focus {
+  outline: none;
+  border-color: #ff4a2b;
+}
+.np-textarea::placeholder {
+  color: #4a443e;
+}
+
+/* ── Workflow page ── */
+.workflow-page.page {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+.wp-layout {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+  min-height: 0;
+}
+.wp-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+.wp-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.wp-current-node {
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+.node-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255, 74, 43, 0.15);
+  color: #ff4a2b;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: monospace;
+}
+
+/* ── Running indicator bar ── */
+.wp-running-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.wp-running-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4caf50;
+  animation: wp-pulse 1.2s ease-in-out infinite;
+}
+@keyframes wp-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+  50% { opacity: 0.5; box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+}
+.wp-running-node {
+  font-size: 13px;
+  color: #7a7972;
+  font-family: monospace;
+}
+
+/* ── Phase Indicator ── */
+.phase-indicator {
+  background: #1a1714;
+  border-radius: 12px;
+  padding: 20px;
+}
+.pi-title {
+  font-size: 13px;
+  color: #7a7972;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.pi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pi-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #4a443e;
+  opacity: 0.5;
+}
+.pi-item.active {
+  color: #f5f0e5;
+  opacity: 1;
+}
+.pi-item.done {
+  color: #7a7972;
+  opacity: 0.7;
+}
+.pi-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f2a25;
+  flex-shrink: 0;
+}
+.pi-item.active .pi-dot {
+  background: #ff4a2b;
+  box-shadow: 0 0 8px rgba(255, 74, 43, 0.5);
+}
+.pi-item.done .pi-dot {
+  background: #7a7972;
+}
+.pi-desc {
+  color: #7a7972;
+  font-size: 12px;
+  margin-left: auto;
+}
+.pi-stats {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #2f2a25;
+}
+.pi-count {
+  font-size: 12px;
+  color: #4a443e;
+}
+
+/* ── Checkpoint Plan ── */
+.cp-view h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.cp-desc {
+  color: #7a7972;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+.cp-section {
+  margin-bottom: 28px;
+}
+.cp-section h4 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #ece4d2;
+}
+.cp-hint {
+  font-size: 13px;
+  color: #7a7972;
+  margin-bottom: 4px;
+}
+.cp-file-content {
+  width: 100%;
+  background: #1a1a1a;
+  color: #d4d4c8;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+/* Theme grid */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.theme-card {
+  background: #1a1714;
+  border: 2px solid #2f2a25;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  color: #f5f0e5;
+  transition: all 0.2s;
+}
+.theme-card:hover {
+  border-color: #7a7972;
+}
+.theme-card.selected {
+  border-color: #ff4a2b;
+  background: rgba(255, 74, 43, 0.05);
+}
+.theme-preview {
+  margin-bottom: 12px;
+}
+.theme-swatches {
+  display: flex;
+  gap: 6px;
+}
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.theme-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.theme-desc {
+  font-size: 12px;
+  color: #7a7972;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.theme-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  font-size: 11px;
+  color: #7a7972;
+}
+
+.material-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 12px;
+}
+.material-list li {
+  padding: 4px 0;
+  font-size: 13px;
+  color: #7a7972;
+}
+.material-list li::before {
+  content: "• ";
+  color: #ff4a2b;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Chapter Review ── */
+.cr-view h3 {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+.cr-chapter {
+  color: #ff4a2b;
+  margin-left: 8px;
+}
+.cr-preview {
+  margin-bottom: 24px;
+  text-align: center;
+}
+.cr-preview .btn {
+  font-size: 16px;
+  padding: 12px 28px;
+}
+.cr-checklist {
+  margin-bottom: 24px;
+}
+.cr-checklist h4 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.cr-count {
+  font-size: 13px;
+  color: #7a7972;
+  font-weight: 400;
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.5;
+  border-bottom: 1px solid #1a1714;
+}
+.check-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: #ff4a2b;
+}
+.cr-feedback {
+  margin-bottom: 24px;
+}
+.cr-feedback h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.cr-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ── Checkpoint Audio ── */
+.ca-view h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.ca-context {
+  color: #7a7972;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+.ca-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ca-option {
+  background: #1a1714;
+  border: 1px solid #2f2a25;
+  border-radius: 12px;
+  padding: 24px;
+}
+.ca-option-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.ca-option-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #ff4a2b;
+  color: #fff;
+}
+.ca-option:last-child .ca-option-icon {
+  background: #2f2a25;
+  color: #7a7972;
+}
+.ca-option-desc {
+  font-size: 13px;
+  color: #7a7972;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.ca-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+.ca-features li {
+  font-size: 13px;
+  color: #7a7972;
+  padding: 4px 0;
+}
+.ca-features li::before {
+  content: "→ ";
+  color: #ff4a2b;
+}
+
+/* ── Interrupt card (generic) ── */
+.wp-interrupt-card {
+  background: #1a1714;
+  border: 1px solid #2f2a25;
+  border-radius: 12px;
+  padding: 32px;
+}
+.wp-interrupt-card h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.wp-interrupt-card p {
+  color: #7a7972;
+  margin-bottom: 24px;
+}
+
+/* ── Artifact Panel ── */
+.artifact-panel {
+  background: #1a1714;
+  border-radius: 12px;
+  padding: 20px;
+}
+.ap-title {
+  font-size: 13px;
+  color: #7a7972;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.ap-loading, .ap-empty {
+  font-size: 13px;
+  color: #4a443e;
+}
+.ap-list {
+  list-style: none;
+}
+.ap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.ap-link {
+  background: none;
+  border: none;
+  color: #ece4d2;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+.ap-link:hover {
+  color: #ff4a2b;
+}
+.ap-status {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a443e;
+}
+.ap-status.exists {
+  background: #4caf50;
+}
+.ap-size {
+  font-size: 11px;
+  color: #4a443e;
+}
+.ap-preview {
+  margin-top: 12px;
+  border-top: 1px solid #2f2a25;
+  padding-top: 12px;
+}
+.ap-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #7a7972;
+}
+.ap-preview-body {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #ece4d2;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #0d0b09;
+  padding: 12px;
+  border-radius: 6px;
+}
+.ap-truncated {
+  font-size: 11px;
+  color: #4a443e;
+  margin-top: 8px;
+}
+
+/* ── Node Timeline ── */
+.node-timeline {
+  margin-top: 32px;
+}
+.nt-title {
+  font-size: 13px;
+  color: #7a7972;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.nt-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.nt-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #1a1714;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.nt-index {
+  color: #7a7972;
+  font-family: monospace;
+  font-size: 11px;
+}
+.nt-name {
+  color: #ece4d2;
+}
+
+/* ── Preview card (sidebar) ── */
+.sidebar-card {
+  background: #1e1c18;
+  border: 1px solid #2f2a25;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.sidebar-card h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #ece4d2;
+}
+.preview-desc {
+  font-size: 11px;
+  color: #7a7972;
+  margin: 0 0 10px;
+}
+.btn-sm {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ── Loading ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 16px;
+}
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #2f2a25;
+  border-top-color: #ff4a2b;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-message {
+  color: #7a7972;
+  font-size: 14px;
+}
+
+/* ── Done state ── */
+.wp-done {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+.wp-done h2 {
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+.wp-summary {
+  background: #1a1714;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ece4d2;
+  margin-bottom: 24px;
+  white-space: pre-wrap;
+}
+.wp-done .artifact-panel {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+/* ── Thinking Panel ── */
+.thinking-panel {
+  background: #1a1714;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 12px;
+}
+/* In main area, fill available height */
+.wp-main .thinking-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.tp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #2f2a25;
+  flex-shrink: 0;
+}
+.tp-header:hover {
+  background: rgba(255,255,255,0.02);
+}
+.tp-toggle {
+  color: #7a7972;
+  font-size: 10px;
+  width: 12px;
+}
+.tp-title {
+  font-weight: 600;
+  color: #ece4d2;
+  font-size: 14px;
+}
+.tp-count {
+  color: #4a443e;
+  font-size: 11px;
+  margin-left: auto;
+}
+.tp-now {
+  color: #7a7972;
+  font-size: 11px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+.tp-body {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+/* In main area, tp-body takes all available space */
+.wp-main .thinking-panel .tp-body {
+  flex: 1;
+  max-height: none;
+  overflow-y: auto;
+}
+.tp-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 16px;
+  line-height: 1.6;
+  transition: background 0.15s;
+}
+.tp-event:hover {
+  background: rgba(255,255,255,0.02);
+}
+.tp-event.tp-node-start {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.tp-event.tp-error {
+  background: rgba(255, 74, 43, 0.05);
+}
+.tp-icon {
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 12px;
+}
+.tp-label {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #4a443e;
+  background: rgba(255,255,255,0.05);
+  padding: 0 6px;
+  border-radius: 3px;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.tp-text {
+  color: #7a7972;
+  word-break: break-word;
+  font-size: 13px;
+}
+.tp-node-start .tp-text {
+  color: #ece4d2;
+  font-weight: 500;
+}
+.tp-event.tp-error .tp-text {
+  color: #ff4a2b;
+}
+
+/* ── Modal overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 40px;
+  backdrop-filter: blur(4px);
+}
+.modal-card {
+  background: #0d0b09;
+  border: 1px solid #2f2a25;
+  border-radius: 16px;
+  max-width: 820px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 36px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Workflow Shell — IDE / Codex-style layout
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Shell ── */
+.wf-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #0b0b0b;
+  color: rgba(255, 255, 255, 0.86);
+  overflow: hidden;
+}
+
+/* ── Top Bar ── */
+.wf-topbar {
+  height: 56px;
+  background: #0f0f0f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.wf-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wf-topbar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+  white-space: nowrap;
+}
+.wf-topbar-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.wf-topbar-phase {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.56);
+  white-space: nowrap;
+}
+.wf-topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.wf-topbar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #facc15;
+  animation: wf-pulse 1.4s ease-in-out infinite;
+}
+@keyframes wf-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.wf-topbar-node {
+  font-size: 13px;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  color: rgba(255, 255, 255, 0.72);
+}
+.wf-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wf-topbar-count {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
+.wf-topbar-progress {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.wf-topbar-progress-fill {
+  height: 100%;
+  background: #4ade80;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ── Grid: sidebar | console ── */
+.wf-grid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Sidebar ── */
+.wf-sidebar {
+  background: #0f0f0f;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-y: auto;
+  padding: 20px 0 32px;
+}
+.wf-sidebar-section {
+  padding: 0 16px;
+  margin-bottom: 24px;
+}
+.wf-sidebar-section:last-child {
+  margin-bottom: 0;
+}
+.wf-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.34);
+  margin-bottom: 10px;
+}
+
+/* ── Session grid ── */
+.wf-session-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wf-session-row {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  align-items: center;
+  min-height: 22px;
+}
+.wf-session-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.34);
+}
+.wf-session-value {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.86);
+}
+.wf-session-mono {
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wf-status-running {
+  color: #facc15;
+  font-weight: 500;
+}
+
+/* ── Phase list ── */
+.wf-phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wf-phase-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.34);
+}
+.wf-phase-active {
+  color: rgba(255, 255, 255, 0.86);
+}
+.wf-phase-done {
+  color: rgba(255, 255, 255, 0.56);
+}
+.wf-phase-pending {
+  color: rgba(255, 255, 255, 0.30);
+}
+.wf-phase-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+.wf-phase-active .wf-phase-dot {
+  background: #facc15;
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.3);
+}
+.wf-phase-done .wf-phase-dot {
+  background: #4ade80;
+}
+.wf-phase-en {
+  font-size: 11px;
+  color: inherit;
+  opacity: 0.7;
+  min-width: 52px;
+}
+.wf-phase-label {
+  color: inherit;
+}
+
+/* ── File list ── */
+.wf-file-group {
+  margin-bottom: 8px;
+}
+.wf-file-group:last-child {
+  margin-bottom: 0;
+}
+.wf-file-group-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 4px;
+  padding-left: 2px;
+}
+.wf-file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 2px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.wf-file-icon {
+  width: 14px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #4ade80;
+  text-align: center;
+}
+.wf-file-pending {
+  color: rgba(255, 255, 255, 0.2);
+}
+.wf-file-name {
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.wf-file-dim {
+  color: rgba(255, 255, 255, 0.30);
+}
+.wf-file-size {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.24);
+  flex-shrink: 0;
+}
+
+/* ── Node History (sidebar) ── */
+.wf-node-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.wf-history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 2px;
+  font-size: 11px;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+}
+.wf-history-empty {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.24);
+  padding: 4px 2px;
+}
+.wf-history-icon {
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+}
+.wf-history-done .wf-history-icon {
+  color: #4ade80;
+}
+.wf-history-done .wf-history-name {
+  color: rgba(255, 255, 255, 0.50);
+}
+.wf-history-current .wf-history-icon {
+  color: #facc15;
+  font-size: 10px;
+}
+.wf-history-current .wf-history-name {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* ── Main Console ── */
+.wf-console {
+  background: #111111;
+  overflow: hidden;
+  padding: 24px 28px 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ── Plan Summary ── */
+.wf-plan {
+  margin-bottom: 28px;
+}
+.wf-plan-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.wf-plan-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.8;
+  transition: opacity 0.2s;
+}
+.wf-plan-pending {
+  opacity: 0.30;
+}
+.wf-plan-step.wf-plan-current {
+  color: rgba(255, 255, 255, 0.86);
+}
+.wf-plan-step.wf-plan-done {
+  color: rgba(255, 255, 255, 0.56);
+}
+.wf-plan-icon {
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+}
+.wf-plan-done .wf-plan-icon {
+  color: #4ade80;
+}
+.wf-plan-current .wf-plan-icon {
+  color: #facc15;
+  font-size: 8px;
+}
+.wf-plan-pending .wf-plan-icon {
+  color: rgba(255, 255, 255, 0.18);
+}
+.wf-plan-label {
+  white-space: nowrap;
+}
+
+/* ── Execution Stream ── */
+.wf-execution {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 0;
+  background: #0f0f0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.wf-exec-empty {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.24);
+  padding: 12px 0;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+}
+.wf-exec-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+.wf-exec-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.wf-exec-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.wf-exec-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.wf-exec-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+.wf-exec-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.wf-exec-loading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 0 8px;
+}
+.wf-exec-loading-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  animation: wf-bounce 1.4s ease-in-out infinite;
+}
+.wf-exec-loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.wf-exec-loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes wf-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+  40% { transform: translateY(-5px); opacity: 1; }
+}
+.wf-exec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wf-exec-node {
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  padding-left: 12px;
+  transition: border-color 0.2s;
+}
+.wf-exec-node.is-running {
+  border-left-color: #facc15;
+}
+.wf-exec-node.is-failed {
+  border-left-color: #fb7185;
+}
+.wf-exec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  user-select: none;
+}
+.wf-exec-icon {
+  width: 16px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+}
+.is-running .wf-exec-icon {
+  color: #facc15;
+  font-size: 10px;
+  animation: wf-pulse 1.4s ease-in-out infinite;
+}
+.is-failed .wf-exec-icon {
+  color: #fb7185;
+}
+.wf-exec-name {
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wf-exec-duration {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  white-space: nowrap;
+}
+.wf-exec-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  white-space: nowrap;
+}
+.is-running .wf-exec-label {
+  color: #facc15;
+}
+.is-failed .wf-exec-label {
+  color: #fb7185;
+}
+.wf-exec-arrow {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.2);
+  margin-left: 4px;
+}
+.wf-exec-events {
+  padding-bottom: 4px;
+}
+.wf-exec-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 1.5px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.wf-exec-ev-icon {
+  width: 16px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.28);
+}
+.wf-exec-ev-text {
+  color: rgba(255, 255, 255, 0.56);
+  word-break: break-word;
+  font-size: 12px;
+}
+
+/* ── Validation Issues ── */
+.wf-validation {
+  margin-bottom: 20px;
+  background: rgba(250, 204, 21, 0.06);
+  border: 1px solid rgba(250, 204, 21, 0.18);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.wf-validation.wf-validation-error {
+  background: rgba(251, 113, 133, 0.06);
+  border-color: rgba(251, 113, 133, 0.18);
+}
+.wf-validation .wf-section-title {
+  margin-bottom: 8px;
+}
+.wf-validation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wf-validation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 680px;
+}
+.wf-validation-icon {
+  width: 16px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 12px;
+  color: #facc15;
+  margin-top: 2px;
+}
+.wf-err-icon {
+  color: #fb7185;
+}
+.wf-validation-msg {
+  color: rgba(255, 255, 255, 0.72);
+  word-break: break-word;
+}
+.wf-validation-error .wf-validation-msg {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ── Bottom Status Bar ── */
+.wf-bottombar {
+  height: 52px;
+  background: #0f0f0f;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.wf-bottombar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+.wf-bottombar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: wf-pulse 1.4s ease-in-out infinite;
+}
+.wf-bottombar-waiting {
+  background: #60a5fa;
+  animation: none;
+}
+.wf-bottombar-status {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.56);
+  font-weight: 500;
+}
+.wf-bottombar-center {
+  flex: 1;
+  text-align: center;
+}
+.wf-bottombar-node {
+  font-size: 12px;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  color: rgba(255, 255, 255, 0.45);
+}
+.wf-bottombar-right {
+  min-width: 180px;
+  text-align: right;
+}
+.wf-bottombar-info {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.34);
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+}
+
+/* ── Done State ── */
+.wf-done-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0b0b0b;
+  padding: 40px;
+}
+.wf-done-card {
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+}
+.wf-done-card h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+  margin-bottom: 24px;
+}
+.wf-done-summary {
+  background: #0f0f0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 24px;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+/* ── Thin scrollbar ── */
+.wf-sidebar::-webkit-scrollbar,
+.wf-console::-webkit-scrollbar {
+  width: 6px;
+}
+.wf-sidebar::-webkit-scrollbar-track,
+.wf-console::-webkit-scrollbar-track {
+  background: transparent;
+}
+.wf-sidebar::-webkit-scrollbar-thumb,
+.wf-console::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+.wf-sidebar::-webkit-scrollbar-thumb:hover,
+.wf-console::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

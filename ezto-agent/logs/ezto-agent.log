@@ -1,0 +1,1430 @@
+21:13:46 [[32mINFO[0m] ezto | Starting ezto-agent server — port=8001
+21:13:46 [[32mINFO[0m] ezto | Graph built with 27 nodes, ready
+21:14:01 [[32mINFO[0m] ezto | Server shutting down
+21:14:05 [[32mINFO[0m] ezto | Starting ezto-agent server — port=8001
+21:14:05 [[32mINFO[0m] ezto | Graph built with 27 nodes, ready
+21:15:04 [[32mINFO[0m] ezto | ▶ wv_identify_input
+21:15:05 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.8s)
+21:15:05 [[32mINFO[0m] ezto | ✓ wv_identify_input done (1833ms)
+21:15:05 [[32mINFO[0m] ezto | ▶ wv_prepare_source_files
+21:15:56 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 19480 chars → OK (51.0s)
+21:15:56 [[32mINFO[0m] ezto | ✓ wv_prepare_source_files done (50953ms)
+21:15:56 [[32mINFO[0m] ezto | ▶ wv_validate_script
+21:16:49 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 10634 chars → OK (52.5s)
+21:16:49 [[32mINFO[0m] ezto | ✓ wv_validate_script done (52498ms)
+21:16:49 [[32mINFO[0m] ezto | ▶ wv_repair_script
+21:17:33 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 10998 chars → OK (43.8s)
+21:17:33 [[32mINFO[0m] ezto | ✓ wv_repair_script done (43841ms)
+21:17:33 [[32mINFO[0m] ezto | ▶ wv_validate_script
+21:17:58 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 10500 chars → OK (25.2s)
+21:17:58 [[32mINFO[0m] ezto | ✓ wv_validate_script done (25201ms)
+21:17:58 [[32mINFO[0m] ezto | ▶ wv_validate_outline
+21:18:24 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 9304 chars → OK (26.2s)
+21:18:24 [[32mINFO[0m] ezto | ✓ wv_validate_outline done (26161ms)
+21:18:24 [[32mINFO[0m] ezto | ▶ wv_repair_outline
+21:18:58 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 9481 chars → OK (33.5s)
+21:18:58 [[32mINFO[0m] ezto | ✓ wv_repair_outline done (33533ms)
+21:18:58 [[32mINFO[0m] ezto | ▶ wv_validate_outline
+21:19:25 [[32mINFO[0m] ezto | LLM [deepseek-v4-flash] 1 msgs, 9626 chars → OK (27.4s)
+21:19:25 [[32mINFO[0m] ezto | ✓ wv_validate_outline done (27355ms)
+21:19:25 [[32mINFO[0m] ezto | ▶ wv_checkpoint_plan
+21:19:25 [[31mERROR[0m] ezto | ✗ wv_checkpoint_plan FAILED after 12ms: (Interrupt(value={'type': 'checkpoint_plan', 'description': '一次对齐 5 件事：稿子 / outline / 主题 / 素材 / 开发模式', 'files': {'script': 'workspace/93bcdc97-1bcb-48ac-84e6-fd75f2089339\\93bcdc97-1bcb-48ac-84e6-fd75f2089339\\script.md', 'outline': 'workspace/93bcdc97-1bcb-48ac-84e6-fd75f2089339\\93bcdc97-1bcb-48ac-84e6-fd75f2089339\\outline.md'}, 'must_confirm': ['script', 'outline', 'theme', 'materials', 'development_mode'], 'theme_recommendations': [{'id': 'bauhaus-bold', 'name': 'Bauhaus Bold', 'nameZh': '包豪斯'}, {'id': 'blueprint', 'name': 'Blueprint', 'nameZh': '蓝图'}, {'id': 'bold-signal', 'name': 'Bold Signal', 'nameZh': '焦点信号'}, {'id': 'chalk-garden', 'name': 'Chalk Garden', 'nameZh': '粉笔花园'}, {'id': 'creative-voltage', 'name': 'Creative Voltage', 'nameZh': '电压创意'}, {'id': 'dark-botanical', 'name': 'Dark Botanical', 'nameZh': '暗夜植物'}, {'id': 'dune', 'name': 'Dune', 'nameZh': '沙丘'}, {'id': 'electric-studio', 'name': 'Electric Studio', 'nameZh': '电光企业'}, {'id': 'forest-ink', 'name': 'Forest Ink', 'nameZh': '森林墨'}, {'id': 'indigo-porcelain', 'name': 'Indigo Porcelain', 'nameZh': '靛蓝瓷'}], 'material_list': ['script.md', 'outline.md'], 'development_modes': {'A': '逐章确认（默认，推荐）', 'B': '第 1 章后顺序开发，统一验收', 'C': '第 1 章后并行开发（subagent）'}}, id='56f0cbc967de947d779c115e0f645902'),)
+21:19:25 [[32mINFO[0m] ezto | Workflow 93bcdc97-1bcb-48ac-84e6-fd75f2089339 completed (summary=False)
+21:19:25 [[32mINFO[0m] ezto | API POST /workflow/start → 200 (261425ms)
+21:19:25 [[32mINFO[0m] ezto | Workflow started thread=93bcdc97-1bcb-48ac-84e6-fd75f2089339 input_type=article len=5887
+21:19:25 [[32mINFO[0m] ezto | Server shutting down
+21:19:26 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:19:27 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:19:27 [[32mINFO[0m] Server shutting down
+21:19:28 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:19:28 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:22:06 [[32mINFO[0m] Server shutting down
+21:22:08 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:22:08 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:22:18 [[32mINFO[0m] Server shutting down
+21:22:19 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:22:20 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:22:20 [[32mINFO[0m] Server shutting down
+21:22:22 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:22:22 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:22:27 [[32mINFO[0m] Server shutting down
+21:22:29 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:22:29 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:23:05 [[32mINFO[0m] Server shutting down
+21:23:07 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:23:07 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:23:09 [[32mINFO[0m] Server shutting down
+21:23:10 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:23:10 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:23:34 [[32mINFO[0m] Server shutting down
+21:23:35 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:23:35 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:24:11 [[32mINFO[0m] Server shutting down
+21:24:16 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:24:16 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:24:55 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+21:24:55 [[32mINFO[0m] Workflow started thread=ec0fd2e5-5061-417d-8239-b7fca29ee4f9 input_type=article len=5887
+21:24:55 [[32mINFO[0m] Background graph start thread=ec0fd2e5-5061-417d-8239-b7fca29ee4f9
+21:24:55 [[32mINFO[0m] ▶ wv_identify_input
+21:24:55 [[32mINFO[0m] Classifying input (5887 chars prefix=# RICE Prioritization Framework  **Category**: methodology **Source**: Intercom …)
+21:24:55 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092
+21:24:57 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (2.1s)
+21:24:57 [[32mINFO[0m] Input classified as: article
+21:24:57 [[32mINFO[0m] ✓ wv_identify_input done (2120ms)
+21:24:57 [[32mINFO[0m] ▶ wv_prepare_source_files
+21:24:57 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+21:24:57 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19480
+21:25:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19480 chars → OK (45.1s)
+21:25:42 [[32mINFO[0m] Written script.md (2047 chars) + outline.md (3807 chars)
+21:25:42 [[32mINFO[0m] ✓ wv_prepare_source_files done (45145ms)
+21:25:42 [[32mINFO[0m] ▶ wv_validate_script
+21:25:42 [[32mINFO[0m] Validating script.md (2047 chars)
+21:25:42 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10480
+21:26:14 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10480 chars → OK (32.2s)
+21:26:14 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+21:26:14 [[32mINFO[0m] ✓ wv_validate_script done (32158ms)
+21:26:14 [[32mINFO[0m] ▶ wv_validate_outline
+21:26:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9030
+21:26:41 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9030 chars → OK (26.9s)
+21:26:41 [[32mINFO[0m] ✓ wv_validate_outline done (26890ms)
+21:26:41 [[32mINFO[0m] ▶ wv_repair_outline
+21:26:41 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9277
+21:27:14 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9277 chars → OK (33.1s)
+21:27:14 [[32mINFO[0m] ✓ wv_repair_outline done (33138ms)
+21:27:14 [[32mINFO[0m] ▶ wv_validate_outline
+21:27:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9858
+21:27:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9858 chars → OK (27.9s)
+21:27:42 [[32mINFO[0m] ✓ wv_validate_outline done (27860ms)
+21:27:42 [[32mINFO[0m] ▶ wv_checkpoint_plan
+21:27:42 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+21:27:42 [[31mERROR[0m] ✗ wv_checkpoint_plan FAILED after 10ms: (Interrupt(value={'type': 'checkpoint_plan', 'description': '一次对齐 5 件事：稿子 / outline / 主题 / 素材 / 开发模式', 'files': {'script': 'workspace/ec0fd2e5-5061-417d-8239-b7fca29ee4f9\\ec0fd2e5-5061-417d-8239-b7fca29ee4f9\\script.md', 'outline': 'workspace/ec0fd2e5-5061-417d-8239-b7fca29ee4f9\\ec0fd2e5-5061-417d-8239-b7fca29ee4f9\\outline.md'}, 'must_confirm': ['script', 'outline', 'theme', 'materials', 'development_mode'], 'theme_recommendations': [{'id': 'bauhaus-bold', 'name': 'Bauhaus Bold', 'nameZh': '包豪斯'}, {'id': 'blueprint', 'name': 'Blueprint', 'nameZh': '蓝图'}, {'id': 'bold-signal', 'name': 'Bold Signal', 'nameZh': '焦点信号'}, {'id': 'chalk-garden', 'name': 'Chalk Garden', 'nameZh': '粉笔花园'}, {'id': 'creative-voltage', 'name': 'Creative Voltage', 'nameZh': '电压创意'}, {'id': 'dark-botanical', 'name': 'Dark Botanical', 'nameZh': '暗夜植物'}, {'id': 'dune', 'name': 'Dune', 'nameZh': '沙丘'}, {'id': 'electric-studio', 'name': 'Electric Studio', 'nameZh': '电光企业'}, {'id': 'forest-ink', 'name': 'Forest Ink', 'nameZh': '森林墨'}, {'id': 'indigo-porcelain', 'name': 'Indigo Porcelain', 'nameZh': '靛蓝瓷'}], 'material_list': ['script.md', 'outline.md'], 'development_modes': {'A': '逐章确认（默认，推荐）', 'B': '第 1 章后顺序开发，统一验收', 'C': '第 1 章后并行开发（subagent）'}}, id='7eb9acc6b1a6c21720d8c945afcf9317'),)
+21:27:42 [[32mINFO[0m] Background graph completed after 167s
+21:32:24 [[32mINFO[0m] Server shutting down
+21:32:25 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:32:25 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:32:26 [[32mINFO[0m] Server shutting down
+21:32:27 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:32:27 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:33:09 [[32mINFO[0m] Server shutting down
+21:33:10 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:33:10 [[32mINFO[0m] Graph built with 27 nodes, ready
+21:33:13 [[32mINFO[0m] Server shutting down
+21:33:14 [[32mINFO[0m] Starting ezto-agent server — port=8001
+21:33:14 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:44:51 [[32mINFO[0m] Server shutting down
+17:45:01 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:45:01 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:45:29 [[32mINFO[0m] API POST /workflow/start → 200 (8ms)
+17:45:29 [[32mINFO[0m] Workflow started thread=ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f input_type=article len=5888
+17:45:29 [[32mINFO[0m] Background graph start thread=ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f
+17:45:29 [[32mINFO[0m] ▶ wv_identify_input
+17:45:29 [[32mINFO[0m] Classifying input (5887 chars)
+17:45:29 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092
+17:45:32 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (2.7s)
+17:45:32 [[32mINFO[0m] Input classified as: article
+17:45:32 [[32mINFO[0m] ✓ wv_identify_input done (2688ms)
+17:45:32 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:45:32 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:45:32 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19481
+17:46:13 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19481 chars → OK (41.3s)
+17:46:13 [[32mINFO[0m] Written script.md (1731 chars) + outline.md (2910 chars)
+17:46:13 [[32mINFO[0m] ✓ wv_prepare_source_files done (41267ms)
+17:46:13 [[32mINFO[0m] ▶ wv_validate_script
+17:46:13 [[32mINFO[0m] Validating script.md (1731 chars)
+17:46:13 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10164
+17:46:43 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10164 chars → OK (29.8s)
+17:46:43 [[32mINFO[0m] Script validation: FAIL (failed_checks=['原则2（短句）违规：存在超过20字的句子，例如“你可能会问，每次要决定先做哪个功能的时候，是不是感觉谁嗓门大谁说了算？”（共约26字）', '原则6（数字翻译成感受）未完全遵守：例如“八万用户”“两万五千个家长”等具体数字未转换为感受性表达，且非核心冲击数字', '信息保留度≥60%无法验证（未提供原文article.md），但假设通过'])
+17:46:43 [[32mINFO[0m] ✓ wv_validate_script done (29824ms)
+17:46:43 [[32mINFO[0m] ▶ wv_repair_script
+17:46:43 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本整体口语化、有钩子、使用第二人称、有节奏停顿、避免结构词和AI味腔调，但在短句控制和数字感受翻译方面未严格遵循风格指南，需修改。
+原则2（短句）违规：存在超过20字的句子，例如“你可能会问，每次要决定先做哪个功能的时候，是不是感觉谁嗓门大谁说了算？”（共约26字）
+原则6（数字翻译成感受）未完全遵守：例如“八万用户”“两万五千个家长”等具体数字未转换为感受性表达，且非核心冲击数字
+信息保留度≥)
+17:46:43 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10348
+17:47:33 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10348 chars → OK (50.0s)
+17:47:33 [[32mINFO[0m] Repaired script.md rewritten (1525 chars)
+17:47:33 [[32mINFO[0m] ✓ wv_repair_script done (50010ms)
+17:47:33 [[32mINFO[0m] ▶ wv_validate_script
+17:47:33 [[32mINFO[0m] Validating script.md (1525 chars)
+17:47:33 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9958
+17:58:32 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9958 chars → OK (658.4s)
+17:58:32 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+17:58:32 [[32mINFO[0m] ✓ wv_validate_script done (658414ms)
+17:58:32 [[32mINFO[0m] ▶ wv_validate_outline
+17:58:32 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8133
+17:58:58 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8133 chars → OK (26.7s)
+17:58:58 [[32mINFO[0m] ✓ wv_validate_outline done (26679ms)
+17:58:58 [[32mINFO[0m] ▶ wv_repair_outline
+17:58:58 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9047
+17:59:35 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9047 chars → OK (36.9s)
+17:59:35 [[32mINFO[0m] ✓ wv_repair_outline done (36935ms)
+17:59:35 [[32mINFO[0m] ▶ wv_validate_outline
+17:59:35 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9339
+17:59:56 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9339 chars → OK (20.4s)
+17:59:56 [[32mINFO[0m] ✓ wv_validate_outline done (20435ms)
+17:59:56 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:59:56 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:59:56 [[31mERROR[0m] ✗ wv_checkpoint_plan FAILED after 13ms: (Interrupt(value={'type': 'checkpoint_plan', 'description': '一次对齐 5 件事：稿子 / outline / 主题 / 素材 / 开发模式', 'files': {'script': 'workspace/ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f\\ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f\\script.md', 'outline': 'workspace/ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f\\ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f\\outline.md'}, 'must_confirm': ['script', 'outline', 'theme', 'materials', 'development_mode'], 'theme_recommendations': [{'id': 'bauhaus-bold', 'name': 'Bauhaus Bold', 'nameZh': '包豪斯'}, {'id': 'blueprint', 'name': 'Blueprint', 'nameZh': '蓝图'}, {'id': 'bold-signal', 'name': 'Bold Signal', 'nameZh': '焦点信号'}, {'id': 'chalk-garden', 'name': 'Chalk Garden', 'nameZh': '粉笔花园'}, {'id': 'creative-voltage', 'name': 'Creative Voltage', 'nameZh': '电压创意'}, {'id': 'dark-botanical', 'name': 'Dark Botanical', 'nameZh': '暗夜植物'}, {'id': 'dune', 'name': 'Dune', 'nameZh': '沙丘'}, {'id': 'electric-studio', 'name': 'Electric Studio', 'nameZh': '电光企业'}, {'id': 'forest-ink', 'name': 'Forest Ink', 'nameZh': '森林墨'}, {'id': 'indigo-porcelain', 'name': 'Indigo Porcelain', 'nameZh': '靛蓝瓷'}], 'material_list': ['script.md', 'outline.md'], 'development_modes': {'A': '逐章确认（默认，推荐）', 'B': '第 1 章后顺序开发，统一验收', 'C': '第 1 章后并行开发（subagent）'}}, id='d02d2865d8c33f01b10d5abee03047bd'),)
+17:59:56 [[32mINFO[0m] Background graph completed after 866s
+18:49:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=4
+18:49:43 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 4 chars → OK (2.6s)
+18:50:12 [[32mINFO[0m] Starting ezto-agent server — port=8001
+18:50:12 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:28:52 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+17:28:52 [[32mINFO[0m] Workflow started thread=5e158b09-c3df-447b-a01c-a12ad4fff6f8 input_type=article len=201
+17:28:52 [[32mINFO[0m] Background graph start thread=5e158b09-c3df-447b-a01c-a12ad4fff6f8
+17:28:52 [[32mINFO[0m] ▶ wv_identify_input
+17:28:52 [[32mINFO[0m] Classifying input (201 chars)
+17:28:52 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=293 remaining=300s
+17:28:55 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 293 chars → OK (2.7s)
+17:28:55 [[32mINFO[0m] Input classified as: article
+17:28:55 [[32mINFO[0m] ✓ wv_identify_input done (2662ms)
+17:28:55 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:28:55 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:28:55 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13794 remaining=300s
+17:29:27 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 32.5s chars=13794
+17:29:27 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13794 chars → OK (32.5s)
+17:29:27 [[32mINFO[0m] Written script.md (1732 chars) + outline.md (2612 chars)
+17:29:27 [[32mINFO[0m] ✓ wv_prepare_source_files done (32515ms)
+17:29:27 [[32mINFO[0m] ▶ wv_validate_script
+17:29:27 [[32mINFO[0m] Validating script.md (1732 chars)
+17:29:27 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10165 remaining=300s
+17:30:07 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 39.1s chars=10165
+17:30:07 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10165 chars → OK (39.1s)
+17:30:07 [[32mINFO[0m] Script validation: FAIL (failed_checks=['短句原则：存在超过20字的句子（例如第一句‘说到产品需求优先级……’43字，以及RICE字母列举句等）', '禁止括号补充：Confidence部分使用了括号‘（比如跑过完整的A/B实验）’，括号内容无法自然念出'])
+17:30:07 [[32mINFO[0m] ✓ wv_validate_script done (39081ms)
+17:30:07 [[32mINFO[0m] ▶ wv_repair_script
+17:30:07 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本整体口语化、钩子得力、无AI腔调，但在形式层面违反了两条硬性规则：句子长度多处超过B站基准20字，且出现了口播稿禁止的括号补充。信息保留度因缺少原文无法验证。建议拆分超长句，将括号内容融入正文。
+短句原则：存在超过20字的句子（例如第一句‘说到产品需求优先级……’43字，以及RICE字母列举句等）
+禁止括号补充：Confidence部分使用了括号‘（比如跑过完整的A/B实验）’，括号内容无法自)
+17:30:07 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10322 remaining=300s
+17:30:45 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 38.3s chars=10322
+17:30:45 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10322 chars → OK (38.3s)
+17:30:45 [[32mINFO[0m] Repaired script.md rewritten (1941 chars)
+17:30:45 [[32mINFO[0m] ✓ wv_repair_script done (38288ms)
+17:30:45 [[32mINFO[0m] ▶ wv_validate_script
+17:30:45 [[32mINFO[0m] Validating script.md (1941 chars)
+17:30:45 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10374 remaining=300s
+17:31:59 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 73.9s chars=10374
+17:31:59 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10374 chars → OK (73.9s)
+17:31:59 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+17:31:59 [[32mINFO[0m] ✓ wv_validate_script done (73892ms)
+17:31:59 [[32mINFO[0m] ▶ wv_validate_outline
+17:31:59 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=7835 remaining=300s
+17:32:07 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 7835 chars → OK (8.5s)
+17:32:07 [[32mINFO[0m] ✓ wv_validate_outline done (8534ms)
+17:32:07 [[32mINFO[0m] ▶ wv_repair_outline
+17:32:07 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=7967 remaining=300s
+17:32:30 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 7967 chars → OK (23.2s)
+17:32:30 [[32mINFO[0m] ✓ wv_repair_outline done (23207ms)
+17:32:30 [[32mINFO[0m] ▶ wv_validate_outline
+17:32:30 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8110 remaining=300s
+17:32:50 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8110 chars → OK (19.3s)
+17:32:50 [[32mINFO[0m] ✓ wv_validate_outline done (19284ms)
+17:32:50 [[32mINFO[0m] ▶ wv_repair_outline
+17:32:50 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8223 remaining=300s
+17:33:16 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8223 chars → OK (26.7s)
+17:33:16 [[32mINFO[0m] ✓ wv_repair_outline done (26656ms)
+17:33:16 [[32mINFO[0m] ▶ wv_validate_outline
+17:33:16 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8199 remaining=300s
+17:33:43 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8199 chars → OK (26.7s)
+17:33:43 [[32mINFO[0m] ✓ wv_validate_outline done (26663ms)
+17:33:43 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:33:43 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:33:43 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 15ms
+17:33:43 [[32mINFO[0m] Background graph completed after 291s
+17:36:58 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:36:58 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:37:05 [[32mINFO[0m] API POST /workflow/start → 200 (7ms)
+17:37:05 [[32mINFO[0m] Workflow started thread=1df9fe22-2b9e-41d9-9cea-c03c069c7c92 input_type=article len=139
+17:37:05 [[32mINFO[0m] Background graph start thread=1df9fe22-2b9e-41d9-9cea-c03c069c7c92
+17:37:05 [[32mINFO[0m] ▶ wv_identify_input
+17:37:05 [[32mINFO[0m] Classifying input (139 chars)
+17:37:05 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=231 remaining=300s
+17:37:08 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 231 chars → OK (3.0s)
+17:37:08 [[32mINFO[0m] Input classified as: none
+17:37:08 [[32mINFO[0m] ✓ wv_identify_input done (3013ms)
+17:37:08 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:37:08 [[33mWARNING[0m] No input content — cannot generate script/outline
+17:37:08 [[32mINFO[0m] ✓ wv_prepare_source_files done (1ms)
+17:37:08 [[32mINFO[0m] ▶ wv_validate_script
+17:37:08 [[33mWARNING[0m] script.md not found at workspace/1df9fe22-2b9e-41d9-9cea-c03c069c7c92\1df9fe22-2b9e-41d9-9cea-c03c069c7c92\script.md
+17:37:08 [[32mINFO[0m] ✓ wv_validate_script done (1ms)
+17:37:08 [[32mINFO[0m] ▶ wv_repair_script
+17:37:08 [[31mERROR[0m] ✗ wv_repair_script FAILED after 0ms: [Errno 2] No such file or directory: 'workspace\\1df9fe22-2b9e-41d9-9cea-c03c069c7c92\\1df9fe22-2b9e-41d9-9cea-c03c069c7c92\\script.md'
+17:37:08 [[31mERROR[0m] Background graph FAILED thread=1df9fe22-2b9e-41d9-9cea-c03c069c7c92 after 3s: [Errno 2] No such file or directory: 'workspace\\1df9fe22-2b9e-41d9-9cea-c03c069c7c92\\1df9fe22-2b9e-41d9-9cea-c03c069c7c92\\script.md'
+17:40:21 [[32mINFO[0m] API POST /workflow/start → 200 (6ms)
+17:40:21 [[32mINFO[0m] Workflow started thread=17eaea14-a84d-4db3-965a-c15ec62d05b2 input_type=article len=1060
+17:40:21 [[32mINFO[0m] Background graph start thread=17eaea14-a84d-4db3-965a-c15ec62d05b2
+17:40:21 [[32mINFO[0m] ▶ wv_identify_input
+17:40:21 [[32mINFO[0m] Classifying input (1060 chars)
+17:40:21 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=1152 remaining=300s
+17:40:24 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 1152 chars → OK (2.8s)
+17:40:24 [[32mINFO[0m] Input classified as: article
+17:40:24 [[32mINFO[0m] ✓ wv_identify_input done (2753ms)
+17:40:24 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:40:24 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:40:24 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=14653 remaining=300s
+17:40:54 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 30.3s chars=14653
+17:40:54 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 14653 chars → OK (30.3s)
+17:40:54 [[32mINFO[0m] Written script.md (926 chars) + outline.md (3126 chars)
+17:40:54 [[32mINFO[0m] ✓ wv_prepare_source_files done (30290ms)
+17:40:54 [[32mINFO[0m] ▶ wv_validate_script
+17:40:54 [[32mINFO[0m] Validating script.md (926 chars)
+17:40:54 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9359 remaining=300s
+17:41:23 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9359 chars → OK (28.6s)
+17:41:23 [[32mINFO[0m] Script validation: FAIL (failed_checks=['无法验证信息保留度≥60%：缺少原文 article.md'])
+17:41:23 [[32mINFO[0m] ✓ wv_validate_script done (28649ms)
+17:41:23 [[32mINFO[0m] ▶ wv_repair_script
+17:41:23 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本在口语化、短句、第二人称、钩子、节奏停顿、数字处理、具体例子、去AI味等方面均符合风格指南要求。但由于未提供原始文章，无法计算字符比例或逐项核对关键事实/论证链，因此最高优先级检查不通过。
+无法验证信息保留度≥60%：缺少原文 article.md)
+17:41:23 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9439 remaining=300s
+17:42:03 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 40.7s chars=9439
+17:42:03 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9439 chars → OK (40.7s)
+17:42:03 [[32mINFO[0m] Repaired script.md rewritten (2252 chars)
+17:42:03 [[32mINFO[0m] ✓ wv_repair_script done (40713ms)
+17:42:03 [[32mINFO[0m] ▶ wv_validate_script
+17:42:03 [[32mINFO[0m] Validating script.md (2252 chars)
+17:42:03 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10685 remaining=300s
+17:42:28 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10685 chars → OK (24.4s)
+17:42:28 [[32mINFO[0m] Script validation: FAIL (failed_checks=['短句：每句≤20字（B站基准）'])
+17:42:28 [[32mINFO[0m] ✓ wv_validate_script done (24408ms)
+17:42:28 [[32mINFO[0m] ▶ wv_repair_script
+17:42:28 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=脚本中存在多个句子超过20字符（按中英文+标点+空格计算），例如“最早是 Intercom 那帮产品经理搞出来的，现在硅谷都在用。”（31字符）、“比如你加一个注册页，每天大概 500 人看到。”（约25字符）等。违反第2条原则。其他检查项（口语化、第二人称、钩子、节奏停顿、数字翻译、去AI味等）均通过。信息保留度因缺少原文无法验证，但用户声称保留度85%，暂不列为失败项。
+短句：每句≤20字（B)
+17:42:28 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10843 remaining=300s
+17:42:57 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10843 chars → OK (28.9s)
+17:42:57 [[32mINFO[0m] Repaired script.md rewritten (2135 chars)
+17:42:57 [[32mINFO[0m] ✓ wv_repair_script done (28863ms)
+17:42:57 [[32mINFO[0m] ▶ wv_validate_script
+17:42:57 [[32mINFO[0m] Validating script.md (2135 chars)
+17:42:57 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10568 remaining=300s
+17:43:13 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10568 chars → OK (16.7s)
+17:43:13 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+17:43:13 [[32mINFO[0m] ✓ wv_validate_script done (16658ms)
+17:43:13 [[32mINFO[0m] ▶ wv_validate_outline
+17:43:13 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8349 remaining=300s
+17:43:31 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8349 chars → OK (17.8s)
+17:43:31 [[32mINFO[0m] ✓ wv_validate_outline done (17843ms)
+17:43:31 [[32mINFO[0m] ▶ wv_repair_outline
+17:43:31 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8641 remaining=300s
+17:44:09 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 38.2s chars=8641
+17:44:09 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8641 chars → OK (38.2s)
+17:44:09 [[32mINFO[0m] ✓ wv_repair_outline done (38216ms)
+17:44:09 [[32mINFO[0m] ▶ wv_validate_outline
+17:44:09 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9506 remaining=300s
+17:44:31 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9506 chars → OK (21.9s)
+17:44:31 [[32mINFO[0m] ✓ wv_validate_outline done (21853ms)
+17:44:31 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:44:31 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:44:31 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 8ms
+17:44:31 [[32mINFO[0m] Background graph completed after 250s
+17:47:52 [[32mINFO[0m] Background graph start thread=d45d76e4-1d9e-4b36-847e-481e3397b123
+17:47:52 [[32mINFO[0m] ▶ wv_identify_input
+17:47:52 [[32mINFO[0m] Input too short (4 chars) → type=none
+17:47:52 [[32mINFO[0m] ✓ wv_identify_input done (0ms)
+17:47:52 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:47:52 [[33mWARNING[0m] No input content — cannot generate script/outline
+17:47:52 [[32mINFO[0m] ✓ wv_prepare_source_files done (1ms)
+17:47:52 [[32mINFO[0m] ▶ wv_validate_script
+17:47:52 [[33mWARNING[0m] script.md not found at workspace/d45d76e4-1d9e-4b36-847e-481e3397b123\d45d76e4-1d9e-4b36-847e-481e3397b123\script.md
+17:47:52 [[32mINFO[0m] ✓ wv_validate_script done (0ms)
+17:47:52 [[32mINFO[0m] ▶ wv_repair_script
+17:47:52 [[31mERROR[0m] ✗ wv_repair_script FAILED after 0ms: [Errno 2] No such file or directory: 'workspace\\d45d76e4-1d9e-4b36-847e-481e3397b123\\d45d76e4-1d9e-4b36-847e-481e3397b123\\script.md'
+17:47:52 [[31mERROR[0m] Background graph FAILED thread=d45d76e4-1d9e-4b36-847e-481e3397b123 after 0s: [Errno 2] No such file or directory: 'workspace\\d45d76e4-1d9e-4b36-847e-481e3397b123\\d45d76e4-1d9e-4b36-847e-481e3397b123\\script.md'
+17:49:02 [[32mINFO[0m] Background graph start thread=5aca7125-3c3d-429e-bb5c-e2e08c0489a9
+17:49:02 [[32mINFO[0m] ▶ wv_identify_input
+17:49:02 [[32mINFO[0m] Classifying input (291 chars)
+17:49:02 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=383 remaining=300s
+17:49:05 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 383 chars → OK (2.8s)
+17:49:05 [[32mINFO[0m] Input classified as: article
+17:49:05 [[32mINFO[0m] ✓ wv_identify_input done (2822ms)
+17:49:05 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:49:05 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:49:05 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13884 remaining=300s
+17:49:42 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 37.1s chars=13884
+17:49:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13884 chars → OK (37.1s)
+17:49:42 [[32mINFO[0m] Written script.md (1274 chars) + outline.md (3616 chars)
+17:49:42 [[32mINFO[0m] ✓ wv_prepare_source_files done (37108ms)
+17:49:42 [[32mINFO[0m] ▶ wv_validate_script
+17:49:42 [[32mINFO[0m] Validating script.md (1274 chars)
+17:49:42 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9707 remaining=300s
+17:49:43 [[33mWARNING[0m] LLM attempt 1/3 failed after 954ms: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:49:44 [DEBUG] LLM request [deepseek-v4-flash] attempt=2/3 msgs=1 chars=9707 remaining=298s
+17:50:02 [[33mWARNING[0m] Background graph cancelled thread=5aca7125-3c3d-429e-bb5c-e2e08c0489a9
+17:50:21 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 39.0s chars=9707
+17:50:21 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9707 chars → OK (39.0s)
+17:50:21 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度：缺少原文，无法计算比例和逐项对照，但脚本开头包含非口播的元描述，可能影响内容完整性', '原则2（短句）：存在多句超过20字，如“是你嗓门大，谁级别高，谁开会的时候最强势，那个功能就做哪个？”等', '原则4（开头有钩子）：脚本第一句“好的，没问题。我将严格按照您提供的风格指南和格式规范……”为AI回复，非口播钩子；后续标题后提问虽有悬念，但整体开头不合格', '原则6（数字翻译成感受）：多处使用原始数字（如100万、30、1000、5分钟等）未转化为感受表述，不符合B站风格要求', '原则7（不堆结构词）：使用了“先看R”、“再来看I”、“然后是C”、“最后是E”等序列引导词，属于应避免的结构堆砌', '不要做的细节：脚本开头包含元描述（“我将严格按照……转换为……”），属于口播稿不应出现的自述内容'])
+17:50:21 [[32mINFO[0m] ✓ wv_validate_script done (39026ms)
+17:50:56 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:50:56 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:51:05 [[32mINFO[0m] API POST /workflow/start → 200 (6ms)
+17:51:05 [[32mINFO[0m] Workflow started thread=ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9 input_type=article len=1060
+17:51:05 [[32mINFO[0m] Background graph start thread=ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9
+17:51:05 [[32mINFO[0m] ▶ wv_identify_input
+17:51:05 [[32mINFO[0m] Classifying input (1060 chars)
+17:51:05 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=1152 remaining=300s
+17:51:08 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 1152 chars → OK (2.7s)
+17:51:08 [[32mINFO[0m] Input classified as: article
+17:51:08 [[32mINFO[0m] ✓ wv_identify_input done (2722ms)
+17:51:08 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:51:08 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:51:08 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=14653 remaining=300s
+17:51:40 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 32.0s chars=14653
+17:51:40 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 14653 chars → OK (32.0s)
+17:51:40 [[32mINFO[0m] Written script.md (1300 chars) + outline.md (4014 chars)
+17:51:40 [[32mINFO[0m] ✓ wv_prepare_source_files done (32046ms)
+17:51:40 [[32mINFO[0m] ▶ wv_validate_script
+17:51:40 [[32mINFO[0m] Validating script.md (1300 chars)
+17:51:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9733 remaining=300s
+17:52:02 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9733 chars → OK (21.9s)
+17:52:02 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+17:52:02 [[32mINFO[0m] ✓ wv_validate_script done (21951ms)
+17:52:02 [[32mINFO[0m] ▶ wv_validate_outline
+17:52:02 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9237 remaining=300s
+17:52:31 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9237 chars → OK (29.2s)
+17:52:31 [[32mINFO[0m] ✓ wv_validate_outline done (29160ms)
+17:52:31 [[32mINFO[0m] ▶ wv_repair_outline
+17:52:31 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9511 remaining=300s
+17:53:03 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 31.9s chars=9511
+17:53:03 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9511 chars → OK (31.9s)
+17:53:03 [[32mINFO[0m] ✓ wv_repair_outline done (31904ms)
+17:53:03 [[32mINFO[0m] ▶ wv_validate_outline
+17:53:03 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9630 remaining=300s
+17:53:32 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9630 chars → OK (29.1s)
+17:53:32 [[32mINFO[0m] ✓ wv_validate_outline done (29064ms)
+17:53:32 [[32mINFO[0m] ▶ wv_repair_outline
+17:53:32 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9766 remaining=300s
+17:53:52 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9766 chars → OK (20.3s)
+17:53:52 [[32mINFO[0m] ✓ wv_repair_outline done (20272ms)
+17:53:52 [[32mINFO[0m] ▶ wv_validate_outline
+17:53:52 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9592 remaining=300s
+17:54:19 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9592 chars → OK (26.6s)
+17:54:19 [[32mINFO[0m] ✓ wv_validate_outline done (26617ms)
+17:54:19 [[32mINFO[0m] ▶ wv_repair_outline
+17:54:19 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9829 remaining=300s
+17:54:51 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 31.6s chars=9829
+17:54:51 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9829 chars → OK (31.6s)
+17:54:51 [[32mINFO[0m] ✓ wv_repair_outline done (31606ms)
+17:54:51 [[32mINFO[0m] ▶ wv_validate_outline
+17:54:51 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10546 remaining=300s
+17:55:10 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10546 chars → OK (18.8s)
+17:55:10 [[32mINFO[0m] ✓ wv_validate_outline done (18798ms)
+17:55:10 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:55:10 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:55:10 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 14ms
+17:55:10 [[32mINFO[0m] Background graph completed after 244s
+18:06:35 [[32mINFO[0m] Background graph start thread=ece2d32c-7a29-4167-8fb7-7a0b4dd64c3e
+18:06:35 [[32mINFO[0m] ▶ wv_identify_input
+18:06:35 [[32mINFO[0m] Classifying input (25 chars)
+18:06:35 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=117 remaining=300s
+18:06:36 [[33mWARNING[0m] Background graph cancelled thread=ece2d32c-7a29-4167-8fb7-7a0b4dd64c3e
+18:06:37 [[33mWARNING[0m] LLM attempt 1/3 failed after 1328ms: Client error '401 Unauthorized' for url 'https://api.deepseek.com/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+18:06:38 [DEBUG] LLM request [deepseek-v4-flash] attempt=2/3 msgs=1 chars=117 remaining=298s
+18:06:39 [[33mWARNING[0m] LLM attempt 2/3 failed after 3641ms: Client error '401 Unauthorized' for url 'https://api.deepseek.com/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+18:06:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=3/3 msgs=1 chars=117 remaining=295s
+18:06:43 [[33mWARNING[0m] LLM attempt 3/3 failed after 7513ms: Client error '401 Unauthorized' for url 'https://api.deepseek.com/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+18:06:43 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 117 chars → FAIL (7.5s)
+18:06:43 [[31mERROR[0m] ✗ wv_identify_input FAILED after 7514ms: LLM call failed after 3 attempts: Client error '401 Unauthorized' for url 'https://api.deepseek.com/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+11:10:35 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:10:36 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:18:26 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+11:18:26 [[32mINFO[0m] Workflow started thread=ed5f4aeb-39fe-4550-886c-6a81e99eaed0 input_type=article len=5888
+11:18:26 [[32mINFO[0m] Background graph start thread=ed5f4aeb-39fe-4550-886c-6a81e99eaed0
+11:18:26 [[32mINFO[0m] ▶ wv_identify_input
+11:18:26 [[32mINFO[0m] Classifying input (5887 chars)
+11:18:26 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+11:18:27 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.7s)
+11:18:27 [[32mINFO[0m] Input classified as: article
+11:18:27 [[32mINFO[0m] ✓ wv_identify_input done (1738ms)
+11:18:27 [[32mINFO[0m] ▶ wv_prepare_source_files
+11:18:27 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+11:18:27 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19481 remaining=300s
+11:19:04 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 36.9s chars=19481
+11:19:04 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19481 chars → OK (36.9s)
+11:19:04 [[32mINFO[0m] Written script.md (2011 chars) + outline.md (3617 chars)
+11:19:04 [[32mINFO[0m] ✓ wv_prepare_source_files done (36889ms)
+11:19:04 [[32mINFO[0m] ▶ wv_validate_script
+11:19:04 [[32mINFO[0m] Validating script.md (2011 chars)
+11:19:04 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10444 remaining=300s
+11:19:21 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10444 chars → OK (17.1s)
+11:19:21 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度无法验证（缺少 article.md，无法计算字符比例和关键事实对照）', '有个别括号补充（如“Impact 选 3（颠覆性的）”）建议改为“Impact 选 3，颠覆性的”，避免口播念不出'])
+11:19:21 [[32mINFO[0m] ✓ wv_validate_script done (17113ms)
+11:19:21 [[32mINFO[0m] ▶ wv_repair_script
+11:19:21 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=除信息保留度无法验证外，其余风格要求（口语化、短句、第二人称、钩子、节奏、数字处理、去AI味、不堆结构词、具体例子、平台适配）基本符合指南。但需补充原文后重新检查信息保留度。
+信息保留度无法验证（缺少 article.md，无法计算字符比例和关键事实对照）
+有个别括号补充（如“Impact 选 3（颠覆性的）”）建议改为“Impact 选 3，颠覆性的”，避免口播念不出)
+11:19:21 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10584 remaining=300s
+11:19:54 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 32.5s chars=10584
+11:19:54 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10584 chars → OK (32.5s)
+11:19:54 [[32mINFO[0m] Repaired script.md rewritten (1944 chars)
+11:19:54 [[32mINFO[0m] ✓ wv_repair_script done (32490ms)
+11:19:54 [[32mINFO[0m] ▶ wv_validate_script
+11:19:54 [[32mINFO[0m] Validating script.md (1944 chars)
+11:19:54 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10377 remaining=300s
+11:20:35 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 41.3s chars=10377
+11:20:35 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10377 chars → OK (41.3s)
+11:20:35 [[32mINFO[0m] Script validation: FAIL (failed_checks=["Use of prohibited structural words: '最后' and numbered steps ('第一步/第二步/...') violate Principle 7.", "Parallel stacking: consecutive structures with same pattern ('第X步' and '第X个') violate de-AI category 5; steps enumeration has 6 consecutive identical short sentences."])
+11:20:35 [[32mINFO[0m] ✓ wv_validate_script done (41342ms)
+11:20:35 [[32mINFO[0m] ▶ wv_repair_script
+11:20:35 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=Information retention (≥60%) cannot be verified without original article.md. The script otherwise follows most principles: oral style, short sentences, second person, cold open hook, concrete examples)
+11:20:35 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11139 remaining=300s
+11:20:46 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11139 chars → OK (10.9s)
+11:20:46 [[32mINFO[0m] Repaired script.md rewritten (1932 chars)
+11:20:46 [[32mINFO[0m] ✓ wv_repair_script done (10904ms)
+11:20:46 [[32mINFO[0m] ▶ wv_validate_script
+11:20:46 [[32mINFO[0m] Validating script.md (1932 chars)
+11:20:46 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10365 remaining=300s
+11:21:20 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 33.7s chars=10365
+11:21:20 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10365 chars → OK (33.7s)
+11:21:20 [[32mINFO[0m] Script validation: FAIL (failed_checks=['假共情：脚本中出现“你这是不是也有这种感觉”，属于禁止的假共情句式', '括号补充：脚本中出现“（用真实数据说话，别瞎编。）”，违反禁止括号补充的规定', '长句超标：存在多个句子超过20字，如“先把所有候选的功能列一个清单，把你脑子里所有想法、所有的修复、所有的新功能，全写下来。”等，不符合B站基准每句≤20字'])
+11:21:20 [[32mINFO[0m] ✓ wv_validate_script done (33705ms)
+11:21:20 [[32mINFO[0m] ▶ wv_repair_script
+11:21:20 [[32mINFO[0m] Repairing script.md (attempt 3/3, issues=脚本整体口语化、有钩子、有节奏停顿、使用第二人称，但在去AI味风骨层和细节格式上存在问题。假共情和括号补充是明显违规。长句超标也需调整。建议修改这些地方后再使用。
+假共情：脚本中出现“你这是不是也有这种感觉”，属于禁止的假共情句式
+括号补充：脚本中出现“（用真实数据说话，别瞎编。）”，违反禁止括号补充的规定
+长句超标：存在多个句子超过20字，如“先把所有候选的功能列一个清单，把你脑子里所有想法、所)
+11:21:20 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10552 remaining=300s
+11:21:44 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10552 chars → OK (24.3s)
+11:21:44 [[32mINFO[0m] Repaired script.md rewritten (1947 chars)
+11:21:44 [[32mINFO[0m] ✓ wv_repair_script done (24307ms)
+11:21:44 [[32mINFO[0m] ▶ wv_validate_script
+11:21:44 [[32mINFO[0m] Validating script.md (1947 chars)
+11:21:44 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10380 remaining=300s
+11:22:17 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 33.2s chars=10380
+11:22:17 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10380 chars → OK (33.2s)
+11:22:17 [[32mINFO[0m] Script validation: FAIL (failed_checks=["短句原则：存在多处超过20字的句子，例如'你们团队有没有遇到过这种项目？老板觉得重要，研发觉得难搞，最后像块石头一样卡在那，谁都不愿碰。'（27字）、'一个做少儿编程教育 App 的团队，要决定下个季度做什么。'（27字）、'别为了让你的项目上马，故意把 Confidence 填到 100%。'（31字）等。需要拆分每句不超过20字。"])
+11:22:17 [[32mINFO[0m] ✓ wv_validate_script done (33227ms)
+11:22:17 [[32mINFO[0m] ▶ wv_validate_outline
+11:22:17 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8840 remaining=300s
+11:22:39 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8840 chars → OK (21.6s)
+11:22:39 [[32mINFO[0m] ✓ wv_validate_outline done (21565ms)
+11:22:39 [[32mINFO[0m] ▶ wv_repair_outline
+11:22:39 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9133 remaining=300s
+11:23:00 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9133 chars → OK (21.2s)
+11:23:00 [[32mINFO[0m] ✓ wv_repair_outline done (21196ms)
+11:23:00 [[32mINFO[0m] ▶ wv_validate_outline
+11:23:00 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9010 remaining=300s
+11:23:15 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9010 chars → OK (14.9s)
+11:23:15 [[32mINFO[0m] ✓ wv_validate_outline done (14858ms)
+11:23:15 [[32mINFO[0m] ▶ wv_checkpoint_plan
+11:23:15 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+11:23:15 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 16ms
+11:23:15 [[32mINFO[0m] Background graph interrupted at ? after 289s (type=checkpoint_plan)
+11:24:25 [[32mINFO[0m] Resume workflow=ed5f4aeb-39fe-4550-886c-6a81e99eaed0 confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+11:24:25 [[32mINFO[0m] Resume thread=ed5f4aeb-39fe-4550-886c-6a81e99eaed0 confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+11:24:25 [[32mINFO[0m] API POST /workflow/ed5f4aeb-39fe-4550-886c-6a81e99eaed0/resume → 200 (1ms)
+11:24:25 [[31mERROR[0m] Resume FAILED thread=ed5f4aeb-39fe-4550-886c-6a81e99eaed0 after 0s: Cannot use Command(resume=...) without checkpointer
+11:42:42 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:42:42 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:42:42 [[32mINFO[0m] Server shutting down
+11:42:44 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:42:44 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:42:53 [[32mINFO[0m] Server shutting down
+11:43:00 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:43:00 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:44:43 [[32mINFO[0m] API POST /workflow/start → 200 (10ms)
+11:44:43 [[32mINFO[0m] Workflow started thread=49fe82d5-467f-4b36-a87a-4a36c2fbe61c input_type=article len=5888
+11:44:43 [[32mINFO[0m] Background graph start thread=49fe82d5-467f-4b36-a87a-4a36c2fbe61c
+11:44:43 [[32mINFO[0m] ▶ wv_identify_input
+11:44:43 [[32mINFO[0m] Classifying input (5887 chars)
+11:44:43 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+11:44:44 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.8s)
+11:44:44 [[32mINFO[0m] Input classified as: article
+11:44:44 [[32mINFO[0m] ✓ wv_identify_input done (1752ms)
+11:44:44 [[32mINFO[0m] ▶ wv_prepare_source_files
+11:44:44 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+11:44:44 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19481 remaining=300s
+11:45:18 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 33.9s chars=19481
+11:45:18 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19481 chars → OK (33.9s)
+11:45:18 [[32mINFO[0m] Written script.md (1727 chars) + outline.md (2978 chars)
+11:45:18 [[32mINFO[0m] ✓ wv_prepare_source_files done (33902ms)
+11:45:18 [[32mINFO[0m] ▶ wv_validate_script
+11:45:18 [[32mINFO[0m] Validating script.md (1727 chars)
+11:45:18 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10160 remaining=300s
+11:45:51 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 32.3s chars=10160
+11:45:51 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10160 chars → OK (32.3s)
+11:45:51 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度无法验证（缺少原始 article.md）', '部分句子长度超过 20 字（如“他们想解决一个老问题：团队总爱先做自己偏爱的项目，或者凭感觉判断。”）', '未使用 `---` 分隔想法', '存在括号补充（如“Impact 3（极大解决痛点）”、“Confidence 80%（有 beta 数据支撑）”）'])
+11:45:51 [[32mINFO[0m] ✓ wv_validate_script done (32299ms)
+11:45:51 [[32mINFO[0m] ▶ wv_repair_script
+11:45:51 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本整体口语化、第二人称、钩子、具体例子等符合要求，去AI味五类基本通过。但信息保留度因缺少原始文章无法核查；句子长度和节奏停顿（缺少`---`）违反了B站风格的形式原则；括号补充违反了“不要做”的细节。需修改后重审。
+信息保留度无法验证（缺少原始 article.md）
+部分句子长度超过 20 字（如“他们想解决一个老问题：团队总爱先做自己偏爱的项目，或者凭感觉判断。”）
+未使用 `---` 分)
+11:45:51 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10375 remaining=300s
+11:46:00 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10375 chars → OK (9.2s)
+11:46:00 [[32mINFO[0m] Repaired script.md rewritten (1622 chars)
+11:46:00 [[32mINFO[0m] ✓ wv_repair_script done (9183ms)
+11:46:00 [[32mINFO[0m] ▶ wv_validate_script
+11:46:00 [[32mINFO[0m] Validating script.md (1622 chars)
+11:46:00 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10055 remaining=300s
+11:46:31 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 31.4s chars=10055
+11:46:31 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10055 chars → OK (31.4s)
+11:46:31 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度未验证：缺少原文 article.md，无法计算 len(script.md) ÷ len(article.md) ≥ 0.6 及关键事实逐项对照', '单句长度超标：多处句子超过 20 字（B 站基准），例如开头句 26 字、例子里长句等', '使用了“第一/第二/第三/第四/第五”结构枚举，违反原则7“不堆结构词”，应改为自然过渡'])
+11:46:31 [[32mINFO[0m] ✓ wv_validate_script done (31390ms)
+11:46:31 [[32mINFO[0m] ▶ wv_repair_script
+11:46:31 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=脚本整体口语化较好，钩子恰当，例子具体，去 AI 味五类无明显问题。但存在句子过长和结构词堆砌问题，且无法核实信息保留度（最高优先级）。需缩短句子（拆短句）并改用“比如/另外/还有”等自然过渡替代枚举。
+信息保留度未验证：缺少原文 article.md，无法计算 len(script.md) ÷ len(article.md) ≥ 0.6 及关键事实逐项对照
+单句长度超标：多处句子超过 20 字（)
+11:46:31 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10278 remaining=300s
+11:47:15 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 43.8s chars=10278
+11:47:15 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10278 chars → OK (43.8s)
+11:47:15 [[32mINFO[0m] Repaired script.md rewritten (1708 chars)
+11:47:15 [[32mINFO[0m] ✓ wv_repair_script done (43779ms)
+11:47:15 [[32mINFO[0m] ▶ wv_validate_script
+11:47:15 [[32mINFO[0m] Validating script.md (1708 chars)
+11:47:15 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10141 remaining=300s
+11:47:39 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10141 chars → OK (24.6s)
+11:47:39 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度无法验证（缺少原文 `article.md`，无法计算比例或逐项对照关键事实/论证链）', '节奏停顿：未使用 `---` 分隔每个完整想法（用空行代替）', '短句原则：存在多句超过20字（如“RICE是Intercom的产品团队在2017年搞出来的。”“RICE分数等于Reach乘Impact乘Confidence，然后除以Effort。”等）'])
+11:47:39 [[32mINFO[0m] ✓ wv_validate_script done (24570ms)
+11:47:39 [[32mINFO[0m] ▶ wv_repair_script
+11:47:39 [[32mINFO[0m] Repairing script.md (attempt 3/3, issues=脚本整体口语化、第二人称、开头钩子、具体例子等做得好，去AI味五类基本过关。但缺少原文无法验证信息保留度（最高原则，默认不通过），且未按格式使用`---`分隔，部分句子略超20字。建议补充原文后重新验证，并调整格式与句长。
+信息保留度无法验证（缺少原文 `article.md`，无法计算比例或逐项对照关键事实/论证链）
+节奏停顿：未使用 `---` 分隔每个完整想法（用空行代替）
+短句原则：存在多)
+11:47:39 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10381 remaining=300s
+11:48:42 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 62.4s chars=10381
+11:48:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10381 chars → OK (62.4s)
+11:48:42 [[32mINFO[0m] Repaired script.md rewritten (0 chars)
+11:48:42 [[32mINFO[0m] ✓ wv_repair_script done (62373ms)
+11:48:42 [[32mINFO[0m] ▶ wv_validate_script
+11:48:42 [[32mINFO[0m] Validating script.md (0 chars)
+11:48:42 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8433 remaining=300s
+11:48:47 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8433 chars → OK (5.2s)
+11:48:47 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度<60%（0%），因为没有提供脚本内容', '无法进行形式层和风骨层自检'])
+11:48:47 [[32mINFO[0m] ✓ wv_validate_script done (5231ms)
+11:48:47 [[32mINFO[0m] ▶ wv_validate_outline
+11:48:47 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8201 remaining=300s
+11:49:06 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8201 chars → OK (18.5s)
+11:49:06 [[32mINFO[0m] ✓ wv_validate_outline done (18551ms)
+11:49:06 [[32mINFO[0m] ▶ wv_repair_outline
+11:49:06 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9202 remaining=300s
+11:49:52 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 46.2s chars=9202
+11:49:52 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9202 chars → OK (46.2s)
+11:49:52 [[32mINFO[0m] ✓ wv_repair_outline done (46217ms)
+11:49:52 [[32mINFO[0m] ▶ wv_validate_outline
+11:49:52 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8379 remaining=300s
+11:50:11 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8379 chars → OK (18.8s)
+11:50:11 [[32mINFO[0m] ✓ wv_validate_outline done (18773ms)
+11:50:11 [[32mINFO[0m] ▶ wv_checkpoint_plan
+11:50:11 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+11:50:11 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 8ms
+11:50:11 [[32mINFO[0m] Background graph interrupted at ? after 328s (type=checkpoint_plan)
+11:50:32 [[32mINFO[0m] Resume workflow=49fe82d5-467f-4b36-a87a-4a36c2fbe61c confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+11:50:32 [[32mINFO[0m] Resume thread=49fe82d5-467f-4b36-a87a-4a36c2fbe61c confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+11:50:32 [[32mINFO[0m] API POST /workflow/49fe82d5-467f-4b36-a87a-4a36c2fbe61c/resume → 200 (1ms)
+11:50:32 [[32mINFO[0m] ▶ wv_checkpoint_plan
+11:50:32 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+11:50:32 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+11:50:32 [[32mINFO[0m] Checkpoint Plan → selected_mode=C
+11:50:32 [[32mINFO[0m] ✓ wv_checkpoint_plan done (14ms)
+11:50:32 [[32mINFO[0m] ▶ wv_scaffold_presentation
+11:50:32 [[32mINFO[0m] Scaffolding presentation with theme=dune
+11:50:39 [[31mERROR[0m] Scaffold failed (rc=127): /bin/bash: D:\code\ezto_video\ezto-agent\app\scripts\scaffold.sh: No such file or directory
+
+11:50:39 [[32mINFO[0m] ✓ wv_scaffold_presentation done (6627ms)
+11:50:39 [[32mINFO[0m] ▶ wv_remove_example_chapter
+11:50:39 [[32mINFO[0m] ✓ wv_remove_example_chapter done (0ms)
+11:50:39 [[32mINFO[0m] ▶ wv_build_chapter_1
+11:50:39 [[31mERROR[0m] ✗ wv_build_chapter_1 FAILED after 0ms: [wv_remove_example_chapter] policy violation: missing refs ['CHAPTER-CRAFT.md'] — Chapter refs not loaded — each chapter must re-read CHAPTER-CRAFT.md
+11:50:39 [[31mERROR[0m] Resume FAILED thread=49fe82d5-467f-4b36-a87a-4a36c2fbe61c after 7s: [wv_remove_example_chapter] policy violation: missing refs ['CHAPTER-CRAFT.md'] — Chapter refs not loaded — each chapter must re-read CHAPTER-CRAFT.md
+12:17:09 [[32mINFO[0m] Server shutting down
+12:17:11 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:17:11 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:17:11 [[32mINFO[0m] Server shutting down
+12:17:12 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:17:13 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:17:16 [[32mINFO[0m] Server shutting down
+12:17:24 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:17:24 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:17:45 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+12:17:45 [[32mINFO[0m] Workflow started thread=db659768-493b-44ca-9efc-9fc61c0ab570 input_type=article len=5888
+12:17:45 [[32mINFO[0m] Background graph start thread=db659768-493b-44ca-9efc-9fc61c0ab570
+12:17:45 [[32mINFO[0m] ▶ wv_identify_input
+12:17:45 [[32mINFO[0m] Classifying input (5887 chars)
+12:17:45 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+12:17:47 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.5s)
+12:17:47 [[32mINFO[0m] Input classified as: article
+12:17:47 [[32mINFO[0m] ✓ wv_identify_input done (1549ms)
+12:17:47 [[32mINFO[0m] ▶ wv_prepare_source_files
+12:17:47 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+12:17:47 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19481 remaining=300s
+12:18:38 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 50.9s chars=19481
+12:18:38 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19481 chars → OK (50.9s)
+12:18:38 [[32mINFO[0m] Written script.md (2580 chars) + outline.md (5881 chars)
+12:18:38 [[32mINFO[0m] ✓ wv_prepare_source_files done (50859ms)
+12:18:38 [[32mINFO[0m] ▶ wv_validate_script
+12:18:38 [[32mINFO[0m] Validating script.md (2580 chars)
+12:18:38 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11013 remaining=300s
+12:19:11 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 33.0s chars=11013
+12:19:11 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11013 chars → OK (33.0s)
+12:19:11 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度 ≥ 60%: 无法验证，因未提供原文 article.md，无法计算字符比例或核对关键事实/论证链是否完整保留。', "短句原则: 发现多个句子汉字数超过20字。例如（1）'团队七嘴八舌，老板说这个重要，销售说那个紧急，所有人都觉得自己的项目是宇宙第一优先级。'（33汉字）；（2）'也就是说，你只要填个超简单的计算器，就能把一堆乱七八糟的需求，按得分排成一条直线。'（36汉字）；（3）'如果连1个月都不到，就按0.5算。'（13字，符合）但整体仍有超标句，未做到每句≤20字的B站基准。"])
+12:19:11 [[32mINFO[0m] ✓ wv_validate_script done (33001ms)
+12:19:11 [[32mINFO[0m] ▶ wv_repair_script
+12:19:11 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本在口语化、第二人称、钩子、节奏停顿、数字处理、具体例子、去AI味等方面均符合风格指南。主要缺陷是部分长句未拆分，违反了B站风格的短句原则。同时，由于缺少原文，无法对最高优先级的信息保留度进行校验，若原文信息被过多压缩则可能整体不通过。建议拆分长句并确保信息保留度达标。
+信息保留度 ≥ 60%: 无法验证，因未提供原文 article.md，无法计算字符比例或核对关键事实/论证链是否完整保留。
+)
+12:19:11 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11352 remaining=300s
+12:20:07 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 56.3s chars=11352
+12:20:07 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11352 chars → OK (56.3s)
+12:20:07 [[32mINFO[0m] Repaired script.md rewritten (0 chars)
+12:20:07 [[32mINFO[0m] ✓ wv_repair_script done (56267ms)
+12:20:07 [[32mINFO[0m] ▶ wv_validate_script
+12:20:07 [[32mINFO[0m] Validating script.md (0 chars)
+12:20:07 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8433 remaining=300s
+12:20:14 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8433 chars → OK (6.9s)
+12:20:14 [[32mINFO[0m] Script validation: FAIL (failed_checks=['No script provided'])
+12:20:14 [[32mINFO[0m] ✓ wv_validate_script done (6860ms)
+12:20:14 [[32mINFO[0m] ▶ wv_repair_script
+12:20:14 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=The user message ends with 'Script:' but no script content follows. Cannot validate against the style guide because there is no script to check.
+No script provided)
+12:20:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8550 remaining=300s
+12:20:18 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8550 chars → OK (4.1s)
+12:20:18 [[32mINFO[0m] Repaired script.md rewritten (134 chars)
+12:20:18 [[32mINFO[0m] ✓ wv_repair_script done (4126ms)
+12:20:18 [[32mINFO[0m] ▶ wv_validate_script
+12:20:18 [[32mINFO[0m] Validating script.md (134 chars)
+12:20:18 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8567 remaining=300s
+12:20:24 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8567 chars → OK (5.6s)
+12:20:24 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度≥60%：未提供原文，无法计算比例', '三条底线：缺少原文，无法转写'])
+12:20:24 [[32mINFO[0m] ✓ wv_validate_script done (5624ms)
+12:20:24 [[32mINFO[0m] ▶ wv_repair_script
+12:20:24 [[32mINFO[0m] Repairing script.md (attempt 3/3, issues=Script 为空，没有提供需要转写的文章内容（article.md）。请提供原文。
+信息保留度≥60%：未提供原文，无法计算比例
+三条底线：缺少原文，无法转写)
+12:20:24 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8601 remaining=300s
+12:20:26 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8601 chars → OK (2.8s)
+12:20:26 [[32mINFO[0m] Repaired script.md rewritten (134 chars)
+12:20:26 [[32mINFO[0m] ✓ wv_repair_script done (2802ms)
+12:20:26 [[32mINFO[0m] ▶ wv_validate_script
+12:20:26 [[32mINFO[0m] Validating script.md (134 chars)
+12:20:26 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8567 remaining=300s
+12:20:36 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8567 chars → OK (10.0s)
+12:20:36 [[32mINFO[0m] Script validation: FAIL (failed_checks=['Missing article content (Script is empty)'])
+12:20:36 [[32mINFO[0m] ✓ wv_validate_script done (9961ms)
+12:20:36 [[32mINFO[0m] ▶ wv_validate_outline
+12:20:36 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11104 remaining=300s
+12:21:03 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11104 chars → OK (26.5s)
+12:21:03 [[32mINFO[0m] ✓ wv_validate_outline done (26462ms)
+12:21:03 [[32mINFO[0m] ▶ wv_repair_outline
+12:21:03 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11508 remaining=300s
+12:21:48 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 45.0s chars=11508
+12:21:48 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11508 chars → OK (45.0s)
+12:21:48 [[32mINFO[0m] ✓ wv_repair_outline done (45019ms)
+12:21:48 [[32mINFO[0m] ▶ wv_validate_outline
+12:21:48 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11818 remaining=300s
+12:22:10 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11818 chars → OK (22.5s)
+12:22:10 [[32mINFO[0m] ✓ wv_validate_outline done (22460ms)
+12:22:10 [[32mINFO[0m] ▶ wv_checkpoint_plan
+12:22:10 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+12:22:10 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 10ms
+12:22:10 [[32mINFO[0m] Background graph interrupted at ? after 265s (type=checkpoint_plan)
+12:22:24 [[32mINFO[0m] Resume workflow=db659768-493b-44ca-9efc-9fc61c0ab570 confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+12:22:24 [[32mINFO[0m] Resume thread=db659768-493b-44ca-9efc-9fc61c0ab570 confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+12:22:24 [[32mINFO[0m] API POST /workflow/db659768-493b-44ca-9efc-9fc61c0ab570/resume → 200 (1ms)
+12:22:24 [[32mINFO[0m] ▶ wv_checkpoint_plan
+12:22:24 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+12:22:24 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+12:22:24 [[32mINFO[0m] Checkpoint Plan → selected_mode=C
+12:22:24 [[32mINFO[0m] ✓ wv_checkpoint_plan done (14ms)
+12:22:24 [[32mINFO[0m] ▶ wv_scaffold_presentation
+12:22:24 [[32mINFO[0m] Scaffolding presentation with theme=dune
+12:22:28 [[31mERROR[0m] Scaffold failed (rc=127): /bin/bash: D:\code\ezto_video\ezto-agent\app\scripts\scaffold.sh: No such file or directory
+
+12:22:28 [[32mINFO[0m] ✓ wv_scaffold_presentation done (3097ms)
+12:22:28 [[32mINFO[0m] ▶ wv_remove_example_chapter
+12:22:28 [[32mINFO[0m] ✓ wv_remove_example_chapter done (0ms)
+12:22:28 [[32mINFO[0m] ▶ wv_build_chapter_1
+12:22:28 [[32mINFO[0m] Building chapter 1: chapter_1 — Chapter 1 (script=134 chars, outline=6595 chars)
+12:22:28 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12385 remaining=300s
+12:23:40 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 72.8s chars=12385
+12:23:40 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12385 chars → OK (72.8s)
+12:23:40 [[32mINFO[0m] Chapter 1 written: chapter_1/index.tsx (0 chars), narrations.ts (39 chars)
+12:23:40 [[32mINFO[0m] ✓ wv_build_chapter_1 done (72808ms)
+12:23:40 [[32mINFO[0m] ▶ wv_validate_chapter_1
+12:23:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=5499 remaining=300s
+12:23:48 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 5499 chars → OK (8.0s)
+12:23:48 [[32mINFO[0m] ✓ wv_validate_chapter_1 done (8043ms)
+12:23:48 [[32mINFO[0m] ▶ wv_checkpoint_chapter_1
+12:23:48 [[32mINFO[0m] ⏸ wv_checkpoint_chapter_1 interrupted after 0ms
+12:23:48 [[32mINFO[0m] Resume interrupted at ? after 84s (type=checkpoint_chapter_1)
+13:14:33 [[32mINFO[0m] Server shutting down
+13:14:34 [[32mINFO[0m] Starting ezto-agent server — port=8001
+13:14:34 [[32mINFO[0m] Graph built with 27 nodes, ready
+13:14:35 [[32mINFO[0m] Server shutting down
+13:14:36 [[32mINFO[0m] Starting ezto-agent server — port=8001
+13:14:36 [[32mINFO[0m] Graph built with 27 nodes, ready
+13:15:42 [[32mINFO[0m] Server shutting down
+13:15:44 [[32mINFO[0m] Starting ezto-agent server — port=8001
+13:15:44 [[32mINFO[0m] Graph built with 27 nodes, ready
+16:14:43 [[32mINFO[0m] Server shutting down
+16:14:45 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:14:45 [[32mINFO[0m] Graph built with 27 nodes, ready
+16:16:02 [[32mINFO[0m] Server shutting down
+16:16:03 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:16:03 [[32mINFO[0m] Graph built with 27 nodes, ready
+16:18:11 [[32mINFO[0m] Server shutting down
+16:18:13 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:18:13 [[32mINFO[0m] Graph built with 27 nodes, ready
+16:18:13 [[32mINFO[0m] Server shutting down
+16:18:14 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:18:14 [[32mINFO[0m] Graph built with 27 nodes, ready
+16:44:27 [[32mINFO[0m] Server shutting down
+16:44:28 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:44:28 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:05:28 [[32mINFO[0m] Server shutting down
+17:05:29 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:05:29 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:58:29 [[32mINFO[0m] Server shutting down
+11:58:31 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:58:31 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:00:24 [[32mINFO[0m] Server shutting down
+12:00:26 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:00:26 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:00:28 [[32mINFO[0m] Server shutting down
+12:00:30 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:00:30 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:00:30 [[32mINFO[0m] Server shutting down
+12:00:32 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:00:32 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:00:32 [[32mINFO[0m] Server shutting down
+12:00:33 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:00:34 [[32mINFO[0m] Graph built with 27 nodes, ready
+12:26:23 [[32mINFO[0m] Server shutting down
+12:26:24 [[32mINFO[0m] Starting ezto-agent server — port=8001
+12:26:24 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:04:32 [[32mINFO[0m] Server shutting down
+11:04:35 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:04:35 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:04:35 [[32mINFO[0m] Server shutting down
+11:04:37 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:04:37 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:08:24 [[32mINFO[0m] Server shutting down
+11:08:26 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:08:26 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:08:26 [[32mINFO[0m] Server shutting down
+11:08:28 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:08:28 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:08:57 [[32mINFO[0m] Server shutting down
+11:08:59 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:08:59 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:09:00 [[32mINFO[0m] Server shutting down
+11:09:02 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:09:02 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:09:51 [[32mINFO[0m] Server shutting down
+11:09:52 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:09:53 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:09:57 [[32mINFO[0m] Server shutting down
+11:09:58 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:09:58 [[32mINFO[0m] Graph built with 27 nodes, ready
+11:09:58 [[32mINFO[0m] Server shutting down
+11:10:00 [[32mINFO[0m] Starting ezto-agent server — port=8001
+11:10:00 [[32mINFO[0m] Graph built with 27 nodes, ready
+13:33:04 [[32mINFO[0m] Server shutting down
+13:33:06 [[32mINFO[0m] Starting ezto-agent server — port=8001
+13:33:06 [[32mINFO[0m] Graph built with 27 nodes, ready
+14:09:16 [[32mINFO[0m] Server shutting down
+14:09:17 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:09:20 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:09:24 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:09:24 [[32mINFO[0m] Graph built with 27 nodes, ready
+14:20:31 [[32mINFO[0m] Server shutting down
+14:20:33 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:20:33 [[32mINFO[0m] Graph built with 27 nodes, ready
+14:20:35 [[32mINFO[0m] Server shutting down
+14:20:36 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:20:37 [[32mINFO[0m] Graph built with 27 nodes, ready
+14:20:39 [[32mINFO[0m] Server shutting down
+14:20:40 [[32mINFO[0m] Starting ezto-agent server — port=8001
+14:20:40 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:18:10 [[32mINFO[0m] Server shutting down
+15:18:12 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:12 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:18:15 [[32mINFO[0m] Server shutting down
+15:18:17 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:17 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:18:21 [[32mINFO[0m] Server shutting down
+15:18:23 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:26 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:33 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:39 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:18:45 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:23:34 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:23:34 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:23:34 [[32mINFO[0m] Server shutting down
+15:23:35 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:23:35 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:23:36 [[32mINFO[0m] Server shutting down
+15:23:37 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:23:37 [[32mINFO[0m] Graph built with 27 nodes, ready
+15:27:05 [[32mINFO[0m] Server shutting down
+15:27:07 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:27:08 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:27:21 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:27:22 [[32mINFO[0m] Starting ezto-agent server — port=8001
+15:27:24 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:32:38 [[32mINFO[0m] Starting ezto-agent server — port=8001
+16:32:42 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:13:43 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:13:43 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:14:23 [[32mINFO[0m] API POST /workflow/start → 200 (7ms)
+17:14:23 [[32mINFO[0m] Workflow started thread=48c0d924-da67-4200-ba9a-049efd871662 input_type=article len=10375
+17:14:23 [[32mINFO[0m] Background graph start thread=48c0d924-da67-4200-ba9a-049efd871662
+17:14:23 [[32mINFO[0m] ▶ wv_identify_input
+17:14:23 [[32mINFO[0m] Classifying input (10374 chars)
+17:14:23 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+17:14:31 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (8.8s)
+17:14:31 [[32mINFO[0m] Input classified as: article
+17:14:31 [[32mINFO[0m] ✓ wv_identify_input done (8838ms)
+17:14:31 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:14:31 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:14:31 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+17:14:37 [[33mWARNING[0m] LLM attempt 1/3 failed after 5705ms: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:14:38 [DEBUG] LLM request [deepseek-v4-flash] attempt=2/3 msgs=1 chars=23967 remaining=293s
+17:14:44 [[33mWARNING[0m] LLM attempt 2/3 failed after 12428ms: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:14:45 [DEBUG] LLM request [deepseek-v4-flash] attempt=3/3 msgs=1 chars=23967 remaining=286s
+17:14:51 [[33mWARNING[0m] LLM attempt 3/3 failed after 19679ms: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:14:51 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → FAIL (19.7s)
+17:14:51 [[31mERROR[0m] ✗ wv_prepare_source_files FAILED after 19691ms: LLM call failed after 3 attempts: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:14:51 [[31mERROR[0m] Background graph FAILED thread=48c0d924-da67-4200-ba9a-049efd871662 after 29s: LLM call failed after 3 attempts: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+17:20:15 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:20:15 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:20:15 [[32mINFO[0m] Server shutting down
+17:23:11 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:23:11 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:23:43 [[32mINFO[0m] Starting ezto-agent server — port=8001
+17:23:43 [[32mINFO[0m] Graph built with 27 nodes, ready
+17:23:45 [[32mINFO[0m] Server shutting down
+17:24:13 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+17:24:13 [[32mINFO[0m] Workflow started thread=64aebd05-2b10-4499-a475-07809bf4acf2 input_type=article len=6061
+17:24:13 [[32mINFO[0m] Background graph start thread=64aebd05-2b10-4499-a475-07809bf4acf2
+17:24:13 [[32mINFO[0m] ▶ wv_identify_input
+17:24:13 [[32mINFO[0m] Classifying input (6060 chars)
+17:24:13 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+17:24:15 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.9s)
+17:24:15 [[32mINFO[0m] Input classified as: article
+17:24:15 [[32mINFO[0m] ✓ wv_identify_input done (1922ms)
+17:24:15 [[32mINFO[0m] ▶ wv_prepare_source_files
+17:24:15 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:24:15 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=19653 remaining=300s
+17:25:05 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 49.8s chars=19653
+17:25:05 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 19653 chars → OK (49.8s)
+17:25:05 [[32mINFO[0m] Written script.md (1467 chars) + outline.md (4000 chars)
+17:25:05 [[32mINFO[0m] ✓ wv_prepare_source_files done (49757ms)
+17:25:05 [[32mINFO[0m] ▶ wv_validate_script
+17:25:05 [[32mINFO[0m] Validating script.md (1467 chars)
+17:25:05 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9900 remaining=300s
+17:26:04 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 59.1s chars=9900
+17:26:04 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9900 chars → OK (59.1s)
+17:26:04 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度：无法验证（缺少原文 article.md），但该原则为最高优先级，需用户提供原文方可检查', '句子长度超标（B站基准每句≤20字）：存在多句超过20字，如‘不是回答一个问题，而是自己设计一套流程，先拆任务，再安排好几个智能体同时开工，最后综合结果。’（约36字）、‘因为Claude在同一个上下文里待久了，会犯几个老毛病。’（约26字）等', '结构词/枚举：使用‘第一个，智能体惰性’、‘第二个，自我偏好’、‘第三个，目标漂移’，相当于‘首先/其次/最后’，违反不堆结构词原则', '排比堆砌：在‘哪些场景特别适合用动态工作流？’段落中连续出现‘迁移重构：...’、‘深度研究：...’、‘深度验证：...’、‘排序：...’四个结构相同的短句，违反去AI味第五类', '结尾CTA不够具体：‘欢迎告诉我们你的发现’属于较模糊的互动邀请，建议改为具体动作（如‘在评论区聊聊你用动态工作流做了什么’）'])
+17:26:04 [[32mINFO[0m] ✓ wv_validate_script done (59081ms)
+17:26:04 [[32mINFO[0m] ▶ wv_repair_script
+17:26:04 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本整体口语化、第二人称、钩子、节奏停顿等基本符合B站风格，但在句子长度（多句超过20字）、结构词枚举（第一个/第二/第三）、排比堆砌（场景列表重复结构）以及结尾CTA具体度上存在明显违规。另外，因缺少原文无法验证信息保留度（≥60%），但这是最高优先级，需补充后重新检查。建议按风格指南逐条修改。
+信息保留度：无法验证（缺少原文 article.md），但该原则为最高优先级，需用户提供原文方可检查)
+17:26:04 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10399 remaining=300s
+17:26:17 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10399 chars → OK (13.2s)
+17:26:17 [[32mINFO[0m] Repaired script.md rewritten (1548 chars)
+17:26:17 [[32mINFO[0m] ✓ wv_repair_script done (13228ms)
+17:26:17 [[32mINFO[0m] ▶ wv_validate_script
+17:26:17 [[32mINFO[0m] Validating script.md (1548 chars)
+17:26:17 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9981 remaining=300s
+17:26:43 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9981 chars → OK (26.1s)
+17:26:43 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+17:26:43 [[32mINFO[0m] ✓ wv_validate_script done (26107ms)
+17:26:43 [[32mINFO[0m] ▶ wv_validate_outline
+17:26:43 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9222 remaining=300s
+17:27:25 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 41.3s chars=9222
+17:27:25 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9222 chars → OK (41.3s)
+17:27:25 [[32mINFO[0m] ✓ wv_validate_outline done (41262ms)
+17:27:25 [[32mINFO[0m] ▶ wv_repair_outline
+17:27:25 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9291 remaining=300s
+17:28:21 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 56.7s chars=9291
+17:28:21 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9291 chars → OK (56.7s)
+17:28:21 [[32mINFO[0m] ✓ wv_repair_outline done (56687ms)
+17:28:21 [[32mINFO[0m] ▶ wv_validate_outline
+17:28:21 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9279 remaining=300s
+17:29:10 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 48.3s chars=9279
+17:29:10 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9279 chars → OK (48.3s)
+17:29:10 [[32mINFO[0m] ✓ wv_validate_outline done (48262ms)
+17:29:10 [[32mINFO[0m] ▶ wv_repair_outline
+17:29:10 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9981 remaining=300s
+17:30:59 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 109.7s chars=9981
+17:30:59 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9981 chars → OK (109.7s)
+17:30:59 [[32mINFO[0m] ✓ wv_repair_outline done (109698ms)
+17:30:59 [[32mINFO[0m] ▶ wv_validate_outline
+17:30:59 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=6890 remaining=300s
+17:31:19 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 6890 chars → OK (19.9s)
+17:31:19 [[32mINFO[0m] ✓ wv_validate_outline done (19956ms)
+17:31:19 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:31:19 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:31:19 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 13ms
+17:31:19 [[32mINFO[0m] Background graph interrupted at ? after 426s (type=checkpoint_plan)
+17:31:48 [[32mINFO[0m] Resume workflow=64aebd05-2b10-4499-a475-07809bf4acf2 confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+17:31:48 [[32mINFO[0m] Resume thread=64aebd05-2b10-4499-a475-07809bf4acf2 confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+17:31:48 [[32mINFO[0m] API POST /workflow/64aebd05-2b10-4499-a475-07809bf4acf2/resume → 200 (2ms)
+17:31:48 [[32mINFO[0m] ▶ wv_checkpoint_plan
+17:31:48 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+17:31:48 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+17:31:48 [[32mINFO[0m] Checkpoint Plan → selected_mode=A
+17:31:48 [[32mINFO[0m] ✓ wv_checkpoint_plan done (19ms)
+17:31:48 [[32mINFO[0m] ▶ wv_scaffold_presentation
+17:31:48 [[32mINFO[0m] Scaffolding presentation with theme=dune
+17:31:52 [[31mERROR[0m] Scaffold failed (rc=127): /bin/bash: D:\code\ezto_video\ezto-agent\app\scripts\scaffold.sh: No such file or directory
+
+17:31:52 [[32mINFO[0m] ✓ wv_scaffold_presentation done (3550ms)
+17:31:52 [[32mINFO[0m] ▶ wv_build_chapter_1
+17:31:52 [[32mINFO[0m] Building chapter 1: chapter_1 — Chapter 1 (script=1548 chars, outline=1668 chars)
+17:31:52 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=8872 remaining=300s
+17:33:36 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 104.5s chars=8872
+17:33:36 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 8872 chars → OK (104.5s)
+17:33:36 [[32mINFO[0m] Chapter 1 written: chapter_1/index.tsx (0 chars), narrations.ts (39 chars)
+17:33:36 [[32mINFO[0m] ✓ wv_build_chapter_1 done (104490ms)
+17:33:36 [[32mINFO[0m] ▶ wv_validate_chapter_1
+17:33:36 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=5499 remaining=300s
+17:34:27 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 50.7s chars=5499
+17:34:27 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 5499 chars → OK (50.7s)
+17:34:27 [[32mINFO[0m] ✓ wv_validate_chapter_1 done (50663ms)
+17:34:27 [[32mINFO[0m] ▶ wv_checkpoint_chapter_1
+17:34:27 [[32mINFO[0m] ⏸ wv_checkpoint_chapter_1 interrupted after 0ms
+17:34:27 [[32mINFO[0m] Resume interrupted at ? after 159s (type=checkpoint_chapter_1)
+18:46:23 [[32mINFO[0m] Starting ezto-agent server — port=8001
+18:46:23 [[32mINFO[0m] Graph built with 27 nodes, ready
+18:47:02 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+18:47:02 [[32mINFO[0m] Workflow started thread=4a2950eb-ee6c-4107-ae2c-cbcc969d7ee5 input_type=article len=10375
+18:47:02 [[32mINFO[0m] Background graph start thread=4a2950eb-ee6c-4107-ae2c-cbcc969d7ee5
+18:47:02 [[32mINFO[0m] ▶ wv_identify_input
+18:47:02 [[32mINFO[0m] Classifying input (10374 chars)
+18:47:02 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+18:47:04 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.6s)
+18:47:04 [[32mINFO[0m] Input classified as: article
+18:47:04 [[32mINFO[0m] ✓ wv_identify_input done (1639ms)
+18:47:04 [[32mINFO[0m] ▶ wv_prepare_source_files
+18:47:04 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+18:47:04 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+18:47:55 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 51.0s chars=23967
+18:47:55 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (51.0s)
+18:47:55 [[32mINFO[0m] Written script.md (4352 chars) + outline.md (4369 chars)
+18:47:55 [[32mINFO[0m] ✓ wv_prepare_source_files done (51035ms)
+18:47:55 [[32mINFO[0m] ▶ wv_validate_script
+18:47:55 [[32mINFO[0m] Validating script.md (4352 chars)
+18:47:55 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12785 remaining=300s
+18:48:48 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 53.4s chars=12785
+18:48:48 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12785 chars → OK (53.4s)
+18:48:48 [[32mINFO[0m] Script validation: FAIL (failed_checks=["Short sentence principle: multiple sentences exceed 20 characters (e.g., '让它“搞个 workflow，扫一遍我最近五十次 session，把我反复纠正的问题挖出来，整理成 `CLAUDE.md` 规则。”' has 30 Chinese characters; '提出几个互相矛盾的理论，一个一个去验证，直到只剩一个解释说得通为止”’ has 33 Chinese characters; etc.)", "AI template '本质上' used in 'Dynamic workflow 本质上是一个 JavaScript 文件。' (banned in category 4)", 'Parentheses used in spoken script: (日志、文件、数据) – should be integrated into sentence without parentheses'])
+18:48:48 [[32mINFO[0m] ✓ wv_validate_script done (53425ms)
+18:48:48 [[32mINFO[0m] ▶ wv_repair_script
+18:48:48 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=The script is largely conversational and follows many principles (cold open, second person, rhythm breaks, specific examples, no false empathy, no self-praise). However, it fails the B站 ≤20 character )
+18:48:48 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13672 remaining=300s
+18:49:29 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 40.7s chars=13672
+18:49:29 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13672 chars → OK (40.7s)
+18:49:29 [[32mINFO[0m] Repaired script.md rewritten (4695 chars)
+18:49:29 [[32mINFO[0m] ✓ wv_repair_script done (40661ms)
+18:49:29 [[32mINFO[0m] ▶ wv_validate_script
+18:49:29 [[32mINFO[0m] Validating script.md (4695 chars)
+18:49:29 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13128 remaining=300s
+18:50:12 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 42.8s chars=13128
+18:50:12 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13128 chars → OK (42.8s)
+18:50:12 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+18:50:12 [[32mINFO[0m] ✓ wv_validate_script done (42857ms)
+18:50:12 [[32mINFO[0m] ▶ wv_validate_outline
+18:50:12 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9591 remaining=300s
+18:50:26 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9591 chars → OK (13.7s)
+18:50:26 [[32mINFO[0m] ✓ wv_validate_outline done (13729ms)
+18:50:26 [[32mINFO[0m] ▶ wv_repair_outline
+18:50:26 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10035 remaining=300s
+18:51:14 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 48.6s chars=10035
+18:51:14 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10035 chars → OK (48.6s)
+18:51:14 [[32mINFO[0m] ✓ wv_repair_outline done (48650ms)
+18:51:14 [[32mINFO[0m] ▶ wv_validate_outline
+18:51:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10422 remaining=300s
+18:51:39 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10422 chars → OK (24.5s)
+18:51:39 [[32mINFO[0m] ✓ wv_validate_outline done (24477ms)
+18:51:39 [[32mINFO[0m] ▶ wv_repair_outline
+18:51:39 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10544 remaining=300s
+18:52:08 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10544 chars → OK (29.6s)
+18:52:08 [[32mINFO[0m] ✓ wv_repair_outline done (29595ms)
+18:52:08 [[32mINFO[0m] ▶ wv_validate_outline
+18:52:08 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11867 remaining=300s
+18:52:29 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11867 chars → OK (20.2s)
+18:52:29 [[32mINFO[0m] ✓ wv_validate_outline done (20160ms)
+18:52:29 [[32mINFO[0m] ▶ wv_repair_outline
+18:52:29 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12170 remaining=300s
+18:53:00 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 31.6s chars=12170
+18:53:00 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12170 chars → OK (31.6s)
+18:53:00 [[32mINFO[0m] ✓ wv_repair_outline done (31637ms)
+18:53:00 [[32mINFO[0m] ▶ wv_validate_outline
+18:53:00 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11049 remaining=300s
+18:53:42 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 42.2s chars=11049
+18:53:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11049 chars → OK (42.2s)
+18:53:42 [[32mINFO[0m] ✓ wv_validate_outline done (42239ms)
+18:53:42 [[32mINFO[0m] ▶ wv_checkpoint_plan
+18:53:42 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+18:53:42 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 11ms
+18:53:42 [[32mINFO[0m] Background graph interrupted at ? after 400s (type=checkpoint_plan)
+19:06:18 [[32mINFO[0m] Resume workflow=4a2950eb-ee6c-4107-ae2c-cbcc969d7ee5 confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+19:06:18 [[32mINFO[0m] Resume thread=4a2950eb-ee6c-4107-ae2c-cbcc969d7ee5 confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+19:06:18 [[32mINFO[0m] API POST /workflow/4a2950eb-ee6c-4107-ae2c-cbcc969d7ee5/resume → 200 (1ms)
+19:06:18 [[32mINFO[0m] ▶ wv_checkpoint_plan
+19:06:18 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+19:06:18 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+19:06:18 [[32mINFO[0m] Checkpoint Plan → selected_mode=A
+19:06:18 [[32mINFO[0m] ✓ wv_checkpoint_plan done (122ms)
+19:06:18 [[32mINFO[0m] ▶ wv_scaffold_presentation
+19:06:18 [[32mINFO[0m] Scaffolding presentation with theme=dune
+19:06:21 [[31mERROR[0m] Scaffold failed (rc=127): /bin/bash: D:\code\ezto_video\ezto-agent\app\scripts\scaffold.sh: No such file or directory
+
+19:06:21 [[32mINFO[0m] ✓ wv_scaffold_presentation done (3414ms)
+19:06:21 [[32mINFO[0m] ▶ wv_build_chapter_1
+19:06:21 [[32mINFO[0m] Building chapter 1: chapter_1 — Chapter 1 (script=4695 chars, outline=5827 chars)
+19:06:21 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=16178 remaining=300s
+19:07:39 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 78.2s chars=16178
+19:07:39 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 16178 chars → OK (78.2s)
+19:07:39 [[32mINFO[0m] Chapter 1 written: chapter_1/index.tsx (5791 chars), narrations.ts (39 chars)
+19:07:39 [[32mINFO[0m] ✓ wv_build_chapter_1 done (78185ms)
+19:07:39 [[32mINFO[0m] ▶ wv_validate_chapter_1
+19:07:39 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11290 remaining=300s
+19:08:00 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11290 chars → OK (20.3s)
+19:08:00 [[32mINFO[0m] ✓ wv_validate_chapter_1 done (20328ms)
+19:08:00 [[32mINFO[0m] ▶ wv_checkpoint_chapter_1
+19:08:00 [[32mINFO[0m] ⏸ wv_checkpoint_chapter_1 interrupted after 0ms
+19:08:00 [[32mINFO[0m] Resume interrupted at ? after 102s (type=checkpoint_chapter_1)
+19:08:34 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:08:34 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:13:06 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:13:06 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:14:37 [[32mINFO[0m] API POST /workflow/start → 200 (8ms)
+19:14:37 [[32mINFO[0m] Workflow started thread=f263a752-55e9-44bf-af3d-5a843b5f9fe5 input_type=article len=10375
+19:14:37 [[32mINFO[0m] Background graph start thread=f263a752-55e9-44bf-af3d-5a843b5f9fe5
+19:14:37 [[32mINFO[0m] ▶ wv_identify_input
+19:14:37 [[32mINFO[0m] Classifying input (10374 chars)
+19:14:37 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+19:14:39 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.8s)
+19:14:39 [[32mINFO[0m] Input classified as: article
+19:14:39 [[32mINFO[0m] ✓ wv_identify_input done (1849ms)
+19:14:39 [[32mINFO[0m] ▶ wv_prepare_source_files
+19:14:39 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+19:14:39 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+19:16:17 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 98.1s chars=23967
+19:16:17 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (98.1s)
+19:16:17 [[32mINFO[0m] Written script.md (2730 chars) + outline.md (4316 chars)
+19:16:17 [[32mINFO[0m] ✓ wv_prepare_source_files done (98087ms)
+19:16:17 [[32mINFO[0m] ▶ wv_validate_script
+19:16:17 [[32mINFO[0m] Validating script.md (2730 chars)
+19:16:17 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11163 remaining=300s
+19:16:58 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 40.2s chars=11163
+19:16:58 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11163 chars → OK (40.2s)
+19:16:58 [[32mINFO[0m] Script validation: FAIL (failed_checks=['短句原则：存在多个句子长度超过20字（如“它本来是个写代码的助手，但现在它能根据你的任务，自己写一个 JavaScript 脚本，然后调度一堆小助理帮你干活。”），未拆分为多个以句号结尾的短句。', '不堆结构词：使用“第一个是...第二个是...第三个是...”等结构词，应改为自然过渡表达。', '去AI味（万能模板）：结尾“以上就是今天的分享”属于禁止的套话，应改为具体CTA。'])
+19:16:58 [[32mINFO[0m] ✓ wv_validate_script done (40256ms)
+19:16:58 [[32mINFO[0m] ▶ wv_repair_script
+19:16:58 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本在口语化、钩子、节奏停顿、第二人称、具体例子等方面表现良好，但上述三个问题违反了风格指南。需要拆分长句、替换结构词、修改结尾。
+短句原则：存在多个句子长度超过20字（如“它本来是个写代码的助手，但现在它能根据你的任务，自己写一个 JavaScript 脚本，然后调度一堆小助理帮你干活。”），未拆分为多个以句号结尾的短句。
+不堆结构词：使用“第一个是...第二个是...第三个是...”等结构词，)
+19:16:58 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11369 remaining=300s
+19:17:21 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11369 chars → OK (23.0s)
+19:17:21 [[32mINFO[0m] Repaired script.md rewritten (2879 chars)
+19:17:21 [[32mINFO[0m] ✓ wv_repair_script done (22977ms)
+19:17:21 [[32mINFO[0m] ▶ wv_validate_script
+19:17:21 [[32mINFO[0m] Validating script.md (2879 chars)
+19:17:21 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11312 remaining=300s
+19:18:11 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 50.4s chars=11312
+19:18:11 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11312 chars → OK (50.4s)
+19:18:11 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+19:18:11 [[32mINFO[0m] ✓ wv_validate_script done (50376ms)
+19:18:11 [[32mINFO[0m] ▶ wv_validate_outline
+19:18:11 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9538 remaining=300s
+19:18:13 [[33mWARNING[0m] LLM attempt 1/3 failed after 2278ms: peer closed connection without sending complete message body (incomplete chunked read)
+19:18:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=2/3 msgs=1 chars=9538 remaining=297s
+19:18:40 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9538 chars → OK (29.4s)
+19:18:40 [[32mINFO[0m] ✓ wv_validate_outline done (29384ms)
+19:18:40 [[32mINFO[0m] ▶ wv_repair_outline
+19:18:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9770 remaining=300s
+19:19:26 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 45.3s chars=9770
+19:19:26 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9770 chars → OK (45.3s)
+19:19:26 [[32mINFO[0m] ✓ wv_repair_outline done (45269ms)
+19:19:26 [[32mINFO[0m] ▶ wv_validate_outline
+19:19:26 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=10252 remaining=300s
+19:19:55 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 10252 chars → OK (29.5s)
+19:19:55 [[32mINFO[0m] ✓ wv_validate_outline done (29466ms)
+19:19:55 [[32mINFO[0m] ▶ wv_checkpoint_plan
+19:19:55 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+19:19:55 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 12ms
+19:19:55 [[32mINFO[0m] Background graph interrupted at ? after 318s (type=checkpoint_plan)
+19:22:09 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:22:09 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:22:09 [[32mINFO[0m] Server shutting down
+19:22:28 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:22:28 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:22:55 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:22:55 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:25:24 [[32mINFO[0m] Server shutting down
+19:27:37 [[32mINFO[0m] API POST /workflow/start → 200 (7ms)
+19:27:37 [[32mINFO[0m] Workflow started thread=121986e5-c350-40b9-a6aa-33d2a5087623 input_type=article len=10375
+19:27:37 [[32mINFO[0m] Background graph start thread=121986e5-c350-40b9-a6aa-33d2a5087623
+19:27:37 [[32mINFO[0m] ▶ wv_identify_input
+19:27:37 [[32mINFO[0m] Classifying input (10374 chars)
+19:27:37 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+19:27:40 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (2.7s)
+19:27:40 [[32mINFO[0m] Input classified as: article
+19:27:40 [[32mINFO[0m] ✓ wv_identify_input done (2694ms)
+19:27:40 [[32mINFO[0m] ▶ wv_prepare_source_files
+19:27:40 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+19:27:40 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+19:29:01 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 80.8s chars=23967
+19:29:01 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (80.8s)
+19:29:01 [[32mINFO[0m] Written script.md (3240 chars) + outline.md (7720 chars)
+19:29:01 [[32mINFO[0m] ✓ wv_prepare_source_files done (80809ms)
+19:29:01 [[32mINFO[0m] ▶ wv_validate_script
+19:29:01 [[32mINFO[0m] Validating script.md (3240 chars)
+19:29:01 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11673 remaining=300s
+19:29:42 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 40.7s chars=11673
+19:29:42 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11673 chars → OK (40.7s)
+19:29:42 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度无法验证（缺少原文article.md，无法计算比例和对照关键事实）', '使用禁止的AI高频词“本质上”', '使用结构词“第一种/第二种/第三种”等进行列举，违反了“不堆结构词”原则和“排比堆砌”红线', '结尾使用了禁止的套话“以上就是本期内容”'])
+19:29:42 [[32mINFO[0m] ✓ wv_validate_script done (40716ms)
+19:29:42 [[32mINFO[0m] ▶ wv_repair_script
+19:29:42 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本在语言上较为口语化且节奏良好，但存在明显的风格违规：1) “本质上”属于去AI味五类中明确禁止的万能模板；2) 连续用“第一种……第二种……第三种……”的结构词列举，既违背原则7（不堆结构词）也属于排比堆砌；3) 结尾句“以上就是本期内容”是风格指南明确禁止的套话。另外，由于没有提供原始article.md，无法验证信息保留度≥60%这一最高原则。
+信息保留度无法验证（缺少原文article.)
+19:29:42 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11927 remaining=300s
+19:30:02 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11927 chars → OK (20.6s)
+19:30:02 [[32mINFO[0m] Repaired script.md rewritten (3577 chars)
+19:30:02 [[32mINFO[0m] ✓ wv_repair_script done (20640ms)
+19:30:02 [[32mINFO[0m] ▶ wv_validate_script
+19:30:02 [[32mINFO[0m] Validating script.md (3577 chars)
+19:30:02 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12010 remaining=300s
+19:30:08 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:30:08 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:30:08 [[32mINFO[0m] Server shutting down
+19:30:23 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:30:23 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:38:48 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:38:48 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:41:38 [[32mINFO[0m] API POST /workflow/start → 200 (7ms)
+19:41:38 [[32mINFO[0m] Workflow started thread=0788601f-afae-4326-b021-9b301ea1e5f8 input_type=article len=10375
+19:41:38 [[32mINFO[0m] Background graph start thread=0788601f-afae-4326-b021-9b301ea1e5f8
+19:41:38 [[32mINFO[0m] ▶ wv_identify_input
+19:41:38 [[32mINFO[0m] Classifying input (10374 chars)
+19:41:38 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+19:41:41 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (2.9s)
+19:41:41 [[32mINFO[0m] Input classified as: article
+19:41:41 [[32mINFO[0m] ✓ wv_identify_input done (2874ms)
+19:41:41 [[32mINFO[0m] ▶ wv_prepare_source_files
+19:41:41 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+19:41:41 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+19:43:04 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 83.2s chars=23967
+19:43:04 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (83.2s)
+19:43:04 [[32mINFO[0m] Written script.md (3807 chars) + outline.md (5837 chars)
+19:43:04 [[32mINFO[0m] ✓ wv_prepare_source_files done (83179ms)
+19:43:04 [[32mINFO[0m] ▶ wv_validate_script
+19:43:04 [[32mINFO[0m] Validating script.md (3807 chars)
+19:43:04 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12240 remaining=300s
+19:43:55 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 50.9s chars=12240
+19:43:55 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12240 chars → OK (50.9s)
+19:43:55 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+19:43:55 [[32mINFO[0m] ✓ wv_validate_script done (50921ms)
+19:43:55 [[32mINFO[0m] ▶ wv_validate_outline
+19:43:55 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11059 remaining=300s
+19:44:24 [[32mINFO[0m] Starting ezto-agent server — port=8001
+19:44:24 [[32mINFO[0m] Graph built with 27 nodes, ready
+19:44:44 [[32mINFO[0m] API POST /workflow/start → 200 (7ms)
+19:44:44 [[32mINFO[0m] Workflow started thread=357aaeb4-093c-469e-a0cc-6d1793588836 input_type=article len=10375
+19:44:44 [[32mINFO[0m] Background graph start thread=357aaeb4-093c-469e-a0cc-6d1793588836
+19:44:44 [[32mINFO[0m] ▶ wv_identify_input
+19:44:44 [[32mINFO[0m] Classifying input (10374 chars)
+19:44:44 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+19:44:46 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.9s)
+19:44:46 [[32mINFO[0m] Input classified as: article
+19:44:46 [[32mINFO[0m] ✓ wv_identify_input done (1925ms)
+19:44:46 [[32mINFO[0m] ▶ wv_prepare_source_files
+19:44:46 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+19:44:46 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+19:45:57 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 71.1s chars=23967
+19:45:57 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (71.1s)
+19:45:57 [[32mINFO[0m] Written script.md (4022 chars) + outline.md (7029 chars)
+19:45:57 [[32mINFO[0m] ✓ wv_prepare_source_files done (71057ms)
+19:45:57 [[32mINFO[0m] ▶ wv_validate_script
+19:45:57 [[32mINFO[0m] Validating script.md (4022 chars)
+19:45:57 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12455 remaining=300s
+19:46:48 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 50.7s chars=12455
+19:46:48 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12455 chars → OK (50.7s)
+19:46:48 [[32mINFO[0m] Script validation: FAIL (failed_checks=['短句原则（每句 ≤ 20 字）：多处句子长度超标，如“普通的做法是手动复现——但你想啊，50次跑一次，你得重试多少次才能抓到那个 race condition？”等超过20字。', '不堆结构词 / 万能模板原则：出现了被明确禁止的“说白了”。', '去 AI 味——万能模板类：使用了“说白了”这一 AI 高频指纹。', '去 AI 味——排比堆砌：连续出现多个结构相同的句子，如“第一种叫……第二种叫……第三种叫……”和“第一个是……第二个是……第三个是……第四个是……第五个是……第六个是……”，违反排比堆砌禁令。'])
+19:46:48 [[32mINFO[0m] ✓ wv_validate_script done (50719ms)
+19:46:48 [[32mINFO[0m] ▶ wv_repair_script
+19:46:48 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=信息保留度因缺少原始 article.md 无法验证，需用户提供原文后补检。其余检查项中，口语化、第二人称、开头钩子、节奏停顿、具体例子等方面基本符合要求，但上述四项违反明确规定，需修改后重新审核。
+短句原则（每句 ≤ 20 字）：多处句子长度超标，如“普通的做法是手动复现——但你想啊，50次跑一次，你得重试多少次才能抓到那个 race condition？”等超过20字。
+不堆结构词 / 万能模)
+19:46:48 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12760 remaining=300s
+19:47:14 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12760 chars → OK (26.3s)
+19:47:14 [[32mINFO[0m] Repaired script.md rewritten (4192 chars)
+19:47:14 [[32mINFO[0m] ✓ wv_repair_script done (26331ms)
+19:47:14 [[32mINFO[0m] ▶ wv_validate_script
+19:47:14 [[32mINFO[0m] Validating script.md (4192 chars)
+19:47:14 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12625 remaining=300s
+19:47:59 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 44.9s chars=12625
+19:47:59 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12625 chars → OK (44.9s)
+19:47:59 [[32mINFO[0m] Script validation: FAIL (failed_checks=['Missing `---` separators between ideas (Principle 5: 节奏停顿)', "Numbers not translated to feeling (Principle 6): kept raw numbers like '50', '35', '15', '1000'", "排比堆砌: Three consecutive sentences with same structure '第一种叫...第二种叫...第三种叫...' (去AI味第五类)", 'Cannot verify information retention (≥60%) and language consistency: original article not provided'])
+19:47:59 [[32mINFO[0m] ✓ wv_validate_script done (44909ms)
+19:47:59 [[32mINFO[0m] ▶ wv_repair_script
+19:47:59 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=The script largely follows the style guide in terms of colloquialism, short sentences, second person, hook opening, and avoidance of structural words and fake empathy. However, it fails on three check)
+19:47:59 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13520 remaining=300s
+19:48:22 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13520 chars → OK (22.8s)
+19:48:22 [[32mINFO[0m] Repaired script.md rewritten (4247 chars)
+19:48:22 [[32mINFO[0m] ✓ wv_repair_script done (22763ms)
+19:48:22 [[32mINFO[0m] ▶ wv_validate_script
+19:48:22 [[32mINFO[0m] Validating script.md (4247 chars)
+19:48:22 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12680 remaining=300s
+19:48:44 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12680 chars → OK (22.4s)
+19:48:44 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+19:48:44 [[32mINFO[0m] ✓ wv_validate_script done (22379ms)
+19:48:44 [[32mINFO[0m] ▶ wv_validate_outline
+19:48:45 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12251 remaining=300s
+19:49:24 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 39.8s chars=12251
+19:49:24 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12251 chars → OK (39.8s)
+19:49:24 [[32mINFO[0m] ✓ wv_validate_outline done (39770ms)
+19:49:24 [[32mINFO[0m] ▶ wv_repair_outline
+19:49:24 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13298 remaining=300s
+19:50:12 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 47.6s chars=13298
+19:50:12 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13298 chars → OK (47.6s)
+19:50:12 [[32mINFO[0m] ✓ wv_repair_outline done (47590ms)
+19:50:12 [[32mINFO[0m] ▶ wv_validate_outline
+19:50:12 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13066 remaining=300s
+19:50:53 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 41.5s chars=13066
+19:50:53 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13066 chars → OK (41.5s)
+19:50:53 [[32mINFO[0m] ✓ wv_validate_outline done (41529ms)
+19:50:53 [[32mINFO[0m] ▶ wv_repair_outline
+19:50:53 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13297 remaining=300s
+19:51:41 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 47.9s chars=13297
+19:51:41 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13297 chars → OK (47.9s)
+19:51:41 [[32mINFO[0m] ✓ wv_repair_outline done (47884ms)
+19:51:41 [[32mINFO[0m] ▶ wv_validate_outline
+19:51:41 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=13253 remaining=300s
+19:51:59 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 13253 chars → OK (17.8s)
+19:51:59 [[32mINFO[0m] ✓ wv_validate_outline done (17838ms)
+19:51:59 [[32mINFO[0m] ▶ wv_checkpoint_plan
+19:51:59 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+19:51:59 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 11ms
+19:51:59 [[32mINFO[0m] Background graph interrupted at ? after 435s (type=checkpoint_plan)
+19:55:05 [[32mINFO[0m] Resume workflow=357aaeb4-093c-469e-a0cc-6d1793588836 confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+19:55:05 [[32mINFO[0m] Resume thread=357aaeb4-093c-469e-a0cc-6d1793588836 confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+19:55:05 [[32mINFO[0m] API POST /workflow/357aaeb4-093c-469e-a0cc-6d1793588836/resume → 200 (1ms)
+19:55:05 [[32mINFO[0m] ▶ wv_checkpoint_plan
+19:55:05 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+19:55:05 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+19:55:05 [[32mINFO[0m] Checkpoint Plan → selected_mode=A
+19:55:05 [[32mINFO[0m] ✓ wv_checkpoint_plan done (13ms)
+19:55:05 [[32mINFO[0m] ▶ wv_scaffold_presentation
+19:55:05 [[32mINFO[0m] Scaffolding presentation with theme=dune
+19:55:08 [[31mERROR[0m] ✗ wv_scaffold_presentation FAILED after 3298ms: 'NoneType' object is not subscriptable
+19:55:08 [[31mERROR[0m] Resume FAILED thread=357aaeb4-093c-469e-a0cc-6d1793588836 after 3s: 'NoneType' object is not subscriptable
+20:03:55 [[32mINFO[0m] Server shutting down
+20:03:57 [[32mINFO[0m] Starting ezto-agent server — port=8001
+20:03:57 [[32mINFO[0m] Graph built with 27 nodes, ready
+20:04:15 [[32mINFO[0m] API POST /workflow/start → 200 (9ms)
+20:04:15 [[32mINFO[0m] Workflow started thread=23d3fd70-1344-441c-8c66-d278e29677eb input_type=article len=10375
+20:04:15 [[32mINFO[0m] Background graph start thread=23d3fd70-1344-441c-8c66-d278e29677eb
+20:04:15 [[32mINFO[0m] ▶ wv_identify_input
+20:04:15 [[32mINFO[0m] Classifying input (10374 chars)
+20:04:15 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=2092 remaining=300s
+20:04:16 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 2092 chars → OK (1.7s)
+20:04:16 [[32mINFO[0m] Input classified as: article
+20:04:16 [[32mINFO[0m] ✓ wv_identify_input done (1676ms)
+20:04:16 [[32mINFO[0m] ▶ wv_prepare_source_files
+20:04:16 [[32mINFO[0m] Generating script.md + outline.md (input_type=article, language=zh-CN)
+20:04:16 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=23967 remaining=300s
+20:05:18 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 61.8s chars=23967
+20:05:18 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 23967 chars → OK (61.8s)
+20:05:18 [[32mINFO[0m] Written script.md (3100 chars) + outline.md (4556 chars)
+20:05:18 [[32mINFO[0m] ✓ wv_prepare_source_files done (61843ms)
+20:05:18 [[32mINFO[0m] ▶ wv_validate_script
+20:05:18 [[32mINFO[0m] Validating script.md (3100 chars)
+20:05:18 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11533 remaining=300s
+20:06:05 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 47.1s chars=11533
+20:06:05 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11533 chars → OK (47.1s)
+20:06:05 [[32mINFO[0m] Script validation: FAIL (failed_checks=['信息保留度≥60% (无法验证，未提供原文 article.md)', '短句原则 (存在超过20字的句子，如“但有些任务吧，你让它干，它干到一半就跟你说‘干完了’，实际上才搞了一半。”等)', '括号补充 (存在括号内术语如 (worktree) 和 (skill)，应并入正文或删除)'])
+20:06:05 [[32mINFO[0m] ✓ wv_validate_script done (47068ms)
+20:06:05 [[32mINFO[0m] ▶ wv_repair_script
+20:06:05 [[32mINFO[0m] Repairing script.md (attempt 1/3, issues=脚本整体口语化、有钩子、第二人称、避免结构词和AI万能用语，总体风格接近指南要求。但短句原则未完全遵守，部分句子超过20字；同时存在括号补充（如“小窝（worktree）”）违反口播稿规范。信息保留度因缺少原文无法评估，需用户提供article.md以完成验证。
+信息保留度≥60% (无法验证，未提供原文 article.md)
+短句原则 (存在超过20字的句子，如“但有些任务吧，你让它干，它干到)
+20:06:05 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11757 remaining=300s
+20:06:27 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11757 chars → OK (21.5s)
+20:06:27 [[32mINFO[0m] Repaired script.md rewritten (2862 chars)
+20:06:27 [[32mINFO[0m] ✓ wv_repair_script done (21463ms)
+20:06:27 [[32mINFO[0m] ▶ wv_validate_script
+20:06:27 [[32mINFO[0m] Validating script.md (2862 chars)
+20:06:27 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11295 remaining=300s
+20:07:09 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 42.8s chars=11295
+20:07:09 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11295 chars → OK (42.8s)
+20:07:09 [[32mINFO[0m] Script validation: FAIL (failed_checks=['每句 ≤ 20 字（B站基准）？部分句子因包含英文专有名词超过20字符', "没'首先/其次/最后'结构词？脚本大量使用'第一个/第二个/第三个'等枚举结构，违反原则7", "有连续 ≥ 3 句结构一样的排比？脚本中多处出现'第一个是...第二个是...第三个是...'及'一个是...一个是...'等并列枚举，违反去AI味第五类"])
+20:07:09 [[32mINFO[0m] ✓ wv_validate_script done (42783ms)
+20:07:09 [[32mINFO[0m] ▶ wv_repair_script
+20:07:09 [[32mINFO[0m] Repairing script.md (attempt 2/3, issues=脚本整体口语化、第二人称、有钩子、结尾CTA等方面表现良好，但在句子长度控制（尤其含英文词时）和避免枚举结构（'第一个/第二个'以及'一个是...'等平行排比）上多次违反风格指南。建议将枚举内容改为自然过渡或仅保留一两个最有信息量的点，并适当缩短含英文的长句。
+每句 ≤ 20 字（B站基准）？部分句子因包含英文专有名词超过20字符
+没'首先/其次/最后'结构词？脚本大量使用'第一个/第二个/第三个)
+20:07:09 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11539 remaining=300s
+20:07:56 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 46.5s chars=11539
+20:07:56 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11539 chars → OK (46.5s)
+20:07:56 [[32mINFO[0m] Repaired script.md rewritten (3130 chars)
+20:07:56 [[32mINFO[0m] ✓ wv_repair_script done (46492ms)
+20:07:56 [[32mINFO[0m] ▶ wv_validate_script
+20:07:56 [[32mINFO[0m] Validating script.md (3130 chars)
+20:07:56 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11563 remaining=300s
+20:08:55 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 58.7s chars=11563
+20:08:55 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11563 chars → OK (58.7s)
+20:08:55 [[32mINFO[0m] Script validation: FAIL (failed_checks=['每句 ≤ 20 字（B站基准）：大量句子超过20字符，例如“你让 Claude 帮你写代码，它干到一半说“搞定了”。结果一看，才搞了一半。典型的摸鱼。”中多个分句长度超标，以及“最近 Anthropic 搞了个东西，叫 Dynamic workflows。”等。', '不堆结构词/万能模板：使用了“第一个是摸鱼。第二个是护短。第三个是跑偏。”枚举结构，属于违禁的结构词，不符合原则7。'])
+20:08:55 [[32mINFO[0m] ✓ wv_validate_script done (58746ms)
+20:08:55 [[32mINFO[0m] ▶ wv_repair_script
+20:08:55 [[32mINFO[0m] Repairing script.md (attempt 3/3, issues=脚本在口语化、第二人称、开头钩子、节奏停顿、具体例子等方面基本合规。但形式层两个核心检查未通过：1）句子长度控制不足，多数句子超过20字；2）使用了“第一个/第二个/第三个”枚举结构，违反了禁止结构词的原则。此外，信息保留度因缺少原文无法精确验证，但从内容看保留较完整。风骨层（去AI味）基本通过。需要修改上述问题后方可视为符合风格指南。
+每句 ≤ 20 字（B站基准）：大量句子超过20字符，例如“)
+20:08:55 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11877 remaining=300s
+20:09:57 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 62.7s chars=11877
+20:09:57 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11877 chars → OK (62.7s)
+20:09:57 [[32mINFO[0m] Repaired script.md rewritten (2605 chars)
+20:09:57 [[32mINFO[0m] ✓ wv_repair_script done (62730ms)
+20:09:57 [[32mINFO[0m] ▶ wv_validate_script
+20:09:57 [[32mINFO[0m] Validating script.md (2605 chars)
+20:09:57 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=11038 remaining=300s
+20:10:30 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 32.5s chars=11038
+20:10:30 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 11038 chars → OK (32.5s)
+20:10:30 [[32mINFO[0m] Script validation: PASS (failed_checks=[])
+20:10:30 [[32mINFO[0m] ✓ wv_validate_script done (32477ms)
+20:10:30 [[32mINFO[0m] ▶ wv_validate_outline
+20:10:30 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=9778 remaining=300s
+20:10:59 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 9778 chars → OK (29.1s)
+20:10:59 [[32mINFO[0m] ✓ wv_validate_outline done (29121ms)
+20:10:59 [[32mINFO[0m] ▶ wv_checkpoint_plan
+20:10:59 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+20:10:59 [[32mINFO[0m] ⏸ wv_checkpoint_plan interrupted after 12ms
+20:10:59 [[32mINFO[0m] Background graph interrupted at ? after 404s (type=checkpoint_plan)
+20:11:16 [[32mINFO[0m] Resume workflow=23d3fd70-1344-441c-8c66-d278e29677eb confirm_keys=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+20:11:16 [[32mINFO[0m] Resume thread=23d3fd70-1344-441c-8c66-d278e29677eb confirm=['script_feedback', 'outline_feedback', 'selected_theme', 'material_plan', 'development_mode']
+20:11:16 [[32mINFO[0m] API POST /workflow/23d3fd70-1344-441c-8c66-d278e29677eb/resume → 200 (1ms)
+20:11:16 [[32mINFO[0m] ▶ wv_checkpoint_plan
+20:11:16 [[32mINFO[0m] Checkpoint Plan interrupt — 23 themes available
+20:11:16 [[32mINFO[0m] Checkpoint Plan → selected_theme=dune
+20:11:16 [[32mINFO[0m] Checkpoint Plan → selected_mode=A
+20:11:16 [[32mINFO[0m] ✓ wv_checkpoint_plan done (13ms)
+20:11:16 [[32mINFO[0m] ▶ wv_scaffold_presentation
+20:11:16 [[32mINFO[0m] Scaffolding presentation with theme=dune
+20:11:20 [[31mERROR[0m] Scaffold failed (rc=127): w s l :   �hKm0R  l o c a l h o s t   �NtM�n�FO*g\��P0R  W S L 0N A T   !j_N�v  W S L   
+N/ec  l o c a l h o s t   �Nt0
+ 
+ /bin/bash: app/scripts/scaffold.sh: No such file or directory
+
+20:11:20 [[32mINFO[0m] ✓ wv_scaffold_presentation done (3345ms)
+20:11:20 [[32mINFO[0m] ▶ wv_build_chapter_1
+20:11:20 [[32mINFO[0m] Building chapter 1: chapter_1 — Chapter 1 (script=2605 chars, outline=4556 chars)
+20:11:20 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=12817 remaining=300s
+20:12:44 [[33mWARNING[0m] LLM [deepseek-v4-flash] slow call: 84.0s chars=12817
+20:12:44 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 12817 chars → OK (84.0s)
+20:12:44 [[32mINFO[0m] Chapter 1 written: chapter_1/index.tsx (0 chars), narrations.ts (39 chars)
+20:12:44 [[32mINFO[0m] ✓ wv_build_chapter_1 done (84036ms)
+20:12:44 [[32mINFO[0m] ▶ wv_validate_chapter_1
+20:12:44 [DEBUG] LLM request [deepseek-v4-flash] attempt=1/3 msgs=1 chars=5499 remaining=300s
+20:12:54 [[32mINFO[0m] LLM [deepseek-v4-flash] 1 msgs, 5499 chars → OK (10.7s)
+20:12:54 [[32mINFO[0m] ✓ wv_validate_chapter_1 done (10678ms)
+20:12:54 [[32mINFO[0m] ▶ wv_checkpoint_chapter_1
+20:12:54 [[32mINFO[0m] ⏸ wv_checkpoint_chapter_1 interrupted after 0ms
+20:12:54 [[32mINFO[0m] Resume interrupted at ? after 98s (type=checkpoint_chapter_1)

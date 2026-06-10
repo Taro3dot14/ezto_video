@@ -1,0 +1,86 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+
+%% Phase 1
+__start__([<p>__start__</p>]):::first
+wv_identify_input["识别用户输入"]
+wv_prepare_source_files["产出初稿"]
+wv_validate_script["Script 自检"]
+wv_repair_script["Script 修复"]
+wv_validate_outline["Outline 自检"]
+wv_repair_outline["Outline 修复"]
+wv_checkpoint_plan["Checkpoint Plan"]
+wv_scaffold_presentation["脚手架 scaffold"]
+wv_remove_example_chapter["删除 Demo"]
+wv_build_chapter_1["实现第 1 章"]
+wv_validate_chapter_1["第 1 章自检"]
+wv_repair_chapter_1["第 1 章修复"]
+wv_checkpoint_chapter_1["第 1 章验收"]
+wv_build_chapter_n["实现第 N 章"]
+wv_validate_chapter_n["第 N 章自检"]
+wv_repair_chapter_n["第 N 章修复"]
+wv_checkpoint_chapter_n["第 N 章验收"]
+wv_checkpoint_remaining_batch["批量验收"]
+wv_transition_to_phase3["进入 Phase 3"]
+wv_checkpoint_audio["Checkpoint Audio"]
+wv_extract_narrations["提取 Narrations"]
+wv_checkpoint_audio_segments["检查音频分段"]
+wv_synthesize_audio["合成音频"]
+wv_report_audio_anomalies["音频异常报告"]
+wv_recording_guidance["录屏指引"]
+__end__([<p>__end__</p>]):::last
+__start__ --> wv_identify_input;
+wv_build_chapter_1 --> wv_validate_chapter_1;
+wv_build_chapter_n --> wv_validate_chapter_n;
+wv_transition_to_phase3 --> wv_checkpoint_audio;
+wv_checkpoint_audio -.-> wv_extract_narrations;
+wv_checkpoint_audio -.-> wv_recording_guidance;
+wv_checkpoint_audio_segments --> wv_synthesize_audio;
+wv_checkpoint_chapter_1 --> wv_remove_example_chapter;
+wv_checkpoint_chapter_n -.-> wv_transition_to_phase3;
+wv_checkpoint_chapter_n -.-> wv_build_chapter_n;
+wv_checkpoint_plan --> wv_scaffold_presentation;
+wv_checkpoint_remaining_batch --> wv_transition_to_phase3;
+wv_extract_narrations --> wv_checkpoint_audio_segments;
+wv_identify_input --> wv_prepare_source_files;
+wv_prepare_source_files --> wv_validate_script;
+wv_scaffold_presentation --> wv_build_chapter_1;
+	wv_remove_example_chapter -.-> wv_build_chapter_n;
+	wv_remove_example_chapter -.-> wv_transition_to_phase3;
+wv_repair_chapter_1 --> wv_validate_chapter_1;
+wv_repair_chapter_n --> wv_validate_chapter_n;
+wv_repair_outline --> wv_validate_outline;
+wv_repair_script --> wv_validate_script;
+wv_report_audio_anomalies --> wv_recording_guidance;
+wv_synthesize_audio --> wv_report_audio_anomalies;
+wv_validate_chapter_1 -.-> wv_checkpoint_chapter_1;
+wv_validate_chapter_1 -.-> wv_repair_chapter_1;
+wv_validate_chapter_n -.-> wv_checkpoint_chapter_n;
+wv_validate_chapter_n -.-> wv_checkpoint_remaining_batch;
+wv_validate_chapter_n -.-> wv_build_chapter_n;
+wv_validate_chapter_n -.-> wv_repair_chapter_n;
+wv_validate_outline -.-> wv_checkpoint_plan;
+wv_validate_outline -.-> wv_repair_outline;
+wv_validate_script -.-> wv_repair_script;
+wv_validate_script -.-> wv_validate_outline;
+wv_recording_guidance --> __end__;
+classDef default fill:#f2f0ff,line-height:1.2
+classDef first fill-opacity:0
+classDef last fill:#bfb6fc
+
+classDef interrupt fill:#fff3e0,stroke:#ff9800,stroke-width:3px,stroke-dasharray: 5 5;
+classDef llm fill:#e3f2fd,stroke:#1976d2;
+classDef tool fill:#f3e5f5,stroke:#7b1fa2;
+classDef logic fill:#e8f5e9,stroke:#388e3c;
+classDef terminal fill:#fafafa,stroke:#9e9e9e;
+
+class wv_checkpoint_plan interrupt;
+class wv_checkpoint_chapter_1 interrupt;
+class wv_checkpoint_chapter_n interrupt;
+class wv_checkpoint_remaining_batch interrupt;
+class wv_checkpoint_audio interrupt;
+class wv_checkpoint_audio_segments interrupt;

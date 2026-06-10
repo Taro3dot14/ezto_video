@@ -1,0 +1,62 @@
+C:\Users\xinyi\AppData\Roaming\Python\Python313\site-packages\langgraph\cache\base\__init__.py:8: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+  from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+INFO:     Started server process [86940]
+INFO:     Waiting for application startup.
+17:50:56 [[32mINFO[0m    ] Starting ezto-agent server — port=8001
+17:50:56 [[32mINFO[0m    ] Graph built with 27 nodes, ready
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58610 - "GET /api/themes HTTP/1.1" 200 OK
+17:51:05 [[32mINFO[0m    ] API POST /workflow/start → 200 (6ms)
+17:51:05 [[32mINFO[0m    ] Workflow started thread=ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9 input_type=article len=1060
+INFO:     127.0.0.1:64996 - "POST /api/workflow/start HTTP/1.1" 200 OK
+17:51:05 [[32mINFO[0m    ] Background graph start thread=ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9
+17:51:05 [[32mINFO[0m    ] ▶ wv_identify_input
+17:51:05 [[32mINFO[0m    ] Classifying input (1060 chars)
+INFO:     127.0.0.1:64997 - "GET /api/workflow/ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9/events HTTP/1.1" 200 OK
+17:51:08 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 1152 chars → OK (2.7s)
+17:51:08 [[32mINFO[0m    ] Input classified as: article
+17:51:08 [[32mINFO[0m    ] ✓ wv_identify_input done (2722ms)
+17:51:08 [[32mINFO[0m    ] ▶ wv_prepare_source_files
+17:51:08 [[32mINFO[0m    ] Generating script.md + outline.md (input_type=article, language=zh-CN)
+17:51:40 [[33mWARNING[0m ] LLM [deepseek-v4-flash] slow call: 32.0s chars=14653
+17:51:40 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 14653 chars → OK (32.0s)
+17:51:40 [[32mINFO[0m    ] Written script.md (1300 chars) + outline.md (4014 chars)
+17:51:40 [[32mINFO[0m    ] ✓ wv_prepare_source_files done (32046ms)
+17:51:40 [[32mINFO[0m    ] ▶ wv_validate_script
+17:51:40 [[32mINFO[0m    ] Validating script.md (1300 chars)
+17:52:02 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9733 chars → OK (21.9s)
+17:52:02 [[32mINFO[0m    ] Script validation: PASS (failed_checks=[])
+17:52:02 [[32mINFO[0m    ] ✓ wv_validate_script done (21951ms)
+17:52:02 [[32mINFO[0m    ] ▶ wv_validate_outline
+17:52:31 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9237 chars → OK (29.2s)
+17:52:31 [[32mINFO[0m    ] ✓ wv_validate_outline done (29160ms)
+17:52:31 [[32mINFO[0m    ] ▶ wv_repair_outline
+17:53:03 [[33mWARNING[0m ] LLM [deepseek-v4-flash] slow call: 31.9s chars=9511
+17:53:03 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9511 chars → OK (31.9s)
+17:53:03 [[32mINFO[0m    ] ✓ wv_repair_outline done (31904ms)
+17:53:03 [[32mINFO[0m    ] ▶ wv_validate_outline
+17:53:32 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9630 chars → OK (29.1s)
+17:53:32 [[32mINFO[0m    ] ✓ wv_validate_outline done (29064ms)
+17:53:32 [[32mINFO[0m    ] ▶ wv_repair_outline
+17:53:52 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9766 chars → OK (20.3s)
+17:53:52 [[32mINFO[0m    ] ✓ wv_repair_outline done (20272ms)
+17:53:52 [[32mINFO[0m    ] ▶ wv_validate_outline
+17:54:19 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9592 chars → OK (26.6s)
+17:54:19 [[32mINFO[0m    ] ✓ wv_validate_outline done (26617ms)
+17:54:19 [[32mINFO[0m    ] ▶ wv_repair_outline
+17:54:51 [[33mWARNING[0m ] LLM [deepseek-v4-flash] slow call: 31.6s chars=9829
+17:54:51 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 9829 chars → OK (31.6s)
+17:54:51 [[32mINFO[0m    ] ✓ wv_repair_outline done (31606ms)
+17:54:51 [[32mINFO[0m    ] ▶ wv_validate_outline
+17:55:10 [[32mINFO[0m    ] LLM [deepseek-v4-flash] 1 msgs, 10546 chars → OK (18.8s)
+17:55:10 [[32mINFO[0m    ] ✓ wv_validate_outline done (18798ms)
+17:55:10 [[32mINFO[0m    ] ▶ wv_checkpoint_plan
+17:55:10 [[32mINFO[0m    ] Checkpoint Plan interrupt — 23 themes available
+17:55:10 [[32mINFO[0m    ] ⏸ wv_checkpoint_plan interrupted after 14ms
+17:55:10 [[32mINFO[0m    ] Background graph completed after 244s
+INFO:     127.0.0.1:61863 - "GET /api/workflow/17eaea14-a84d-4db3-965a-c15ec62d05b2 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61864 - "GET /api/workflow/ba6cddc3-dc85-4d9a-9ffb-32cc99f42ee9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60278 - "GET /api/workflow/ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60279 - "GET /api/workflow/ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60281 - "GET /api/workflow/ae7cbf0b-3b83-4a95-b2d9-16c7ad71897f HTTP/1.1" 404 Not Found
