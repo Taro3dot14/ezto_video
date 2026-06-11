@@ -426,34 +426,64 @@ def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
     outline_content = Path(paths.get("outline.md", "outline.md")).read_text(encoding="utf-8")
     chapters = _parse_outline_chapters(state)
     ch1 = chapters[0]
+    ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch1["id"]
+    ch_dir.mkdir(parents=True, exist_ok=True)
 
     tlog = _think(None, "step", f"正在参考 CHAPTER-CRAFT.md 实现第 1 章 {ch1['title']}…")
     logger.info("Building chapter 1: %s — %s (script=%d chars, outline=%d chars)",
                 ch1["id"], ch1["title"], len(script_content), len(outline_content))
-    _think(tlog, "llm", f"调用 DeepSeek 生成 React 组件 + narrations…")
-    reply = llm.chat(messages=[{"role": "user", "content": (
+
+    # ── 1. Generate index.tsx (React component) ──
+    _think(tlog, "llm", f"生成第 1 章 React 组件…")
+    tsx_reply = llm.chat(messages=[{"role": "user", "content": (
         f"Chapter craft rules:\n{ref}\n\nScript:\n{script_content}\n\n"
         f"Outline:\n{outline_content}\n\n"
         f"Build chapter: {ch1['id']} — {ch1['title']}\n\n"
-        f"Create src/chapters/{ch1['id']}/index.tsx (default export function)\n"
-        f"and src/chapters/{ch1['id']}/narrations.ts (narration text array).\n"
-        f"Separate with ===NARRATIONS==="
+        f"Create a single file: src/chapters/{ch1['id']}/index.tsx\n\n"
+        f"The component receives a `step` prop (number) and renders each step as one screen.\n"
+        f"Export it as the default export.\n"
+        f"Return ONLY the TypeScript React code, no markdown fences, no extra text."
     )}])
+    tsx_content = tsx_reply.strip()
+    if tsx_content.startswith("```"):
+        tsx_content = tsx_content.split("\n", 1)[-1]
+    if tsx_content.endswith("```"):
+        tsx_content = tsx_content.rsplit("```", 1)[0]
+    tsx_content = tsx_content.strip()
 
-    parts = reply.split("===NARRATIONS===")
-    tsx_content = parts[0].strip()
-    nar_content = parts[1].strip() if len(parts) >= 2 else "export const narrations: string[] = [];"
-
-    ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch1["id"]
-    ch_dir.mkdir(parents=True, exist_ok=True)
     tsx_path = ch_dir / "index.tsx"
-    nar_path = ch_dir / "narrations.ts"
     tsx_path.write_text(tsx_content, encoding="utf-8")
+    _think(tlog, "file_write", f"已生成 src/chapters/{ch1['id']}/index.tsx ({len(tsx_content)} 字符)")
+
+    # ── 2. Generate narrations.ts (narration text array) ──
+    _think(tlog, "llm", f"生成第 1 章旁白数组…")
+    nar_reply = llm.chat(messages=[{"role": "user", "content": (
+        f"Outline:\n{outline_content}\n\n"
+        f"Chapter: {ch1['id']} — {ch1['title']}\n\n"
+        f"Based on the script (below), write a narration text array for each step of this chapter.\n"
+        f"Script:\n{script_content}\n\n"
+        f"Return ONLY:\n"
+        f"export const narrations: string[] = [\n"
+        f"  \"第 1 步的口播文字\",\n"
+        f"  \"第 2 步的口播文字\",\n"
+        f"  ...\n"
+        f"];\n"
+        f"No markdown fences, no extra text."
+    )}])
+    nar_content = nar_reply.strip()
+    if nar_content.startswith("```"):
+        nar_content = nar_content.split("\n", 1)[-1]
+    if nar_content.endswith("```"):
+        nar_content = nar_content.rsplit("```", 1)[0]
+    nar_content = nar_content.strip()
+    if not nar_content:
+        nar_content = "export const narrations: string[] = [];"
+
+    nar_path = ch_dir / "narrations.ts"
     nar_path.write_text(nar_content, encoding="utf-8")
+    _think(tlog, "file_write", f"已生成 src/chapters/{ch1['id']}/narrations.ts ({len(nar_content)} 字符)")
 
     _update_chapter_registry(state, chapters)
-    _think(tlog, "file_write", f"已生成 src/chapters/{ch1['id']}/index.tsx ({len(tsx_content)} 字符)")
-    _think(tlog, "file_write", f"已生成 src/chapters/{ch1['id']}/narrations.ts ({len(nar_content)} 字符)")
     logger.info("Chapter 1 written: %s/index.tsx (%d chars), narrations.ts (%d chars)",
                 ch1["id"], len(tsx_content), len(nar_content))
     return {"current_node": "wv_build_chapter_1",
@@ -578,22 +608,52 @@ def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
 
     logger.info("Building chapter %d/%d: %s — %s (prev_chapters=%d)",
                 chapter_index, len(chapters), ch["id"], ch["title"], len(prev))
-    reply = llm.chat(messages=[{"role": "user", "content": (
+    ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch["id"]
+    ch_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── 1. Generate index.tsx (React component) ──
+    tsx_reply = llm.chat(messages=[{"role": "user", "content": (
         f"Chapter craft rules:\n{ref}\n\nScript:\n{script_content}\n\n"
         f"Building chapter {chapter_index}/{len(chapters)}: {ch['id']} — {ch['title']}\n\n"
         f"Previous chapters for reference:\n" + "\n---\n".join(prev) + "\n\n"
-        f"Create src/chapters/{ch['id']}/index.tsx and narrations.ts. Separate with ===NARRATIONS==="
+        f"Create src/chapters/{ch['id']}/index.tsx\n\n"
+        f"The component receives a `step` prop (number) and renders each step as one screen.\n"
+        f"Export it as the default export.\n"
+        f"Return ONLY the TypeScript React code, no markdown fences, no extra text."
     )}])
+    tsx_content = tsx_reply.strip()
+    if tsx_content.startswith("```"):
+        tsx_content = tsx_content.split("\n", 1)[-1]
+    if tsx_content.endswith("```"):
+        tsx_content = tsx_content.rsplit("```", 1)[0]
+    tsx_content = tsx_content.strip()
 
-    parts = reply.split("===NARRATIONS===")
-    tsx_content = parts[0].strip()
-    nar_content = parts[1].strip() if len(parts) >= 2 else "export const narrations: string[] = [];"
-
-    ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch["id"]
-    ch_dir.mkdir(parents=True, exist_ok=True)
     tsx_path = ch_dir / "index.tsx"
-    nar_path = ch_dir / "narrations.ts"
     tsx_path.write_text(tsx_content, encoding="utf-8")
+
+    # ── 2. Generate narrations.ts (narration text array) ──
+    nar_reply = llm.chat(messages=[{"role": "user", "content": (
+        f"Chapter: {ch['id']} — {ch['title']}\n\n"
+        f"Based on the script, write a narration text array for each step of this chapter.\n"
+        f"Script:\n{script_content}\n\n"
+        f"Return ONLY:\n"
+        f"export const narrations: string[] = [\n"
+        f"  \"第 1 步的口播文字\",\n"
+        f"  \"第 2 步的口播文字\",\n"
+        f"  ...\n"
+        f"];\n"
+        f"No markdown fences, no extra text."
+    )}])
+    nar_content = nar_reply.strip()
+    if nar_content.startswith("```"):
+        nar_content = nar_content.split("\n", 1)[-1]
+    if nar_content.endswith("```"):
+        nar_content = nar_content.rsplit("```", 1)[0]
+    nar_content = nar_content.strip()
+    if not nar_content:
+        nar_content = "export const narrations: string[] = [];"
+
+    nar_path = ch_dir / "narrations.ts"
     nar_path.write_text(nar_content, encoding="utf-8")
 
     _update_chapter_registry(state, chapters)
