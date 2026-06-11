@@ -49,38 +49,20 @@ def init_workspace(state: VideoWorkflowState) -> dict:
 
     Returns partial state update with workspace_root and artifact_paths.
     """
-    workspace = resolve_workspace(
+    workspace = str(Path(resolve_workspace(
         state.get("workspace_root", "workspace"),
         state["thread_id"],
-    )
+    )).resolve())
     Path(workspace).mkdir(parents=True, exist_ok=True)
 
     paths: dict[str, str] = {}
     for logical, relative in ARTIFACT_LAYOUT.items():
         paths[logical] = f"{workspace}/{relative}"
 
-    # Create subdirectories for presentation structure
-    _ensure_presentation_dirs(workspace)
-
     return {
         "artifact_paths": paths,
         "workspace_root": workspace,
     }
-
-
-def _ensure_presentation_dirs(workspace: str) -> None:
-    """Create expected subdirectories under the presentation scaffold."""
-    dirs = [
-        "presentation/src/chapters",
-        "presentation/src/registry",
-        "presentation/src/styles",
-        "presentation/src/hooks",
-        "presentation/src/components",
-        "presentation/scripts/tts-providers",
-        "presentation/public/audio",
-    ]
-    for d in dirs:
-        Path(workspace, d).mkdir(parents=True, exist_ok=True)
 
 
 def record_creation(state: VideoWorkflowState, logical_name: str) -> dict:

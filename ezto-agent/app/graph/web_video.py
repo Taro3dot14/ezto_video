@@ -33,6 +33,7 @@ from app.runtime.interrupts import (
     checkpoint_remaining_batch,
     checkpoint_audio,
     checkpoint_audio_segments,
+    set_interrupt_node,
 )
 from app.runtime.tool_adapters import run_shell, run_scaffold, run_npm, run_dev_server
 from app.runtime.artifact_manager import check_artifact_contract
@@ -87,6 +88,12 @@ def wv_prepare_source_files(state: VideoWorkflowState) -> dict:
                             "error": "No content provided — cannot generate script/outline."}],
                 "current_node": "wv_prepare_source_files"}
 
+    # 保存原始文章（article.md）供之后验证信息保留度
+    if input_type == "article":
+        article_path = paths.get("article.md", "article.md")
+        Path(article_path).write_text(text, encoding="utf-8")
+        logger.info("Saved article.md (%d chars)", len(text))
+
     tlog = _think(None, "step", f"正在参考 SCRIPT-STYLE.md + OUTLINE-FORMAT.md 生成稿子和大纲")
     logger.info("Generating script.md + outline.md (input_type=%s, language=%s)", input_type, language)
     _think(tlog, "llm", f"调用 DeepSeek 生成 script.md（口播稿）+ outline.md（大纲）…")
@@ -139,9 +146,32 @@ def wv_validate_script(state: VideoWorkflowState) -> dict:
     logger.info("Validating script.md (%d chars)", len(content))
     _think(tlog, "llm", "调用 DeepSeek 校验脚本质量…")
 
+    article_path = state.get("artifact_paths", {}).get("article.md", "")
+    article_hint = ""
+    if article_path and Path(article_path).exists():
+        article_text = Path(article_path).read_text(encoding="utf-8")
+        # Strip code blocks so English code doesn't bias language detection
+        clean = re.sub(r'```.*?```', '', article_text, flags=re.DOTALL)
+        clean = re.sub(r'https?://\S+', '', clean)
+        cn_chars = sum(1 for c in clean if '一' <= c <= '鿿')
+        en_chars = sum(1 for c in clean if c.isascii() and c.isalpha())
+        total = cn_chars + en_chars
+        article_lang = "Chinese" if (total > 0 and cn_chars / total >= 0.1) else "English"
+        article_hint = (
+            f"Original article (detected language: {article_lang}):\n{article_text}\n\n"
+            f"IMPORTANT: The original article's dominant language is {article_lang}. "
+            f"Do NOT flag a language mismatch if the script uses {article_lang}. "
+            f"English terms/code in a {article_lang} article are expected and do not make it an English article.\n\n"
+        )
+    else:
+        article_hint = ("NOTE: This script IS the original input — there is NO separate source article. "
+                        "Skip information-retention and language-consistency checks entirely. "
+                        "The script defines both the content and its language.\n\n")
+
     #TODO: 是否需要设计一下针对文档中的每个点去打勾，而不是返回现在这种。
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Validate this script against the style guide:\n\n{ref}\n\n"
+        f"{article_hint}"
         f"Script:\n{content}\n\n"
         f"Respond with JSON only:\n"
         f'{{"passed":bool,"failed_checks":["..."],"details":"..."}}'
@@ -159,7 +189,9 @@ def wv_validate_script(state: VideoWorkflowState) -> dict:
     if passed:
         _think(tlog, "validation", "✅ script.md 校验通过")
     else:
-        _think(tlog, "validation", f"❌ 发现 {len(checks)} 个问题: {'; '.join(checks[:3])}")
+        _think(tlog, "validation", f"❌ 发现 {len(checks)} 个问题")
+        for c in checks:
+            _think(tlog, "validation", f"  • {c}")
     logger.info("Script validation: %s (failed_checks=%s)", "PASS" if passed else "FAIL", checks)
     return {"validation_results": [ValidationResult(
         node="wv_validate_script", target="script.md",
@@ -210,14 +242,18 @@ def wv_repair_script(state: VideoWorkflowState) -> dict:
 
 def wv_validate_outline(state: VideoWorkflowState) -> dict:
     ref = require_ref_loaded(state, "OUTLINE-FORMAT.md")
+    tlog = _think(None, "step", "正在校验 outline.md…")
     outline_path = state.get("artifact_paths", {}).get("outline.md")
     if not outline_path or not Path(outline_path).exists():
+        _think(tlog, "validation", "❌ outline.md 文件未找到")
         return {"validation_results": [ValidationResult(
             node="wv_validate_outline", target="outline.md", passed=False,
             failed_checks=["outline.md not found"], details="")],
+            "thinking_log": tlog,
             "current_node": "wv_validate_outline"}
 
     content = Path(outline_path).read_text(encoding="utf-8")
+    _think(tlog, "llm", "调用 DeepSeek 校验大纲格式…")
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Validate this outline against the format spec:\n\n{ref}\n\n"
         f"Outline:\n{content}\n\n"
@@ -230,11 +266,21 @@ def wv_validate_outline(state: VideoWorkflowState) -> dict:
     except json.JSONDecodeError:
         result = {"passed": True, "failed_checks": [], "details": ""}
 
+    passed = bool(result.get("passed", True))
+    checks = result.get("failed_checks", [])
+    if passed:
+        _think(tlog, "validation", "✅ outline.md 校验通过")
+    else:
+        _think(tlog, "validation", f"❌ 发现 {len(checks)} 个问题")
+        for c in checks:
+            _think(tlog, "validation", f"  • {c}")
+
     return {"validation_results": [ValidationResult(
         node="wv_validate_outline", target="outline.md",
-        passed=bool(result.get("passed", True)),
-        failed_checks=result.get("failed_checks", []),
+        passed=passed,
+        failed_checks=checks,
         details=result.get("details", ""))],
+        "thinking_log": tlog,
         "current_node": "wv_validate_outline"}
 
 
@@ -320,7 +366,9 @@ def wv_scaffold_presentation(state: VideoWorkflowState) -> dict:
              or "midnight-press")
 
     logger.info("Scaffolding presentation with theme=%s", theme)
+
     result = run_scaffold(state, _PPT_DIR, theme)
+
     updates: dict[str, Any] = {"current_node": "wv_scaffold_presentation"}
     if result.returncode != 0:
         stderr_tail = (result.stderr or "")[:500]
@@ -329,9 +377,9 @@ def wv_scaffold_presentation(state: VideoWorkflowState) -> dict:
                               "error": f"Scaffold failed: {stderr_tail}"}]
     else:
         logger.info("Scaffold completed OK, starting dev server…")
-        pptr_dir = Path(state.get("workspace_root", "."), _PPT_DIR)
         try:
-            run_dev_server(state, cwd=pptr_dir, port=5174)
+            target = Path(state.get("workspace_root", ".")) / _PPT_DIR
+            run_dev_server(state, cwd=target, port=5174)
             updates["presentation_url"] = "http://localhost:5174"
         except Exception as e:
             logger.warning("Could not start dev server: %s", e)
@@ -415,17 +463,21 @@ def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
 def wv_validate_chapter_1(state: VideoWorkflowState) -> dict:
     require_ref_loaded(state, "CHAPTER-CRAFT.md", reload_each_time=True)
     ref = require_ref_loaded(state, "CHAPTER-CRAFT.md")
+    tlog = _think(None, "step", "正在校验第 1 章…")
     chapters = _parse_outline_chapters(state)
     ch1 = chapters[0]
     tsx_path = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch1["id"] / "index.tsx"
 
     if not tsx_path.exists():
+        _think(tlog, "validation", "❌ 第 1 章文件未找到")
         return {"validation_results": [ValidationResult(
             node="wv_validate_chapter_1", target="chapter_1", passed=False,
             failed_checks=["File not found"], details=str(tsx_path))],
+            "thinking_log": tlog,
             "current_node": "wv_validate_chapter_1"}
 
     content = tsx_path.read_text(encoding="utf-8")
+    _think(tlog, "llm", "调用 DeepSeek 校验章节质量…")
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Rules:\n{ref}\n\nChapter code:\n{content}\n\n"
         f"JSON: {{\"passed\":bool,\"failed_checks\":[\"...\"],\"details\":\"...\"}}"
@@ -436,11 +488,21 @@ def wv_validate_chapter_1(state: VideoWorkflowState) -> dict:
     except json.JSONDecodeError:
         result = {"passed": True, "failed_checks": [], "details": ""}
 
+    passed = bool(result.get("passed", True))
+    checks = result.get("failed_checks", [])
+    if passed:
+        _think(tlog, "validation", "✅ 第 1 章校验通过")
+    else:
+        _think(tlog, "validation", f"❌ 第 1 章发现 {len(checks)} 个问题")
+        for c in checks:
+            _think(tlog, "validation", f"  • {c}")
+
     return {"validation_results": [ValidationResult(
         node="wv_validate_chapter_1", target="chapter_1",
-        passed=bool(result.get("passed", True)),
-        failed_checks=result.get("failed_checks", []),
+        passed=passed,
+        failed_checks=checks,
         details=result.get("details", ""))],
+        "thinking_log": tlog,
         "current_node": "wv_validate_chapter_1"}
 
 
@@ -549,15 +611,19 @@ def wv_validate_chapter_n(state: VideoWorkflowState) -> dict:
     chapter_index = state.get("current_chapter_index", 2)
     chapters = _parse_outline_chapters(state)
     ch = chapters[chapter_index - 1] if chapter_index <= len(chapters) else {"id": f"chapter_{chapter_index}"}
+    tlog = _think(None, "step", f"正在校验第 {chapter_index} 章…")
     tsx_path = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch["id"] / "index.tsx"
 
     if not tsx_path.exists():
+        _think(tlog, "validation", f"❌ 第 {chapter_index} 章文件未找到")
         return {"validation_results": [ValidationResult(
             node="wv_validate_chapter_n", target=f"chapter_{chapter_index}", passed=False,
             failed_checks=["File not found"], details=str(tsx_path))],
+            "thinking_log": tlog,
             "current_node": "wv_validate_chapter_n"}
 
     content = tsx_path.read_text(encoding="utf-8")
+    _think(tlog, "llm", f"调用 DeepSeek 校验第 {chapter_index} 章…")
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Rules:\n{ref}\n\nChapter code:\n{content}\n\n"
         f"JSON: {{\"passed\":bool,\"failed_checks\":[\"...\"],\"details\":\"...\"}}"
@@ -568,11 +634,21 @@ def wv_validate_chapter_n(state: VideoWorkflowState) -> dict:
     except json.JSONDecodeError:
         result = {"passed": True, "failed_checks": [], "details": ""}
 
+    passed = bool(result.get("passed", True))
+    checks = result.get("failed_checks", [])
+    if passed:
+        _think(tlog, "validation", f"✅ 第 {chapter_index} 章校验通过")
+    else:
+        _think(tlog, "validation", f"❌ 第 {chapter_index} 章发现 {len(checks)} 个问题")
+        for c in checks:
+            _think(tlog, "validation", f"  • {c}")
+
     return {"validation_results": [ValidationResult(
         node="wv_validate_chapter_n", target=f"chapter_{chapter_index}",
-        passed=bool(result.get("passed", True)),
-        failed_checks=result.get("failed_checks", []),
+        passed=passed,
+        failed_checks=checks,
         details=result.get("details", ""))],
+        "thinking_log": tlog,
         "current_node": "wv_validate_chapter_n"}
 
 
@@ -842,6 +918,7 @@ def _wrap_node(name: str, fn):
             # GraphInterrupt = normal checkpoint pause, not an error
             if isinstance(e, GraphInterrupt):
                 logger.info("⏸ %s interrupted after %.0fms", name, elapsed)
+                set_interrupt_node(name)
                 raise
             _think(tlog, "node_error", f"✗ {name}: {e}")
             existing = state.get("thinking_log", [])

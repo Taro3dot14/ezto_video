@@ -219,26 +219,6 @@ export default function WorkflowPage() {
             workflowActive={isRunning}
           />
 
-          {/* Validation Issues from state */}
-          {state.validation_results &&
-            (state.validation_results as any[]).length > 0 && (
-              <div className="wf-validation">
-                <div className="wf-section-title">Validation Issues</div>
-                <div className="wf-validation-list">
-                  {(state.validation_results as any[]).map(
-                    (vr: any, i: number) => (
-                      <div key={i} className="wf-validation-item">
-                        <span className="wf-validation-icon">⚠</span>
-                        <span className="wf-validation-msg">
-                          {vr.message || vr.issue || JSON.stringify(vr)}
-                        </span>
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
-            )}
-
           {/* Errors from state */}
           {state.errors && (state.errors as any[]).length > 0 && (
             <div className="wf-validation wf-validation-error">

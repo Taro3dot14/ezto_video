@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -100,7 +101,7 @@ def read_file(
 
 # ── Scaffold adapter ──
 
-_SCRIPTS_DIR = Path(settings.project_root) / "app" / "scripts"
+_SCRIPTS_DIR = Path(settings.project_root).resolve() / "app" / "scripts"
 
 
 def _find_bash() -> str:
@@ -129,16 +130,26 @@ def run_scaffold(
     state: VideoWorkflowState,
     target_dir: str,
     theme: str,
+    cwd: str | None = None,
 ) -> subprocess.CompletedProcess:
     """Run the scaffold.sh script to create a presentation project.
 
     Original SKILL.md (Phase 2.1):
       bash <path>/scaffold.sh <target> --theme=<id>
+
+    If cwd is provided, scaffold runs there (useful for WSL native fs
+    where npm install is much faster). Otherwise uses workspace_root.
     """
     full_script = str(_SCRIPTS_DIR / "scaffold.sh")
     bash_exe = _find_bash()
 
-    cwd = state.get("workspace_root", ".")
+    if cwd is None:
+        cwd = state.get("workspace_root", ".")
+    # Resolve to absolute path — workspace_root in state may be a relative
+    # path like "workspace/<uuid>/" and Popen(cwd=relpath) resolves against
+    # the server's CWD, which may not be what we expect.
+    cwd = str(Path(cwd).resolve())
+    logger.info("Scaffold cwd=%s target=%s theme=%s", cwd, target_dir, theme)
     command = f'"{bash_exe}" "{full_script}" "{target_dir}" --theme="{theme}"'
 
     _record_tool_call(
@@ -148,15 +159,55 @@ def run_scaffold(
         allowed=True,
         reason="Scaffold Vite + React + TS presentation project",
     )
-    return subprocess.run(
+
+    proc = subprocess.Popen(
         command,
         shell=True,
         cwd=cwd,
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
-        timeout=300,
         encoding="utf-8",
         errors="replace",
+    )
+
+    # Stream both stdout/stderr in real-time via background threads
+    stdout_lines: list[str] = []
+    stderr_lines: list[str] = []
+
+    def _read_stream(stream, sink, log_fn):
+        assert stream is not None
+        for line in iter(stream.readline, ""):
+            line = line.rstrip("\n")
+            sink.append(line)
+            log_fn("[scaffold] %s", line)
+
+    threads = [
+        threading.Thread(
+            target=_read_stream, args=(proc.stdout, stdout_lines, logger.info), daemon=True
+        ),
+        threading.Thread(
+            target=_read_stream, args=(proc.stderr, stderr_lines, logger.warning), daemon=True
+        ),
+    ]
+    for t in threads:
+        t.start()
+
+    try:
+        proc.wait(timeout=600)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait(timeout=5)
+        raise
+    finally:
+        for t in threads:
+            t.join(timeout=3)
+
+    return subprocess.CompletedProcess(
+        args=command,
+        returncode=proc.returncode or 0,
+        stdout="\n".join(stdout_lines),
+        stderr="\n".join(stderr_lines),
     )
 
 

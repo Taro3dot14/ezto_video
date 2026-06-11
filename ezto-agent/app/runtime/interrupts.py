@@ -18,6 +18,13 @@ from langgraph.types import interrupt
 _LAST_INTERRUPT_PAYLOAD: dict | None = None
 
 
+def set_interrupt_node(node_name: str) -> None:
+    """Attach the running node name to the stored interrupt payload."""
+    global _LAST_INTERRUPT_PAYLOAD
+    if _LAST_INTERRUPT_PAYLOAD is not None:
+        _LAST_INTERRUPT_PAYLOAD["node"] = node_name
+
+
 def pop_last_interrupt_payload() -> dict | None:
     """Return and clear the stored interrupt payload."""
     global _LAST_INTERRUPT_PAYLOAD

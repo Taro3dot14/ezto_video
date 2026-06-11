@@ -90,14 +90,14 @@ fi
 
 echo "▸ 在 $TARGET 创建 Vite + React + TS 项目"
 echo "▸ 使用主题：$THEME"
-npm create vite@latest "$TARGET" -- --template react-ts >/dev/null
+npx --yes create-vite "$TARGET" --template react-ts 2>&1
 
 cd "$TARGET"
 echo "▸ 安装依赖（可能要等一会）..."
-npm install >/dev/null 2>&1
+npm install 2>&1
 
 echo "▸ 安装 tsx（用于 extract-narrations 脚本）..."
-npm install --save-dev tsx >/dev/null 2>&1
+npm install --save-dev tsx 2>&1
 
 echo "▸ 用演示骨架替换默认 boilerplate"
 

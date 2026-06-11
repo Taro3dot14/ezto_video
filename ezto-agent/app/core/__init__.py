@@ -15,6 +15,8 @@ Usage:
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -56,7 +58,7 @@ class Settings(BaseSettings):
     workspace_root: str = "workspace"
 
     # ── Project root for finding refs/themes/scripts ──
-    project_root: str = "."
+    project_root: str = str(Path(".").resolve())
 
 
 settings = Settings()  # singleton
