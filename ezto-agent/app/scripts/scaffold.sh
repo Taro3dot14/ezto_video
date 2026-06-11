@@ -90,7 +90,7 @@ fi
 
 echo "▸ 在 $TARGET 创建 Vite + React + TS 项目"
 echo "▸ 使用主题：$THEME"
-npx --yes create-vite "$TARGET" --template react-ts 2>&1
+npx --yes create-vite "$TARGET" --template react-ts --no-interactive 2>&1
 
 cd "$TARGET"
 echo "▸ 安装依赖（可能要等一会）..."

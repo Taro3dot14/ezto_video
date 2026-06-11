@@ -20,6 +20,29 @@ from app.core.logger import logger
 
 from .state import ToolCallRecord, VideoWorkflowState
 
+# ── Scaffold log buffer (thread-safe, consumed by SSE endpoint) ──
+
+_scaffold_logs: dict[str, list[str]] = {}
+_scaffold_logs_lock = threading.Lock()
+
+
+def _push_scaffold_log(thread_id: str, line: str) -> None:
+    """Append a scaffold output line for real-time SSE streaming."""
+    with _scaffold_logs_lock:
+        _scaffold_logs.setdefault(thread_id, []).append(line)
+
+
+def drain_scaffold_log(thread_id: str, seen: int = 0) -> tuple[list[str], int]:
+    """Get new scaffold log lines since `seen` count. Returns (lines, new_count)."""
+    with _scaffold_logs_lock:
+        lines = _scaffold_logs.get(thread_id, [])
+    return lines[seen:], len(lines)
+
+
+def _clear_scaffold_log(thread_id: str) -> None:
+    with _scaffold_logs_lock:
+        _scaffold_logs.pop(thread_id, None)
+
 
 def _record_tool_call(
     state: VideoWorkflowState,
@@ -174,6 +197,7 @@ def run_scaffold(
     # Stream both stdout/stderr in real-time via background threads
     stdout_lines: list[str] = []
     stderr_lines: list[str] = []
+    thread_id = state.get("thread_id", "unknown")
 
     def _read_stream(stream, sink, log_fn):
         assert stream is not None
@@ -181,6 +205,7 @@ def run_scaffold(
             line = line.rstrip("\n")
             sink.append(line)
             log_fn("[scaffold] %s", line)
+            _push_scaffold_log(thread_id, line)
 
     threads = [
         threading.Thread(
@@ -202,6 +227,8 @@ def run_scaffold(
     finally:
         for t in threads:
             t.join(timeout=3)
+        # Keep logs in buffer for SSE to read; clear after node completes
+        # (the caller in web_video.py sends state update, SSE picks it up)
 
     return subprocess.CompletedProcess(
         args=command,

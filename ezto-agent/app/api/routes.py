@@ -12,6 +12,8 @@ from fastapi.responses import StreamingResponse
 
 from app.core.logger import logger, log_api_request
 
+from app.runtime.tool_adapters import drain_scaffold_log
+
 from .models import (
     ArtifactInfo,
     ErrorResponse,
@@ -147,6 +149,7 @@ async def workflow_events(thread_id: str):
         last_node_count = -1
         last_think_count = 0
         last_pending_interrupt: dict | None = None
+        last_scaffold_count = 0
         while True:
             state = mgr.get_state(thread_id)
             if state is None:
@@ -162,6 +165,16 @@ async def workflow_events(thread_id: str):
             if new_think:
                 last_think_count = len(thinking)
                 yield f"event: think\ndata: {json.dumps(new_think, ensure_ascii=False)}\n\n"
+
+            # Push new scaffold log lines as thinking events (type="step")
+            # so they appear inline in the ExecutionStream.
+            new_scaffold, last_scaffold_count = drain_scaffold_log(thread_id, last_scaffold_count)
+            if new_scaffold:
+                scaffold_think = [
+                    {"type": "step", "content": line, "ts": time.time()}
+                    for line in new_scaffold
+                ]
+                yield f"event: think\ndata: {json.dumps(scaffold_think, ensure_ascii=False)}\n\n"
 
             # Push state change when nodes advance OR when pending_interrupt appears
             pi_changed = current_pi and current_pi != last_pending_interrupt
