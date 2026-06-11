@@ -379,8 +379,9 @@ def wv_scaffold_presentation(state: VideoWorkflowState) -> dict:
         logger.info("Scaffold completed OK, starting dev server…")
         try:
             target = Path(state.get("workspace_root", ".")) / _PPT_DIR
-            run_dev_server(state, cwd=target, port=5174)
-            updates["presentation_url"] = "http://localhost:5174"
+            port = settings.presentation_port
+            run_dev_server(state, cwd=target, port=port)
+            updates["presentation_url"] = f"http://localhost:{port}"
         except Exception as e:
             logger.warning("Could not start dev server: %s", e)
             updates["presentation_url"] = None

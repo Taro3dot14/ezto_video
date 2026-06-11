@@ -35,8 +35,10 @@ class Settings(BaseSettings):
     cors_origins: list[str] = [
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://localhost:5202",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
+        "http://127.0.0.1:5202",
     ]
 
     # ── DeepSeek LLM ──
@@ -56,6 +58,9 @@ class Settings(BaseSettings):
 
     # ── Workspace ──
     workspace_root: str = "workspace"
+
+    # ── Presentation ──
+    presentation_port: int = 5202
 
     # ── Project root for finding refs/themes/scripts ──
     project_root: str = str(Path(".").resolve())

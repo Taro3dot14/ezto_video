@@ -71,16 +71,6 @@ function groupEvents(
     groups.push(current);
   }
 
-  for (const node of completedNodes) {
-    if (!groups.find((g) => g.nodeName === node)) {
-      groups.push({
-        nodeName: node,
-        status: "completed",
-        events: [],
-        startTs: 0,
-      });
-    }
-  }
 
   if (
     currentNode &&
