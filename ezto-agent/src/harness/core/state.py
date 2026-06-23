@@ -56,7 +56,10 @@ class VideoWorkflowState(TypedDict):
     current_phase: str
     current_node: str
     completed_nodes: list[str]
-    thinking_log: list[dict]
+    execution_trace: list[dict]
+    execution_revision: NotRequired[int]
+    token_usage: NotRequired[dict]
+    thinking_log: list[dict]  # deprecated — use execution_trace
     current_chapter_index: int
     total_chapters: int
     pending_interrupt: dict | None
@@ -74,6 +77,8 @@ class VideoWorkflowState(TypedDict):
     selected_theme: NotRequired[str | None]
     selected_mode: NotRequired[Literal["A", "B", "C"] | None]
     synthesize_audio: NotRequired[bool | None]
+    approved_chapter_ids: NotRequired[list[str]]
+    chapter_missing_assets: NotRequired[dict[str, Any]]  # chapter_id → {items, note}
 
     # ── validation ──
     validation_results: list[ValidationResult]

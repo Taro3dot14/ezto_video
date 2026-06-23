@@ -45,13 +45,22 @@ body {
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Type scale (used by primitive classes below; chapters can use
-        these OR write hard-coded sizes — whatever the content needs) ── */
+        these OR write hard-coded sizes — projection floor for video) ── */
   --t-display-1:   clamp(140px, 11vw, 200px);
-  --t-display-2:   clamp(80px, 7vw, 128px);
-  --t-h1:          clamp(56px, 5vw, 88px);
-  --t-h2:          clamp(40px, 3.6vw, 60px);
-  --t-body:        20px;
+  --t-display-2:   clamp(96px, 8vw, 140px);
+  --t-h1:          clamp(72px, 6vw, 96px);
+  --t-h2:          clamp(48px, 4vw, 72px);
+  --t-h3:          clamp(36px, 3.2vw, 48px);
+  --t-body:        36px;
+  --t-cue:         28px;
   --t-micro:       12px;
+
+  /* ── Projection readability tokens (chapters SHOULD use for primary copy) ── */
+  --t-projection-hero:    clamp(96px, 8vw, 140px);
+  --t-projection-title:   clamp(72px, 6vw, 96px);
+  --t-projection-body:    36px;
+  --t-projection-caption: 28px;
+  --card-min-width:       min(1056px, 100%);
 
   /* ── Tracking presets (used by primitive classes) ── */
   --track-tight:   -0.025em;   /* large serif display */
@@ -116,6 +125,41 @@ body {
  * 3. Stage chrome — letterbox + 16:9 fitter + raw 1920×1080 frame.
  *    The fitter is sized to ACTUAL visible px so flex-centering is exact.
  * ───────────────────────────────────────────────────────────────────── */
+.review-hint {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  max-width: min(92vw, 720px);
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+.review-position {
+  position: fixed;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.72);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
 .app-shell {
   position: fixed;
   inset: 0;
@@ -208,10 +252,10 @@ body {
 }
 .kicker {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--t-cue);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-mute);
+  color: var(--text-2);
 }
 
 /* hero figure / hero number — theme controls font, style, weight */
@@ -219,6 +263,7 @@ body {
   font-family: var(--hero-num-font);
   font-style: var(--hero-num-style);
   font-weight: var(--hero-num-weight);
+  font-size: var(--t-display-1);
   letter-spacing: var(--hero-num-track);
   font-variant-numeric: tabular-nums;
   line-height: 0.9;
@@ -362,6 +407,8 @@ body {
   border: var(--bw-1) solid var(--rule);
   border-radius: var(--r-card);
   box-shadow: var(--card-shadow, none);
+  padding: var(--space-7);
+  min-width: var(--card-min-width);
 }
 .card-glass {
   background: var(--card-glass-bg, rgba(255, 255, 255, 0.06));

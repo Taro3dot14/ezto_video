@@ -11,7 +11,6 @@ import pytest
 
 from harness.workflow.nodes.web import (
     wv_scaffold_presentation,
-    wv_remove_example_chapter,
     wv_build_chapter_1,
     wv_checkpoint_chapter_1_node,
     wv_build_chapter_n,
@@ -62,37 +61,6 @@ def _base_state(**overrides) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════
-# wv_remove_example_chapter
-# ═══════════════════════════════════════════════════════════════
-
-class TestRemoveExampleChapter:
-    def test_guard_blocks_without_checkpoint(self):
-        """Should raise PolicyViolation if checkpoint_plan not confirmed."""
-        state = _base_state(user_confirmations={})
-        with pytest.raises(Exception):  # PolicyViolation
-            wv_remove_example_chapter(state)
-
-    def test_removes_example_when_exists(self):
-        state = _base_state()
-        ws = state[_WS]
-        example = Path(ws, _PPT, "src", "chapters", "01-example")
-        example.mkdir(parents=True)
-        (example / "Example.tsx").write_text("// example")
-        (example / "narrations.ts").write_text("// narrations")
-        assert example.exists()
-
-        result = wv_remove_example_chapter(state)
-        assert not example.exists()
-        assert result["current_chapter_index"] == 1
-        assert result["current_node"] == "wv_remove_example_chapter"
-
-    def test_noop_when_example_absent(self):
-        state = _base_state()
-        result = wv_remove_example_chapter(state)
-        assert result["current_chapter_index"] == 1
-
-
-# ═══════════════════════════════════════════════════════════════
 # wv_scaffold_presentation
 # ═══════════════════════════════════════════════════════════════
 
@@ -130,37 +98,30 @@ class TestScaffoldPresentation:
 # ═══════════════════════════════════════════════════════════════
 
 class TestBuildChapter1:
-    @patch("harness.workflow.nodes.web.WebBuildAgent")
-    def test_agent_success(self, mock_agent_cls):
-        mock_agent = MagicMock()
-        mock_agent.run.return_value = MagicMock(
+    @patch("harness.workflow.nodes.web.run_chapter_pipeline")
+    def test_agent_success(self, mock_pipeline):
+        mock_pipeline.return_value = MagicMock(
             success=True, iterations=8, tool_calls=7,
-            content="built chapter 1", files_created=[]
+            content="built chapter 1", files_created=[],
         )
-        mock_agent_cls.return_value = mock_agent
 
         state = _base_state()
         ws = state[_WS]
-        # Create outline so parse_outline_chapters finds it
         outline = Path(ws, "outline.md")
         outline.write_text("## Chapter 1 — Test Chapter\n## Chapter 2 — Another\n")
-
-        # Create script so agent can read it
         Path(ws, "script.md").write_text("## Script\n\nTest script content")
 
         result = wv_build_chapter_1(state)
-        mock_agent.run.assert_called_once()
+        mock_pipeline.assert_called_once()
         assert result["current_node"] == "wv_build_chapter_1"
         assert "thinking_log" in result
 
-    @patch("harness.workflow.nodes.web.WebBuildAgent")
-    def test_agent_failure(self, mock_agent_cls):
-        mock_agent = MagicMock()
-        mock_agent.run.return_value = MagicMock(
+    @patch("harness.workflow.nodes.web.run_chapter_pipeline")
+    def test_agent_failure(self, mock_pipeline):
+        mock_pipeline.return_value = MagicMock(
             success=False, iterations=50, tool_calls=20,
-            content="max iterations", files_created=[]
+            content="max iterations", files_created=[],
         )
-        mock_agent_cls.return_value = mock_agent
 
         state = _base_state()
         ws = state[_WS]
@@ -171,15 +132,13 @@ class TestBuildChapter1:
         assert result.get("errors")
         assert "max iterations" in result["errors"][0]["error"]
 
-    @patch("harness.workflow.nodes.web.WebBuildAgent")
-    def test_agent_success_but_files_missing(self, mock_agent_cls):
+    @patch("harness.workflow.nodes.web.run_chapter_pipeline")
+    def test_agent_success_but_files_missing(self, mock_pipeline):
         """Agent says success but didn't write files."""
-        mock_agent = MagicMock()
-        mock_agent.run.return_value = MagicMock(
+        mock_pipeline.return_value = MagicMock(
             success=True, iterations=3, tool_calls=1,
-            content="done", files_created=[]
+            content="done", files_created=[],
         )
-        mock_agent_cls.return_value = mock_agent
 
         state = _base_state()
         ws = state[_WS]
@@ -196,39 +155,36 @@ class TestBuildChapter1:
 # ═══════════════════════════════════════════════════════════════
 
 class TestBuildChapterN:
-    @patch("harness.workflow.nodes.web.WebBuildAgent")
-    def test_builds_chapter_2_files_present(self, mock_agent_cls):
+    @patch("harness.workflow.nodes.web.run_chapter_pipeline")
+    def test_builds_chapter_2_files_present(self, mock_pipeline):
         """Agent succeeds AND writes files → happy path."""
         state = _base_state(current_chapter_index=1)
         ws = state[_WS]
         Path(ws, "outline.md").write_text("## Chapter 1 — First\n## Chapter 2 — Second\n")
         Path(ws, "script.md").write_text("# Script content")
 
-        # Agent mock — writes files as side effect
-        def _agent_run(**kw):
+        def _pipeline_run(_state, **kw):
             ch_dir = Path(ws, _PPT, "src", "chapters", kw["chapter_id"])
             ch_dir.mkdir(parents=True, exist_ok=True)
             (ch_dir / "index.tsx").write_text("export default () => null;")
             (ch_dir / "narrations.ts").write_text("export const narrations = [];")
             return MagicMock(success=True, iterations=6, tool_calls=5)
 
-        mock_agent = MagicMock()
-        mock_agent.run.side_effect = _agent_run
-        mock_agent_cls.return_value = mock_agent
+        mock_pipeline.side_effect = _pipeline_run
 
-        result = wv_build_chapter_n(state)
+        with patch("harness.workflow.nodes.web.refresh_preview_after_registry") as mock_refresh:
+            result = wv_build_chapter_n(state)
+        mock_refresh.assert_called_once()
         assert result["current_chapter_index"] == 2
         assert result["total_chapters"] == 2
 
-    @patch("harness.workflow.nodes.web.WebBuildAgent")
-    def test_builds_chapter_2_files_missing(self, mock_agent_cls):
+    @patch("harness.workflow.nodes.web.run_chapter_pipeline")
+    def test_builds_chapter_2_files_missing(self, mock_pipeline):
         """Agent says success but no files → should return error."""
-        mock_agent = MagicMock()
-        mock_agent.run.return_value = MagicMock(
+        mock_pipeline.return_value = MagicMock(
             success=True, iterations=3, tool_calls=1,
-            content="done", files_created=[]
+            content="done", files_created=[],
         )
-        mock_agent_cls.return_value = mock_agent
 
         state = _base_state(current_chapter_index=1)
         ws = state[_WS]

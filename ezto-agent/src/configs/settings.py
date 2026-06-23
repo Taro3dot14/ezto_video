@@ -5,7 +5,17 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from typing import Literal
+
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ChapterBuildMode = Literal["sub_agent", "agent_team"]
+
+CHAPTER_BUILD_MODE_LABELS: dict[str, str] = {
+    "sub_agent": "Sub Agent 模式",
+    "agent_team": "Agent Team 模式",
+}
 
 # .env 在项目根，settings.py 在 src/configs/
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -37,6 +47,9 @@ class Settings(BaseSettings):
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com"
     deepseek_model: str = "deepseek-v4-pro"
+    # Per-role routing (falls back to deepseek_model when empty)
+    deepseek_model_content: str = "deepseek-v4-flash"
+    deepseek_model_web_build: str = "deepseek-v4-pro"
     deepseek_max_tokens: int = 8192
     deepseek_temperature: float = 0.7
 
@@ -51,6 +64,36 @@ class Settings(BaseSettings):
 
     # ── WebBuildAgent ──
     web_build_agent_max_iterations: int = 50
+    # Chapter implementation mode (see harness/agent/chapter_build.py):
+    #   sub_agent   — Builder → Reviewer 子 Agent → Repair → Verify
+    #   agent_team  — Builder → [Reviewer → 三方会议 → Repair]* → Verify
+    chapter_build_mode: ChapterBuildMode = "sub_agent"
+    chapter_review_max_rounds: int = 4   # Review ↔ Repair cycles (initial + rechecks)
+    chapter_repair_max_rounds: int = 4   # Max Repair attempts per chapter build
+
+    @field_validator("chapter_build_mode", mode="before")
+    @classmethod
+    def _normalize_chapter_build_mode(cls, v: object) -> object:
+        if not isinstance(v, str):
+            return v
+        legacy = {
+            "self_review": "sub_agent",
+            "sub_agent_review": "sub_agent",
+            "team_discuss": "agent_team",
+        }
+        return legacy.get(v.strip(), v)
+
+    # ── Phase 1 content (script.md / outline.md validate-repair loop) ──
+    content_script_max_repair_retries: int = 5
+    content_outline_max_repair_retries: int = 5
+
+    # ── Agent Tool ──
+    agent_tool_json_max_length: int = -1  # -1: no limit
+    agent_use_native_tools: bool = True
+    # Read-tool output shaping (read_file, review_chapter_bundle, etc.)
+    agent_read_max_lines: int = -1        # truncate when line count exceeds this (≤0 = no limit)
+    agent_read_head_lines: int = 30       # lines kept from the start after truncation
+    agent_read_tail_lines: int = 20       # lines kept from the end after truncation
 
     # ── 路径（全部绝对路径，不依赖 CWD） ──
     project_root: str = str(_PROJECT_ROOT)

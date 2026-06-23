@@ -8,12 +8,22 @@ from pathlib import Path
 from typing import Any, Literal
 
 from backend.core import llm
+from backend.core.llm import MODEL_ROLE_CONTENT
 from configs import settings
 from backend.core.logger import logger
 from harness.core.state import VideoWorkflowState, ValidationResult
-from harness.workflow.guards import require_ref_loaded
+from harness.workflow.guards import require_ref_loaded, ensure_workspace_ready, ensure_artifact_parent
 from harness.workflow.interruptions import checkpoint_plan
-from harness.workflow.artifacts import think, get_repair_count, MAX_REPAIR_RETRIES
+from harness.workflow.artifacts import think, get_repair_count, get_max_repair_retries, safe_repair_write
+
+
+def _emit_repair_targets(tlog: list[dict], failed_checks: list[str]) -> None:
+    """Show optimization round targets after the round header."""
+    if not failed_checks:
+        return
+    think(tlog, "validation", f"发现了 {len(failed_checks)} 个优化目标")
+    for check in failed_checks:
+        think(tlog, "validation", f"  · {check}")
 
 
 def wv_identify_input(state: VideoWorkflowState) -> dict:
@@ -26,7 +36,7 @@ def wv_identify_input(state: VideoWorkflowState) -> dict:
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Classify the following text as article, script, or none.\n"
         f"Reply with ONLY that single word.\n\n{text[:2000]}"
-    )}], temperature=0.0)
+    )}], temperature=0.0, role=MODEL_ROLE_CONTENT)
 
     detected: Literal["article", "script", "none"] = "none"
     for kw in ("article", "script"):
@@ -37,14 +47,30 @@ def wv_identify_input(state: VideoWorkflowState) -> dict:
     return {"input_type": detected}
 
 
+def _load_or_seed_script(state: VideoWorkflowState, script_path: str) -> str:
+    """Read script.md or seed from user_request when the file is missing."""
+    target = ensure_artifact_parent(script_path)
+    if target.exists():
+        return target.read_text(encoding="utf-8")
+    seed = ""
+    if state.get("input_type") == "script":
+        seed = state.get("user_request", "").strip()
+    if seed:
+        target.write_text(seed, encoding="utf-8")
+        logger.info("Seeded missing script.md from user_request (%d chars)", len(seed))
+        return seed
+    return ""
+
+
 def wv_prepare_source_files(state: VideoWorkflowState) -> dict:
     ref_script = require_ref_loaded(state, "SCRIPT-STYLE.md")
     ref_outline = require_ref_loaded(state, "OUTLINE-FORMAT.md")
 
+    ws_update = ensure_workspace_ready(state)
     text = state.get("user_request", "")
     input_type = state.get("input_type", "none")
     language = state.get("language", "zh-CN")
-    paths = state.get("artifact_paths", {})
+    paths = ws_update["artifact_paths"]
 
     if input_type == "none":
         logger.warning("No input content — cannot generate script/outline")
@@ -53,13 +79,17 @@ def wv_prepare_source_files(state: VideoWorkflowState) -> dict:
                 "current_node": "wv_prepare_source_files"}
 
     if input_type == "article":
-        article_path = paths.get("article.md", "article.md")
-        Path(article_path).write_text(text, encoding="utf-8")
+        article_path = paths["article.md"]
+        ensure_artifact_parent(article_path).write_text(text, encoding="utf-8")
         logger.info("Saved article.md (%d chars)", len(text))
 
-    tlog = think(None, "step", "正在参考 SCRIPT-STYLE.md + OUTLINE-FORMAT.md 生成稿子和大纲")
+    if input_type == "script":
+        script_path = paths["script.md"]
+        ensure_artifact_parent(script_path).write_text(text, encoding="utf-8")
+        logger.info("Saved input script.md (%d chars)", len(text))
+
+    tlog = think(None, "step", "正在参考 SCRIPT-STYLE.md + OUTLINE-FORMAT.md 生成口播稿和大纲")
     logger.info("Generating script.md + outline.md (input_type=%s, language=%s)", input_type, language)
-    think(tlog, "llm", "调用 DeepSeek 生成 script.md（口播稿）+ outline.md（大纲）…")
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Language: {language}\n"
         f"Input type: {input_type}\n\n"
@@ -68,41 +98,43 @@ def wv_prepare_source_files(state: VideoWorkflowState) -> dict:
         f"Input text:\n{text}\n\n"
         f"Write script.md (narration script) and outline.md (chapter outline).\n"
         f"Separate them with: ===OUTLINE==="
-    )}])
+    )}], role=MODEL_ROLE_CONTENT)
 
     parts = reply.split("===OUTLINE===")
     script_content = parts[0].strip()
     outline_content = "===OUTLINE===".join(parts[1:]).strip() if len(parts) >= 2 else "# Outline\n## Chapter 1\n\n(TODO)"
 
-    script_path = paths.get("script.md", "script.md")
-    outline_path = paths.get("outline.md", "outline.md")
-    Path(script_path).write_text(script_content, encoding="utf-8")
-    Path(outline_path).write_text(outline_content, encoding="utf-8")
+    script_path = paths["script.md"]
+    outline_path = paths["outline.md"]
+    ensure_artifact_parent(script_path).write_text(script_content, encoding="utf-8")
+    ensure_artifact_parent(outline_path).write_text(outline_content, encoding="utf-8")
 
-    think(tlog, "file_write", f"已生成 script.md ({len(script_content)} 字符)")
-    think(tlog, "file_write", f"已生成 outline.md ({len(outline_content)} 字符)")
+    think(tlog, "file_write", f"已生成口播稿（{len(script_content)} 字）")
+    think(tlog, "file_write", f"已生成大纲（{len(outline_content)} 字）")
     logger.info("Written script.md (%d chars) + outline.md (%d chars)",
                 len(script_content), len(outline_content))
-    return {"current_node": "wv_prepare_source_files",
+    return {**ws_update,
+            "current_node": "wv_prepare_source_files",
             "created_files": [script_path, outline_path],
             "thinking_log": tlog}
 
 
 def wv_validate_script(state: VideoWorkflowState) -> dict:
     ref = require_ref_loaded(state, "SCRIPT-STYLE.md")
-    tlog = think(None, "step", "正在参考 SCRIPT-STYLE.md 进行自检…")
-    script_path = state.get("artifact_paths", {}).get("script.md")
+    ws_update = ensure_workspace_ready(state)
+    tlog = think(None, "step", "正在对照 SCRIPT-STYLE.md 核对口播风格…")
+    script_path = ws_update["artifact_paths"].get("script.md")
     if not script_path or not Path(script_path).exists():
         logger.warning("script.md not found at %s", script_path)
-        think(tlog, "validation", "script.md 文件未找到")
-        return {"validation_results": [ValidationResult(
+        think(tlog, "validation", "未找到口播稿文件")
+        return {**ws_update,
+                "validation_results": [ValidationResult(
             node="wv_validate_script", target="script.md", passed=False,
             failed_checks=["script.md not found"], details="")],
             "thinking_log": tlog}
 
     content = Path(script_path).read_text(encoding="utf-8")
     logger.info("Validating script.md (%d chars)", len(content))
-    think(tlog, "llm", "调用 DeepSeek 校验脚本质量…")
 
     article_path = state.get("artifact_paths", {}).get("article.md", "")
     article_hint = ""
@@ -131,7 +163,7 @@ def wv_validate_script(state: VideoWorkflowState) -> dict:
         f"Script:\n{content}\n\n"
         f"Respond with JSON only:\n"
         f'{{"passed":bool,"failed_checks":["..."],"details":"..."}}'
-    )}], temperature=0.0)
+    )}], temperature=0.0, role=MODEL_ROLE_CONTENT)
 
     try:
         jresult = json.loads(reply)
@@ -141,13 +173,13 @@ def wv_validate_script(state: VideoWorkflowState) -> dict:
     passed = bool(jresult.get("passed", True))
     checks = jresult.get("failed_checks", [])
     if passed:
-        think(tlog, "validation", "✅ script.md 校验通过")
+        think(tlog, "validation", "口播稿风格核对通过")
     else:
-        think(tlog, "validation", f"❌ 发现 {len(checks)} 个问题")
-        for c in checks:
-            think(tlog, "validation", f"  • {c}")
+        if get_repair_count(state, "script.md") >= get_max_repair_retries("script.md"):
+            think(tlog, "validation", "本轮优化次数已用尽，继续后续流程")
     logger.info("Script validation: %s (failed_checks=%s)", "PASS" if passed else "FAIL", checks)
-    return {"validation_results": [ValidationResult(
+    return {**ws_update,
+            "validation_results": [ValidationResult(
         node="wv_validate_script", target="script.md",
         passed=passed, failed_checks=checks, details=jresult.get("details", ""))],
         "thinking_log": tlog}
@@ -155,49 +187,95 @@ def wv_validate_script(state: VideoWorkflowState) -> dict:
 
 def wv_repair_script(state: VideoWorkflowState) -> dict:
     ref = require_ref_loaded(state, "SCRIPT-STYLE.md")
-    tlog = think(None, "step", "正在修复 script.md…")
-    script_path = state.get("artifact_paths", {}).get("script.md")
-    content = Path(script_path).read_text(encoding="utf-8") if script_path else ""
+    ws_update = ensure_workspace_ready(state)
+    tlog: list[dict] = []
+    script_path = ws_update["artifact_paths"].get("script.md")
+    if not script_path:
+        think(tlog, "repair", "口播稿路径缺失，跳过本轮优化")
+        return {**ws_update, "thinking_log": tlog, "current_node": "wv_repair_script"}
+
+    content = _load_or_seed_script(state, script_path)
 
     validations = state.get("validation_results", [])
     issues = ""
+    failed_checks: list[str] = []
     for v in reversed(validations):
         if v["node"] == "wv_validate_script":
             issues = v.get("details", "") + "\n" + "\n".join(v.get("failed_checks", []))
+            failed_checks = list(v.get("failed_checks", []))
             break
 
-    repair_count = get_repair_count(state, "script.md")
-    think(tlog, "repair", f"第 {repair_count + 1} 次修复, 共 {MAX_REPAIR_RETRIES} 次")
-    logger.info("Repairing script.md (attempt %d/%d, issues=%s)", repair_count + 1, MAX_REPAIR_RETRIES, issues[:200])
-    think(tlog, "llm", "调用 DeepSeek 修复脚本问题…")
-    reply = llm.chat(messages=[{"role": "user", "content": (
-        f"Style guide:\n{ref}\n\nIssues to fix:\n{issues}\n\n"
-        f"Current script:\n{content}\n\nRewrite the full script fixing all issues."
-    )}])
+    source_block = ""
+    article_path = state.get("artifact_paths", {}).get("article.md")
+    if (not content.strip() or len(content) < 300) and article_path and Path(article_path).exists():
+        article_text = Path(article_path).read_text(encoding="utf-8")
+        source_block = (
+            f"\n\nSource article (regenerate the full script from this — current script is empty or too short):\n"
+            f"{article_text[:12000]}\n"
+        )
 
-    Path(script_path).write_text(reply.strip(), encoding="utf-8")
-    think(tlog, "file_write", f"已更新 script.md ({len(reply)} 字符)")
-    logger.info("Repaired script.md rewritten (%d chars)", len(reply))
+    max_retries = get_max_repair_retries("script.md")
+    repair_count = get_repair_count(state, "script.md")
+    attempt = repair_count + 1
+    think(tlog, "repair", f"第 {attempt} 轮优化")
+    _emit_repair_targets(tlog, failed_checks)
+    think(tlog, "step", "正在根据优化目标润色口播稿…")
+    logger.info("Repairing script.md (attempt %d, max %d, issues=%s)",
+                attempt, max_retries, issues[:200])
+
+    prompt = (
+        f"Style guide:\n{ref}\n\nIssues to fix:\n{issues}\n\n"
+        f"Current script:\n{content}\n"
+        f"{source_block}\n"
+        "Rewrite the FULL script fixing all issues.\n"
+        "OUTPUT RULES (mandatory):\n"
+        "- Output ONLY the complete script text — no JSON, no commentary, no questions.\n"
+        "- Keep --- separators between narration beats.\n"
+        "- Preserve all factual content; do not shorten below 60% of the original length.\n"
+        "- Do NOT ask the user to provide the script — write it now."
+    )
+
+    repaired = ""
+    for llm_attempt in range(2):
+        reply = llm.chat(
+            messages=[{"role": "user", "content": prompt}],
+            role=MODEL_ROLE_CONTENT,
+            max_tokens=16384,
+        )
+        repaired, wrote = safe_repair_write(script_path, content, reply or "")
+        if wrote:
+            break
+        logger.warning(
+            "script.md repair attempt %d LLM pass %d produced unusable output (%d chars)",
+            attempt, llm_attempt + 1, len(reply or ""),
+        )
+
+    if not repaired or repaired == content.strip():
+        think(tlog, "repair", "本轮未生成新版本，保留当前口播稿")
+        logger.warning("script.md repair produced no usable content — keeping previous file")
+        repaired = content
+    else:
+        think(tlog, "file_write", f"口播稿已更新（{len(repaired)} 字）")
+        logger.info("Repaired script.md rewritten (%d chars)", len(repaired))
 
     history = list(state.get("repair_history", []))
-    failed_checks = next((v.get("failed_checks", []) for v in reversed(validations)
-                          if v["node"] == "wv_validate_script"), [])
     history.append({"node": "wv_repair_script", "target": "script.md",
                     "failed_checks": failed_checks,
-                    "repair_summary": reply.strip()[:200]})
+                    "repair_summary": repaired.strip()[:200]})
 
-    return {"current_node": "wv_repair_script",
-            "modified_files": [script_path] if script_path else [],
+    return {**ws_update,
+            "current_node": "wv_repair_script",
+            "modified_files": [script_path] if repaired != content else [],
             "thinking_log": tlog,
             "repair_history": history}
 
 
 def wv_validate_outline(state: VideoWorkflowState) -> dict:
     ref = require_ref_loaded(state, "OUTLINE-FORMAT.md")
-    tlog = think(None, "step", "正在校验 outline.md…")
+    tlog = think(None, "step", "正在对照 OUTLINE-FORMAT.md 核对大纲结构…")
     outline_path = state.get("artifact_paths", {}).get("outline.md")
     if not outline_path or not Path(outline_path).exists():
-        think(tlog, "validation", "❌ outline.md 文件未找到")
+        think(tlog, "validation", "未找到大纲文件")
         return {"validation_results": [ValidationResult(
             node="wv_validate_outline", target="outline.md", passed=False,
             failed_checks=["outline.md not found"], details="")],
@@ -205,13 +283,12 @@ def wv_validate_outline(state: VideoWorkflowState) -> dict:
             "current_node": "wv_validate_outline"}
 
     content = Path(outline_path).read_text(encoding="utf-8")
-    think(tlog, "llm", "调用 DeepSeek 校验大纲格式…")
     reply = llm.chat(messages=[{"role": "user", "content": (
         f"Validate this outline against the format spec:\n\n{ref}\n\n"
         f"Outline:\n{content}\n\n"
         f"JSON response only:\n"
         f'{{"passed":bool,"failed_checks":["..."],"details":"..."}}'
-    )}], temperature=0.0)
+    )}], temperature=0.0, role=MODEL_ROLE_CONTENT)
 
     try:
         result = json.loads(reply)
@@ -221,11 +298,10 @@ def wv_validate_outline(state: VideoWorkflowState) -> dict:
     passed = bool(result.get("passed", True))
     checks = result.get("failed_checks", [])
     if passed:
-        think(tlog, "validation", "✅ outline.md 校验通过")
+        think(tlog, "validation", "大纲结构核对通过")
     else:
-        think(tlog, "validation", f"❌ 发现 {len(checks)} 个问题")
-        for c in checks:
-            think(tlog, "validation", f"  • {c}")
+        if get_repair_count(state, "outline.md") >= get_max_repair_retries("outline.md"):
+            think(tlog, "validation", "本轮优化次数已用尽，继续后续流程")
 
     return {"validation_results": [ValidationResult(
         node="wv_validate_outline", target="outline.md",
@@ -236,31 +312,60 @@ def wv_validate_outline(state: VideoWorkflowState) -> dict:
 
 def wv_repair_outline(state: VideoWorkflowState) -> dict:
     ref = require_ref_loaded(state, "OUTLINE-FORMAT.md")
+    tlog: list[dict] = []
     outline_path = state.get("artifact_paths", {}).get("outline.md")
     content = Path(outline_path).read_text(encoding="utf-8") if outline_path else ""
 
     issues = ""
+    failed_checks: list[str] = []
     for v in reversed(state.get("validation_results", [])):
         if v["node"] == "wv_validate_outline":
             issues = v.get("details", "") + "\n" + "\n".join(v.get("failed_checks", []))
+            failed_checks = list(v.get("failed_checks", []))
             break
 
-    reply = llm.chat(messages=[{"role": "user", "content": (
+    max_retries = get_max_repair_retries("outline.md")
+    repair_count = get_repair_count(state, "outline.md")
+    attempt = repair_count + 1
+    think(tlog, "repair", f"第 {attempt} 轮优化")
+    _emit_repair_targets(tlog, failed_checks)
+    think(tlog, "step", "正在根据优化目标调整大纲…")
+    logger.info("Repairing outline.md (attempt %d, max %d)", attempt, max_retries)
+    prompt = (
         f"Format spec:\n{ref}\n\nIssues:\n{issues}\n\n"
-        f"Current outline:\n{content}\n\nRewrite the full outline fixing all issues."
-    )}])
-    Path(outline_path).write_text(reply.strip(), encoding="utf-8")
+        f"Current outline:\n{content}\n\n"
+        "Rewrite the FULL outline fixing all issues.\n"
+        "OUTPUT RULES: output ONLY the outline text — no JSON, no commentary, no questions."
+    )
+    repaired = ""
+    for llm_attempt in range(2):
+        reply = llm.chat(
+            messages=[{"role": "user", "content": prompt}],
+            role=MODEL_ROLE_CONTENT,
+            max_tokens=16384,
+        )
+        repaired, wrote = safe_repair_write(outline_path, content, reply or "")
+        if wrote:
+            break
+        logger.warning(
+            "outline.md repair attempt %d LLM pass %d produced unusable output (%d chars)",
+            attempt, llm_attempt + 1, len(reply or ""),
+        )
 
-    validations = state.get("validation_results", [])
+    if not repaired or repaired == content.strip():
+        think(tlog, "repair", "本轮未生成新版本，保留当前大纲")
+        repaired = content
+    else:
+        think(tlog, "file_write", f"大纲已更新（{len(repaired)} 字）")
+
     history = list(state.get("repair_history", []))
-    failed_checks = next((v.get("failed_checks", []) for v in reversed(validations)
-                          if v["node"] == "wv_validate_outline"), [])
     history.append({"node": "wv_repair_outline", "target": "outline.md",
                     "failed_checks": failed_checks,
-                    "repair_summary": reply.strip()[:200]})
+                    "repair_summary": repaired.strip()[:200]})
 
     return {"current_node": "wv_repair_outline",
-            "modified_files": [outline_path] if outline_path else [],
+            "modified_files": [outline_path] if repaired != content else [],
+            "thinking_log": tlog,
             "repair_history": history}
 
 

@@ -161,11 +161,19 @@ def log_llm_interaction(
     lines.append("─── REQUEST ───")
     for msg in messages:
         role = msg.get("role", "?")
-        content = msg.get("content", "")
+        content = msg.get("content")
+        if content is None:
+            content = ""
+        elif not isinstance(content, str):
+            content = str(content)
         # Truncate overly long single messages for readability
         if len(content) > 10000:
             content = content[:5000] + f"\n... [TRUNCATED, total {len(content)} chars] ...\n" + content[-5000:]
         lines.append(f"[{role}]")
+        if msg.get("tool_calls"):
+            lines.append(f"(tool_calls: {len(msg['tool_calls'])})")
+        if msg.get("tool_call_id"):
+            lines.append(f"(tool_call_id: {msg['tool_call_id']})")
         lines.append(content)
         lines.append("")
     lines.append("─── RESPONSE ───")

@@ -177,7 +177,7 @@ npm run synthesize-audio -- --provider=edge-tts
      再 PRESENTATION_TTS=<name> npm run synthesize-audio
 
   4. 暂时跳过
-     稿子和 narrations 都在，你自己用任意 TTS 录制即可——文件
+     口播稿和 narrations 都在，你自己用任意 TTS 录制即可——文件
      按 audio-segments.json 的 audio 字段命名就行。
 ```
 
@@ -197,7 +197,7 @@ done
 ```
 
 把每条的实际秒数汇总告诉用户。**重点关注 ≥ 15s 的条目**——口播太长意味
-着该 step 的 narration 写得过密，或者 step 没拆够。让用户决定**改稿子
+着该 step 的 narration 写得过密，或者 step 没拆够。让用户决定**改口播稿
 重合**还是**回章节代码拆 step**。
 
 ---

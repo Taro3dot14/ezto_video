@@ -1,37 +1,18 @@
-import type { ArtifactInfo } from "../api/client";
+import type { ArtifactInfo, TokenUsage } from "../api/client";
+import { displayNodeLabel } from "../workflow/nodeCatalog";
 
 interface Props {
-  currentPhase: string;
-  currentNode: string | null;
   completedNodes: string[];
+  currentNode: string | null;
   artifacts: ArtifactInfo[];
+  tokenUsage?: TokenUsage;
 }
 
-/* ── Phase data ── */
-
-const PHASES = [
-  { key: "phase1", label: "内容编写", en: "Phase 1" },
-  { key: "phase2", label: "网页开发", en: "Phase 2" },
-  { key: "phase3", label: "音频合成", en: "Phase 3" },
-  { key: "phase4", label: "录屏 + 后期", en: "Phase 4" },
-];
-
-function phaseStatus(
-  key: string,
-  current: string,
-  completedNodes: string[],
-): "active" | "done" | "pending" {
-  if (key === current) return "active";
-  const order = PHASES.map((p) => p.key);
-  const curIdx = order.indexOf(current);
-  const thisIdx = order.indexOf(key);
-  if (thisIdx < curIdx) return "done";
-  // Check if all nodes up to this phase boundary are completed
-  if (thisIdx < curIdx) return "done";
-  return "pending";
+function fmtTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
 }
-
-/* ── Helpers ── */
 
 function fmtSize(bytes: number | null): string {
   if (!bytes || bytes === 0) return "";
@@ -41,63 +22,71 @@ function fmtSize(bytes: number | null): string {
 }
 
 export default function WorkflowSidebar({
-  currentPhase,
-  currentNode,
   completedNodes,
+  currentNode,
   artifacts,
+  tokenUsage,
 }: Props) {
   const generated = artifacts.filter((a) => a.exists);
   const pending = artifacts.filter((a) => !a.exists);
-  const completedCount = completedNodes.length;
+  const modelRows = Object.entries(tokenUsage?.by_model ?? {}).sort(
+    (a, b) => b[1].total_tokens - a[1].total_tokens,
+  );
+  const total = tokenUsage?.total;
+  const maxTokens = modelRows[0]?.[1].total_tokens ?? 0;
 
   return (
     <div className="wf-sidebar">
-      {/* ── Session ── */}
       <div className="wf-sidebar-section">
-        <div className="wf-section-title">Session</div>
-        <div className="wf-session-grid">
-          <div className="wf-session-row">
-            <span className="wf-session-label">Status</span>
-            <span className="wf-session-value wf-status-running">Running</span>
-          </div>
-          <div className="wf-session-row">
-            <span className="wf-session-label">Phase</span>
-            <span className="wf-session-value">{currentPhase}</span>
-          </div>
-          <div className="wf-session-row">
-            <span className="wf-session-label">Current</span>
-            <span className="wf-session-value wf-session-mono">
-              {currentNode || "—"}
+        <div className="wf-section-title wf-section-title-row">
+          <span>Token 用量</span>
+          {total && total.total_tokens > 0 && (
+            <span className="wf-token-header-total">
+              {fmtTokens(total.total_tokens)}
             </span>
-          </div>
-          <div className="wf-session-row">
-            <span className="wf-session-label">Completed</span>
-            <span className="wf-session-value">{completedCount}</span>
-          </div>
+          )}
         </div>
+        {modelRows.length === 0 ? (
+          <div className="wf-token-empty">暂无消耗</div>
+        ) : (
+          <div className="wf-token-card">
+            <ul className="wf-token-list" role="list">
+              {modelRows.map(([model, stats]) => {
+                const share =
+                  maxTokens > 0
+                    ? Math.round((stats.total_tokens / maxTokens) * 100)
+                    : 0;
+                return (
+                  <li key={model} className="wf-token-item">
+                    <div className="wf-token-item-head">
+                      <span className="wf-token-model" title={model}>
+                        {model}
+                      </span>
+                      <span className="wf-token-amount">
+                        {fmtTokens(stats.total_tokens)}
+                      </span>
+                    </div>
+                    <div
+                      className="wf-token-bar"
+                      role="presentation"
+                      aria-hidden="true"
+                    >
+                      <span
+                        className="wf-token-bar-fill"
+                        style={{ width: `${share}%` }}
+                      />
+                    </div>
+                    <div className="wf-token-meta">
+                      {stats.calls} 次调用
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </div>
 
-      {/* ── Phases ── */}
-      <div className="wf-sidebar-section">
-        <div className="wf-section-title">Phases</div>
-        <div className="wf-phase-list">
-          {PHASES.map((p) => {
-            const st = phaseStatus(p.key, currentPhase, completedNodes);
-            return (
-              <div
-                key={p.key}
-                className={`wf-phase-item wf-phase-${st}`}
-              >
-                <span className="wf-phase-dot" />
-                <span className="wf-phase-en">{p.en}</span>
-                <span className="wf-phase-label">{p.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Files ── */}
       <div className="wf-sidebar-section">
         <div className="wf-section-title">Files</div>
         {generated.length > 0 && (
@@ -128,7 +117,6 @@ export default function WorkflowSidebar({
         )}
       </div>
 
-      {/* ── Node History ── */}
       <div className="wf-sidebar-section">
         <div className="wf-section-title">Node History</div>
         <div className="wf-node-history">
@@ -138,13 +126,13 @@ export default function WorkflowSidebar({
           {completedNodes.map((node, i) => (
             <div key={i} className="wf-history-item wf-history-done">
               <span className="wf-history-icon">✓</span>
-              <span className="wf-history-name">{node}</span>
+              <span className="wf-history-name">{displayNodeLabel(node)}</span>
             </div>
           ))}
           {currentNode && (
             <div className="wf-history-item wf-history-current">
               <span className="wf-history-icon">●</span>
-              <span className="wf-history-name">{currentNode}</span>
+              <span className="wf-history-name">{displayNodeLabel(currentNode)}</span>
             </div>
           )}
         </div>

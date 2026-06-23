@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import subprocess
 import threading
 import time
@@ -49,6 +50,19 @@ def _record_tool_call(
     calls = state.get("tool_calls", [])
     calls.append(record)
     return record
+
+
+def normalize_presentation_command(command: str) -> tuple[str, str | None]:
+    """Strip presentation/ prefix when cwd is already presentation/."""
+    if not re.search(r"(?:^|[\s;&|])presentation/", command):
+        return command, None
+    normalized = command
+    if normalized.startswith("presentation/"):
+        normalized = normalized[len("presentation/") :]
+    normalized = re.sub(r"([\s;&|])presentation/", r"\1", normalized)
+    return normalized, (
+        "Note: stripped 'presentation/' prefix — run_shell cwd is already presentation/."
+    )
 
 
 def run_shell(

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { startWorkflow } from "../api/client";
+import { startWorkflow, BackendUnreachableError } from "../api/client";
+import { useProjectList } from "../contexts/ProjectListContext";
 
 export default function NewProjectPage() {
   const navigate = useNavigate();
+  const { refreshProjects } = useProjectList();
   const [inputType, setInputType] = useState<"article" | "script">("article");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,8 +17,10 @@ export default function NewProjectPage() {
     setError(null);
     try {
       const res = await startWorkflow(content, "zh-CN", inputType);
+      refreshProjects();
       navigate(`/workflow/${res.thread_id}`);
     } catch (e) {
+      if (e instanceof BackendUnreachableError) return;
       setError(e instanceof Error ? e.message : "提交失败");
     } finally {
       setSubmitting(false);
@@ -47,7 +51,7 @@ export default function NewProjectPage() {
             checked={inputType === "script"}
             onChange={() => setInputType("script")}
           />
-          <span>口播稿 / 视频脚本（已有稿子）</span>
+          <span>口播稿 / 视频脚本（已有口播稿）</span>
         </label>
       </div>
 

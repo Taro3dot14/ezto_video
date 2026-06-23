@@ -2,9 +2,9 @@
 
 # launch backend server
 conda activate ezto
-cd "$(dirname "$0")/../src"
+cd ezto-agent/src
 uvicorn backend.api.server:app --port 8001
 
 # launch frontend server
-cd frontend
+cd ezto-agent/src/frontend
 npm run dev

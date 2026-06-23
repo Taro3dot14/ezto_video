@@ -1,14 +1,11 @@
+import { displayPhaseLabel } from "../workflow/nodeCatalog";
+
 interface Props {
   currentPhase: string;
   completedNodes: string[];
 }
 
-const PHASES = [
-  { id: "phase1", label: "Phase 1", desc: "内容编写" },
-  { id: "phase2", label: "Phase 2", desc: "网页开发" },
-  { id: "phase3", label: "Phase 3", desc: "音频合成" },
-  { id: "phase4", label: "Phase 4", desc: "录屏 + 后期" },
-];
+const PHASE_IDS = ["phase1", "phase2", "phase3", "phase4"] as const;
 
 export default function PhaseIndicator({ currentPhase, completedNodes }: Props) {
   const phaseOrder = ["phase1", "phase2", "phase3", "phase4"];
@@ -18,17 +15,16 @@ export default function PhaseIndicator({ currentPhase, completedNodes }: Props) 
     <div className="phase-indicator">
       <h4 className="pi-title">工作流阶段</h4>
       <div className="pi-list">
-        {PHASES.map((p, i) => {
-          const isActive = p.id === currentPhase;
-          const isDone = phaseOrder.indexOf(p.id) < currentIdx;
+        {PHASE_IDS.map((id) => {
+          const isActive = id === currentPhase;
+          const isDone = phaseOrder.indexOf(id) < currentIdx;
           return (
             <div
-              key={p.id}
+              key={id}
               className={`pi-item ${isActive ? "active" : ""} ${isDone ? "done" : ""}`}
             >
               <span className="pi-dot" />
-              <span className="pi-label">{p.label}</span>
-              <span className="pi-desc">{p.desc}</span>
+              <span className="pi-label">{displayPhaseLabel(id)}</span>
             </div>
           );
         })}

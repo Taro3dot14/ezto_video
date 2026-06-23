@@ -21,14 +21,17 @@ from harness.workflow.interruptions import (
     checkpoint_chapter_n,
     checkpoint_remaining_batch,
 )
-from harness.services.tools.shell import run_shell
 from harness.services.tools.scaffold import run_scaffold
 from harness.services.tools.npm import run_npm, run_dev_server
-from harness.agent.loop import WebBuildAgent, AgentResult
+from harness.agent.chapter_build import chapter_build_mode_label, run_chapter_pipeline
+from harness.agent.loop import AgentResult
 from harness.workflow.artifacts import (
     think,
     parse_outline_chapters,
-    update_chapter_registry,
+    sync_built_chapter_registry,
+    apply_chapter_checkpoint_approval,
+    update_chapter_meta,
+    refresh_preview_after_registry,
     _PPT_DIR,
 )
 
@@ -51,6 +54,7 @@ def wv_scaffold_presentation(state: VideoWorkflowState) -> dict:
                               "error": f"Scaffold failed: {stderr_tail}"}]
     else:
         logger.info("Scaffold completed OK, starting dev server…")
+        update_chapter_meta(state, [])
         try:
             target = Path(state.get("workspace_root", ".")) / _PPT_DIR
             port = settings.presentation_port
@@ -62,27 +66,41 @@ def wv_scaffold_presentation(state: VideoWorkflowState) -> dict:
     return updates
 
 
-def _ensure_dev_server(state: VideoWorkflowState) -> None:
-    """如果 dev server 挂了，重启。"""
-    import urllib.request
-    url = state.get("presentation_url")
-    if not url:
-        return
-    try:
-        urllib.request.urlopen(f"{url}/?chapter=0", timeout=3)
-    except Exception:
-        logger.warning("Dev server at %s is dead, restarting...", url)
-        target = Path(state.get("workspace_root", ".")) / _PPT_DIR
-        port = settings.presentation_port
-        run_dev_server(state, cwd=target, port=port)
+def _chapter_build_error(node: str, result: AgentResult) -> dict[str, str]:
+    """Format pipeline failure for the workflow UI."""
+    phase = result.phase or ""
+    msg = (result.content or "章节构建失败").strip()
+    if len(msg) > 800:
+        msg = msg[:800] + "…"
+    err: dict[str, str] = {"node": node, "error": msg}
+    if phase:
+        err["phase"] = phase
+    return err
 
 
-def wv_remove_example_chapter(state: VideoWorkflowState) -> dict:
-    guard_not_skip_checkpoint(state, "checkpoint_plan")
-    example = Path(state.get("workspace_root", "."), _PPT_DIR, "src", "chapters", "01-example")
-    if example.exists():
-        run_shell(state, f"rm -rf \"{example.as_posix()}\"")
-    return {"current_chapter_index": 1, "current_node": "wv_remove_example_chapter"}
+def _refresh_preview(state: VideoWorkflowState) -> None:
+    """Restart preview Vite so registry/chapter modules match disk."""
+    refresh_preview_after_registry(state)
+
+
+def _chapter_revision_feedback(state: VideoWorkflowState, checkpoint_key: str) -> str | None:
+    conf = state.get("user_confirmations", {}).get(checkpoint_key, {})
+    if not isinstance(conf, dict) or conf.get("approved") is not False:
+        return None
+    feedback = conf.get("feedback")
+    return feedback.strip() if isinstance(feedback, str) and feedback.strip() else None
+
+
+def _next_chapter_index(state: VideoWorkflowState) -> int:
+    """Advance to next chapter, or rebuild current chapter after rejection."""
+    ch_n_conf = state.get("user_confirmations", {}).get("checkpoint_chapter_n", {})
+    batch_conf = state.get("user_confirmations", {}).get("checkpoint_remaining_batch", {})
+    current = state.get("current_chapter_index", 1)
+    if isinstance(ch_n_conf, dict) and ch_n_conf.get("approved") is False:
+        return max(current, 2)
+    if isinstance(batch_conf, dict) and batch_conf.get("approved") is False:
+        return max(current, 2)
+    return current + 1
 
 
 def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
@@ -98,22 +116,34 @@ def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
     for old in ch_dir.glob("*"):
         old.unlink()
 
-    tlog = think(None, "step", f"WebBuildAgent 构建第 1 章 {ch1['title']}…")
-    logger.info("WebBuildAgent building chapter 1: %s — %s", ch1["id"], ch1["title"])
+    tlog = think(None, "step", f"构建第 1 章 {ch1['title']}（{chapter_build_mode_label()}）…")
+    feedback = _chapter_revision_feedback(state, "checkpoint_chapter_1")
+    if feedback:
+        think(tlog, "step", f"根据验收反馈返工：{feedback[:120]}")
+    logger.info("Building chapter 1: %s — %s (mode=%s)", ch1["id"], ch1["title"], settings.chapter_build_mode)
 
-    agent = WebBuildAgent(state)
-    result = agent.run(
+    result = run_chapter_pipeline(
+        state,
         chapter_id=ch1["id"],
         title=ch1["title"],
         chapter_index=1,
         total_chapters=len(chapters),
+        revision_feedback=feedback,
     )
 
     if not result.success:
-        logger.error("WebBuildAgent failed chapter 1 after %d iterations", result.iterations)
+        phase = result.phase or "?"
+        preview = (result.content or "章节构建失败").strip()[:300]
+        logger.error(
+            "WebBuildAgent failed chapter 1 after %d iterations (phase=%s): %s",
+            result.iterations, phase, preview,
+        )
         think(tlog, "validation", f"❌ WebBuildAgent 失败：{result.content[:300]}")
-        return {"errors": [{"node": "wv_build_chapter_1", "error": result.content[:500]}],
-                "thinking_log": tlog, "current_node": "wv_build_chapter_1"}
+        return {
+            "errors": [_chapter_build_error("wv_build_chapter_1", result)],
+            "thinking_log": tlog,
+            "current_node": "wv_build_chapter_1",
+        }
 
     # 确认章节文件确实存在后再更新 registry
     tsx_path = ch_dir / "index.tsx"
@@ -124,24 +154,35 @@ def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
         return {"errors": [{"node": "wv_build_chapter_1", "error": "Files missing after agent build"}],
                 "thinking_log": tlog, "current_node": "wv_build_chapter_1"}
 
-    update_chapter_registry(state, chapters)
+    sync_built_chapter_registry(state, ch1["id"], ch1["title"])
     think(tlog, "step", f"✅ 第 1 章构建完成（{result.iterations} 次迭代，{result.tool_calls} 次工具调用）")
     logger.info("Chapter 1 build OK: %d iterations, %d tool calls", result.iterations, result.tool_calls)
-    return {"current_node": "wv_build_chapter_1",
-            "created_files": [],
-            "thinking_log": tlog}
+    _refresh_preview(state)
+    return {
+        "current_node": "wv_build_chapter_1",
+        "created_files": [],
+        "thinking_log": tlog,
+        "errors": [],
+    }
 
 
 def wv_checkpoint_chapter_1_node(state: VideoWorkflowState) -> dict:
-    _ensure_dev_server(state)
-    return checkpoint_chapter_1(state)
+    _refresh_preview(state)
+    result = checkpoint_chapter_1(state)
+    result["current_chapter_index"] = 1
+    chapters = parse_outline_chapters(state)
+    if chapters:
+        result.update(apply_chapter_checkpoint_approval(
+            state, "checkpoint_chapter_1", [chapters[0]["id"]],
+        ))
+    return result
 
 
 def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
     require_ref_loaded(state, "CHAPTER-CRAFT.md", reload_each_time=True)
     guard_chapter_refs_loaded(state)
 
-    chapter_index = state.get("current_chapter_index", 1) + 1
+    chapter_index = _next_chapter_index(state)
     chapters = parse_outline_chapters(state)
     if chapter_index > len(chapters):
         logger.error("No more chapters to build (index=%d, total=%d)", chapter_index, len(chapters))
@@ -156,9 +197,15 @@ def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
     for old in ch_dir.glob("*"):
         old.unlink()
 
-    tlog = think(None, "step", f"WebBuildAgent 构建第 {chapter_index} 章 {ch['title']}…")
-    logger.info("WebBuildAgent building chapter %d/%d: %s — %s",
-                chapter_index, len(chapters), ch["id"], ch["title"])
+    tlog = think(None, "step", f"构建第 {chapter_index} 章 {ch['title']}（{chapter_build_mode_label()}）…")
+    feedback = (
+        _chapter_revision_feedback(state, "checkpoint_chapter_n")
+        or _chapter_revision_feedback(state, "checkpoint_remaining_batch")
+    )
+    if feedback:
+        think(tlog, "step", f"根据验收反馈返工第 {chapter_index} 章：{feedback[:120]}")
+    logger.info("Building chapter %d/%d: %s — %s (mode=%s)",
+                chapter_index, len(chapters), ch["id"], ch["title"], settings.chapter_build_mode)
 
     # Read previous chapters for style reference
     prev = []
@@ -167,20 +214,29 @@ def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
         if p.exists():
             prev.append(f"Chapter {i}:\n{p.read_text(encoding='utf-8')[:2000]}")
 
-    agent = WebBuildAgent(state)
-    result = agent.run(
+    result = run_chapter_pipeline(
+        state,
         chapter_id=ch["id"],
         title=ch["title"],
         chapter_index=chapter_index,
         total_chapters=len(chapters),
         previous_chapters="\n---\n".join(prev),
+        revision_feedback=feedback,
     )
 
     if not result.success:
-        logger.error("WebBuildAgent failed chapter %d after %d iterations", chapter_index, result.iterations)
+        phase = result.phase or "?"
+        preview = (result.content or "章节构建失败").strip()[:300]
+        logger.error(
+            "WebBuildAgent failed chapter %d after %d iterations (phase=%s): %s",
+            chapter_index, result.iterations, phase, preview,
+        )
         think(tlog, "validation", f"❌ 第 {chapter_index} 章 WebBuildAgent 失败")
-        return {"errors": [{"node": "wv_build_chapter_n", "error": result.content[:500]}],
-                "thinking_log": tlog, "current_node": "wv_build_chapter_n"}
+        return {
+            "errors": [_chapter_build_error("wv_build_chapter_n", result)],
+            "thinking_log": tlog,
+            "current_node": "wv_build_chapter_n",
+        }
 
     # 确认章节文件存在后再更新 registry
     tsx_path = ch_dir / "index.tsx"
@@ -192,26 +248,45 @@ def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
         return {"errors": [{"node": "wv_build_chapter_n", "error": "Files missing after agent build"}],
                 "thinking_log": tlog, "current_node": "wv_build_chapter_n"}
 
-    update_chapter_registry(state, chapters)
+    sync_built_chapter_registry(state, ch["id"], ch["title"])
     think(tlog, "step", f"✅ 第 {chapter_index} 章构建完成（{result.iterations} iter, {result.tool_calls} tools）")
     logger.info("Chapter %d build OK: %d iterations, %d tool calls",
                 chapter_index, result.iterations, result.tool_calls)
-    return {"current_node": "wv_build_chapter_n",
-            "current_chapter_index": chapter_index,
-            "total_chapters": len(chapters),
-            "created_files": [],
-            "thinking_log": tlog}
+    _refresh_preview(state)
+    return {
+        "current_node": "wv_build_chapter_n",
+        "current_chapter_index": chapter_index,
+        "total_chapters": len(chapters),
+        "created_files": [],
+        "thinking_log": tlog,
+        "errors": [],
+    }
 
 
 def wv_checkpoint_chapter_n_node(state: VideoWorkflowState) -> dict:
-    _ensure_dev_server(state)
-    return checkpoint_chapter_n(state, state.get("current_chapter_index", 2))
+    _refresh_preview(state)
+    idx = state.get("current_chapter_index", 2)
+    result = checkpoint_chapter_n(state, idx)
+    chapters = parse_outline_chapters(state)
+    if 1 <= idx <= len(chapters):
+        result.update(apply_chapter_checkpoint_approval(
+            state, "checkpoint_chapter_n", [chapters[idx - 1]["id"]],
+        ))
+    return result
 
 
 def wv_checkpoint_remaining_batch_node(state: VideoWorkflowState) -> dict:
+    _refresh_preview(state)
     idx = state.get("current_chapter_index", 2)
     total = state.get("total_chapters", 0)
-    return checkpoint_remaining_batch(state, list(range(idx, total + 1)))
+    indices = list(range(idx, total + 1))
+    result = checkpoint_remaining_batch(state, indices)
+    chapters = parse_outline_chapters(state)
+    ids = [chapters[i - 1]["id"] for i in indices if 1 <= i <= len(chapters)]
+    result.update(apply_chapter_checkpoint_approval(
+        state, "checkpoint_remaining_batch", ids,
+    ))
+    return result
 
 
 def wv_transition_to_phase3(state: VideoWorkflowState) -> dict:

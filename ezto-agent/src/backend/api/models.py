@@ -85,6 +85,10 @@ class WorkflowStateResponse(BaseModel):
     current_phase: str
     current_node: str
     completed_nodes: list[str]
+    execution_trace: list[dict] = []
+    execution_revision: int = 0
+    total_nodes: int = 20
+    token_usage: dict = Field(default_factory=dict)
     thinking_log: list[dict] = []
     pending_interrupt: dict | None = None
     errors: list[dict] = []
@@ -96,6 +100,8 @@ class WorkflowStateResponse(BaseModel):
     validation_results: list[dict] = []
     user_confirmations: dict = Field(default_factory=dict)
     presentation_url: str | None = None
+    paused: bool = False
+    paused_at: float | None = None
 
 
 class StartWorkflowResponse(BaseModel):
@@ -110,8 +116,51 @@ class ResumeWorkflowResponse(BaseModel):
     state: WorkflowStateResponse
 
 
+class PauseWorkflowResponse(BaseModel):
+    """POST /api/workflow/{id}/pause 响应。"""
+    thread_id: str
+    state: WorkflowStateResponse
+
+
+class ContinueWorkflowResponse(BaseModel):
+    """POST /api/workflow/{id}/continue 响应。"""
+    thread_id: str
+    state: WorkflowStateResponse
+
+
 class ErrorResponse(BaseModel):
     """通用错误响应。"""
     error: str
     message: str
     detail: dict | None = None
+
+
+class ProjectSummary(BaseModel):
+    """GET /api/projects 列表项。"""
+    id: str
+    name: str
+    status: str
+    artifact_count: int = 0
+    is_active: bool = False
+    created_at: str = ""
+    updated_at: str = ""
+    input_type: str | None = None
+
+
+class ProjectDetail(ProjectSummary):
+    """GET /api/projects/{id} 详情。"""
+    user_request: str = ""
+    language: str = "zh-CN"
+    artifacts: list[ArtifactInfo] = []
+
+
+class RenameProjectRequest(BaseModel):
+    """PATCH /api/projects/{id} 请求体。"""
+    name: str = Field(..., min_length=1, max_length=80)
+
+
+class DeleteProjectResponse(BaseModel):
+    """DELETE /api/projects/{id} 响应。"""
+    deleted: bool = True
+    id: str
+    name: str = ""

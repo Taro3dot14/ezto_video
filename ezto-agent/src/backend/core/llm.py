@@ -17,12 +17,24 @@ from __future__ import annotations
 import concurrent.futures
 import json
 import time
+from dataclasses import dataclass, field
 from typing import Any, Generator
 
 import httpx
 
 from configs import settings
 from .logger import logger, log_llm_call, log_llm_interaction
+from harness.core.token_usage import record_api_usage
+
+# Model roles for per-phase routing (see settings.deepseek_model_*)
+MODEL_ROLE_DEFAULT = "default"
+MODEL_ROLE_CONTENT = "content"
+MODEL_ROLE_WEB_BUILD = "web_build"
+
+_ROLE_SETTINGS: dict[str, str] = {
+    MODEL_ROLE_CONTENT: "deepseek_model_content",
+    MODEL_ROLE_WEB_BUILD: "deepseek_model_web_build",
+}
 
 # Shared thread pool for LLM calls with hard timeout
 _LLM_POOL = concurrent.futures.ThreadPoolExecutor(
@@ -45,10 +57,143 @@ def _http_post(
     return resp
 
 
+@dataclass
+class ToolCall:
+    id: str
+    name: str
+    arguments: dict[str, Any]
+
+
+@dataclass
+class ChatResult:
+    content: str | None
+    tool_calls: list[ToolCall] = field(default_factory=list)
+    reasoning_content: str | None = None
+
+
+def resolve_model(*, model: str | None = None, role: str | None = None) -> str:
+    """Resolve model id: explicit model > role-specific setting > deepseek_model."""
+    if model:
+        return model
+    if role and role != MODEL_ROLE_DEFAULT:
+        attr = _ROLE_SETTINGS.get(role)
+        if attr:
+            configured = getattr(settings, attr, "") or ""
+            if configured:
+                return configured
+    return settings.deepseek_model
+
+
+def chat_with_tools(
+    *,
+    messages: list[dict[str, Any]],
+    tools: list[dict[str, Any]] | None = None,
+    model: str | None = None,
+    role: str | None = None,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+    retries: int = 2,
+    timeout: float = 300.0,
+    read_timeout: float = 120.0,
+) -> ChatResult:
+    """Chat completion with native OpenAI-style tool calling."""
+    if not settings.deepseek_api_key:
+        raise RuntimeError(
+            "DEEPSEEK_API_KEY not configured. "
+            "Set it in .env or export DEEPSEEK_API_KEY=sk-..."
+        )
+
+    resolved_model = resolve_model(model=model, role=role)
+    body = _build_body(messages, resolved_model, temperature, max_tokens)
+    if tools:
+        body["tools"] = tools
+        body["tool_choice"] = "auto"
+
+    model_name = body.get("model", "?")
+    url = f"{settings.deepseek_base_url.rstrip('/')}/chat/completions"
+    headers = _headers()
+    total_chars = sum(len(str(m.get("content") or "")) for m in messages)
+    t0 = time.perf_counter()
+    last_err: Exception | None = None
+    deadline = t0 + timeout
+
+    for attempt in range(1 + retries):
+        try:
+            remaining = max(deadline - time.perf_counter(), 5.0)
+            if remaining < 5.0 and attempt > 0:
+                raise TimeoutError(f"LLM call timed out after {timeout:.0f}s total")
+
+            future = _LLM_POOL.submit(_http_post, url, headers, body, read_timeout)
+            resp = future.result(timeout=remaining)
+            data = resp.json()
+            msg = data["choices"][0]["message"]
+            content = msg.get("content")
+            reasoning_content = msg.get("reasoning_content")
+            raw_calls = msg.get("tool_calls") or []
+
+            tool_calls: list[ToolCall] = []
+            for tc in raw_calls:
+                fn = tc.get("function") or {}
+                name = fn.get("name") or ""
+                raw_args = fn.get("arguments") or "{}"
+                try:
+                    args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+                except json.JSONDecodeError:
+                    args = {"_raw": raw_args}
+                tool_calls.append(ToolCall(id=tc.get("id", ""), name=name, arguments=args))
+
+            elapsed = (time.perf_counter() - t0) * 1000
+            log_llm_call(model_name, len(messages), total_chars, True, elapsed)
+            summary = content or ""
+            if tool_calls:
+                summary += "\n" + "\n".join(
+                    f"[tool] {tc.name}({json.dumps(tc.arguments, ensure_ascii=False)[:200]})"
+                    for tc in tool_calls
+                )
+            log_llm_interaction(
+                messages=messages, response=summary, model=model_name,
+                temperature=temperature, duration_ms=elapsed, success=True,
+            )
+            record_api_usage(model_name, data)
+            return ChatResult(
+                content=content,
+                tool_calls=tool_calls,
+                reasoning_content=reasoning_content,
+            )
+
+        except concurrent.futures.TimeoutError:
+            last_err = TimeoutError(f"LLM call timed out after {timeout:.0f}s total")
+            if attempt < retries and time.perf_counter() - t0 < timeout:
+                continue
+
+        except httpx.HTTPStatusError as e:
+            last_err = e
+            if e.response.status_code == 400:
+                logger.warning(
+                    "LLM tool call 400: %s",
+                    e.response.text[:2000],
+                )
+            if attempt < retries and time.perf_counter() - t0 < timeout:
+                time.sleep(min(1.5 ** attempt, max(deadline - time.perf_counter() - 5.0, 0)))
+                continue
+
+        except (httpx.RequestError, KeyError, json.JSONDecodeError,
+                concurrent.futures.CancelledError) as e:
+            last_err = e
+            if attempt < retries and time.perf_counter() - t0 < timeout:
+                time.sleep(min(1.5 ** attempt, max(deadline - time.perf_counter() - 5.0, 0)))
+                continue
+
+    elapsed = (time.perf_counter() - t0) * 1000
+    log_llm_call(model_name, len(messages), total_chars, False, elapsed)
+    raise RuntimeError(f"LLM tool call failed after {retries + 1} attempts: {last_err}")
+
+
 def chat(
     *,
     messages: list[dict[str, str]],
     model: str | None = None,
+    role: str | None = None,
     temperature: float | None = None,
     max_tokens: int | None = None,
     retries: int = 2,
@@ -62,7 +207,8 @@ def chat(
 
     Args:
         messages: Message list, e.g. [{"role": "system", ...}, {"role": "user", ...}].
-        model: Model ID, defaults to settings.deepseek_model.
+        model: Model ID override (highest priority).
+        role: Routing role — "content", "web_build", or None for default.
         temperature: Sampling temperature, defaults to settings value.
         max_tokens: Max tokens in response, defaults to settings value.
         retries: Number of retries on failure (total attempts = 1 + retries).
@@ -81,7 +227,8 @@ def chat(
             "Set it in .env or export DEEPSEEK_API_KEY=sk-..."
         )
 
-    body = _build_body(messages, model, temperature, max_tokens)
+    resolved_model = resolve_model(model=model, role=role)
+    body = _build_body(messages, resolved_model, temperature, max_tokens)
     model_name = body.get("model", "?")
     url = f"{settings.deepseek_base_url.rstrip('/')}/chat/completions"
     headers = _headers()
@@ -120,6 +267,7 @@ def chat(
                 messages=messages, response=content, model=model_name,
                 temperature=temperature, duration_ms=elapsed, success=True,
             )
+            record_api_usage(model_name, data)
             return content
 
         except concurrent.futures.TimeoutError:
@@ -157,6 +305,7 @@ def chat_stream(
     *,
     messages: list[dict[str, str]],
     model: str | None = None,
+    role: str | None = None,
     temperature: float | None = None,
     max_tokens: int | None = None,
     retries: int = 2,
@@ -169,7 +318,8 @@ def chat_stream(
     if not settings.deepseek_api_key:
         raise RuntimeError("DEEPSEEK_API_KEY not configured")
 
-    body = _build_body(messages, model, temperature, max_tokens)
+    resolved_model = resolve_model(model=model, role=role)
+    body = _build_body(messages, resolved_model, temperature, max_tokens)
     body["stream"] = True
     model_name = body.get("model", "?")
     url = f"{settings.deepseek_base_url.rstrip('/')}/chat/completions"
@@ -230,12 +380,12 @@ def chat_stream(
 
 def _build_body(
     messages: list[dict[str, str]],
-    model: str | None,
+    model: str,
     temperature: float | None,
     max_tokens: int | None,
 ) -> dict[str, Any]:
     return {
-        "model": model or settings.deepseek_model,
+        "model": model,
         "messages": list(messages),
         "temperature": temperature if temperature is not None else settings.deepseek_temperature,
         "max_tokens": max_tokens or settings.deepseek_max_tokens,

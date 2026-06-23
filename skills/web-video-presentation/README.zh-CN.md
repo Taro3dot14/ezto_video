@@ -34,7 +34,7 @@
 - **动效优先**：每一步都需要一个移动的视觉锚点，静态正文是坏味道。
 - **主题 token**：视觉属性通过语义 token 驱动，换主题不只是换颜色。
 - **可插拔 TTS**：provider-agnostic 音频 runner，**内置 2 个 provider**（MiniMax `mmx-cli` + OpenAI TTS via curl）；往 `tts-providers/` 丢一个 `.sh` 就能换成 ElevenLabs / edge-tts / Azure / Google Cloud / macOS `say` / 任何自部署 TTS。
-- **硬 checkpoint**：稿子/主题、outline、音频合成前都必须停下来与用户确认。
+- **硬 checkpoint**：口播稿/主题、outline、音频合成前都必须停下来与用户确认。
 
 ---
 
@@ -44,7 +44,7 @@
 Phase 1.1  识别用户输入
 Phase 1.2  文章 -> 口播稿
    |
-Checkpoint A1  稿子、主题、粗略素材计划
+Checkpoint A1  口播稿、主题、粗略素材计划
    |
 Phase 1.3  口播稿 + 原文 -> outline.md
    |

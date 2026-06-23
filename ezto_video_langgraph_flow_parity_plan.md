@@ -818,7 +818,7 @@ data: {"type": "completed", "summary": "..."}
 | `/` | `HomePage` | 首页，选择创建新项目或恢复已有项目 |
 | `/new` | `NewProjectPage` | 输入文章或口播稿 |
 | `/workflow/:id` | `WorkflowPage` | 工作流主页面，根据当前节点动态渲染子组件 |
-| `/workflow/:id/checkpoint-plan` | `CheckpointPlan` | 一次确认 5 件事（稿子/outline/主题/素材/模式） |
+| `/workflow/:id/checkpoint-plan` | `CheckpointPlan` | 一次确认 5 件事（口播稿/outline/主题/素材/模式） |
 | `/workflow/:id/chapter/:n` | `ChapterReview` | 章节验收（含 checklist） |
 | `/workflow/:id/checkpoint-audio` | `CheckpointAudio` | 是否合成音频 |
 | `/workflow/:id/progress` | `ProgressPanel` | 查看整体进度、节点执行历史、产出文件 |

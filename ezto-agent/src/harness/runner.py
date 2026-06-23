@@ -13,6 +13,7 @@ from langgraph.graph import StateGraph
 from langgraph.types import Command
 
 from harness.core.state import VideoWorkflowState
+from harness.core.token_usage import empty_usage
 from harness.core.runtime import load_workspace
 from harness.workflow.builder import build_web_video_graph
 from harness.workflow.interruptions import pop_last_interrupt_payload
@@ -30,7 +31,8 @@ class HarnessRunner:
     def build(self) -> None:
         """Build the LangGraph."""
         self._graph = build_web_video_graph()
-        logger.info("Harness graph built with 27 nodes")
+        from harness.workflow.node_catalog import TOTAL_NODES
+        logger.info("Harness graph built with %d nodes", TOTAL_NODES)
 
     # ── Workflow lifecycle ──
 
@@ -54,8 +56,11 @@ class HarnessRunner:
             "language": language,
             "input_type": input_type,
             "current_phase": "phase1",
-            "current_node": "wv_identify_input",
+            "current_node": "",
             "completed_nodes": [],
+            "execution_trace": [],
+            "execution_revision": 0,
+            "token_usage": empty_usage(),
             "current_chapter_index": 0,
             "total_chapters": 0,
             "thinking_log": [],

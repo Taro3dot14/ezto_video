@@ -2,19 +2,38 @@
 
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 import threading
 from pathlib import Path
 
 from backend.core.logger import logger
+from harness.core.execution import push_event
 from harness.core.state import VideoWorkflowState
-from harness.services.tools.shell import (
-    _record_tool_call, _push_scaffold_log,
-)
+from harness.services.tools.shell import _record_tool_call
 from configs.settings import settings
 
 _SCRIPTS_DIR = Path(settings.cmd_dir)
+
+_SKIP = ("缓存 node_modules",)
+_TRACE_PATTERNS = (
+    re.compile(r"^[▸✓✗]"),
+    re.compile(r"^\s*·\s"),
+    re.compile(r"^━"),
+    re.compile(r"^\s*✓ 演示项目"),
+    re.compile(r"^\s*(目录|主题|预览|下一步|播放模式|写章节|换主题|开发|旁白|音频|手动|伴音|录屏)\s"),
+    re.compile(r"^  ─"),
+)
+
+
+def _scaffold_line_for_trace(line: str) -> bool:
+    if any(skip in line for skip in _SKIP):
+        return False
+    stripped = line.strip()
+    if not stripped:
+        return False
+    return any(p.search(line) for p in _TRACE_PATTERNS)
 
 
 def _find_bash() -> str:
@@ -60,7 +79,6 @@ def run_scaffold(
 
     stdout_lines: list[str] = []
     stderr_lines: list[str] = []
-    thread_id = state.get("thread_id", "unknown")
 
     def _read_stream(stream, sink, log_fn):
         assert stream is not None
@@ -68,7 +86,8 @@ def run_scaffold(
             line = line.rstrip("\n")
             sink.append(line)
             log_fn("[scaffold] %s", line)
-            _push_scaffold_log(thread_id, line)
+            if _scaffold_line_for_trace(line):
+                push_event(state, "step", line)
 
     threads = [
         threading.Thread(target=_read_stream, args=(proc.stdout, stdout_lines, logger.info), daemon=True),

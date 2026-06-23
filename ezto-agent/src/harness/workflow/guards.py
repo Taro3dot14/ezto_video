@@ -167,6 +167,18 @@ def guard_not_skip_checkpoint(state: VideoWorkflowState, expected_checkpoint: st
             node=state.get("current_node", "unknown"),
             missing_refs=[],
         )
+    if expected_checkpoint in {
+        "checkpoint_chapter_1",
+        "checkpoint_chapter_n",
+        "checkpoint_remaining_batch",
+    }:
+        conf = confirmations[expected_checkpoint]
+        if not (isinstance(conf, dict) and conf.get("approved") is True):
+            raise PolicyViolation(
+                f"Cannot proceed: checkpoint '{expected_checkpoint}' was not approved.",
+                node=state.get("current_node", "unknown"),
+                missing_refs=[],
+            )
 
 
 def guard_no_bulk_ref_load(state: VideoWorkflowState) -> None:
@@ -202,6 +214,29 @@ def init_workspace(state: VideoWorkflowState) -> dict:
         paths[logical] = f"{workspace}/{relative}"
 
     return {"artifact_paths": paths, "workspace_root": workspace}
+
+
+def ensure_workspace_ready(state: VideoWorkflowState) -> dict:
+    """Ensure per-thread workspace dir exists and artifact_paths are populated."""
+    paths = state.get("artifact_paths") or {}
+    ws = state.get("workspace_root", "")
+    workspace_path = Path(ws) if ws else None
+    if (
+        not state.get("thread_id")
+        or not paths.get("script.md")
+        or workspace_path is None
+        or not workspace_path.is_dir()
+    ):
+        return init_workspace(state)
+    workspace_path.mkdir(parents=True, exist_ok=True)
+    return {"workspace_root": str(workspace_path), "artifact_paths": paths}
+
+
+def ensure_artifact_parent(path: str | Path) -> Path:
+    """Create parent dirs for an artifact file path."""
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    return target
 
 
 def record_creation(state: VideoWorkflowState, logical_name: str) -> dict:

@@ -28,7 +28,7 @@ npm run dev
    wv_identify_input → wv_prepare_source_files → wv_validate_script → (可能 repair) → wv_validate_outline → (可能 repair)
    ```
 4. 到达 **Checkpoint Plan** 中断时，页面展示 5 件事确认界面：
-   - 稿子 (script.md) — 确认或提修改意见
+   - 口播稿 (script.md) — 确认或提修改意见
    - 开发计划 (outline.md) — 确认或提修改意见
    - 选择主题 — 从 23 个主题中选择
    - 素材准备 — 三个 radio 选项

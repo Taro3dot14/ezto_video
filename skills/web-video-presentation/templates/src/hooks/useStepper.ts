@@ -5,7 +5,18 @@ import type { ChapterDef } from "../registry/types";
  * Bump this when chapter step counts / structure change so old persisted
  * cursors don't land mid-removed-step.
  */
-const STORAGE_KEY = "presentation-cursor-v4";
+const STORAGE_KEY_PREFIX = "presentation-cursor-v5";
+
+function previewScope(): string {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get("wid") ?? "";
+}
+
+function chapterStorageKey(chapters: ChapterDef[]): string {
+  const ids = chapters.map((c) => c.id).join("|");
+  const scope = previewScope();
+  return scope ? `${STORAGE_KEY_PREFIX}:${scope}:${ids}` : `${STORAGE_KEY_PREFIX}:${ids}`;
+}
 
 export type Cursor = { chapter: number; step: number };
 
@@ -24,6 +35,23 @@ export interface StepperState {
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
 
+function readHighlightChapterIndex(): number | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = new URLSearchParams(window.location.search).get("highlight");
+    if (raw === null) return null;
+    const idx = Number(raw);
+    if (!Number.isFinite(idx) || idx < 0) return null;
+    return idx;
+  } catch {
+    return null;
+  }
+}
+
+function chapterIdsKey(chapters: ChapterDef[]): string {
+  return chapters.map((c) => c.id).join("|");
+}
+
 /**
  * Clamp a (possibly stale) cursor to the current chapter list. Persisted
  * cursors can outlive structural changes — fewer chapters, fewer steps,
@@ -39,11 +67,32 @@ function sanitize(cursor: Cursor, chapters: ChapterDef[]): Cursor {
 }
 
 export function useStepper(chapters: ChapterDef[]): StepperState {
+  const storageKey = chapterStorageKey(chapters);
+
   const [cursor, setCursor] = useState<Cursor>(() => {
     const fallback = { chapter: 0, step: 0 };
     if (typeof window === "undefined") return fallback;
+    // Review link (?highlight=N): same single page, jump to the chapter under review.
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const params = new URLSearchParams(window.location.search);
+      const highlight = params.get("highlight");
+      if (highlight !== null) {
+        try {
+          window.localStorage.removeItem(storageKey);
+        } catch {
+          /* ignore */
+        }
+        const idx = Number(highlight);
+        if (Number.isFinite(idx) && idx >= 0) {
+          return sanitize({ chapter: idx, step: 0 }, chapters);
+        }
+        return fallback;
+      }
+    } catch {
+      /* ignore bad params */
+    }
+    try {
+      const raw = window.localStorage.getItem(storageKey);
       if (raw) return sanitize(JSON.parse(raw), chapters);
     } catch {
       /* ignore */
@@ -63,13 +112,25 @@ export function useStepper(chapters: ChapterDef[]): StepperState {
     });
   }, [chapters]);
 
+  // Re-apply ?highlight=N when chapters.ts gains entries (HMR / late registry sync).
+  const chapterKey = useMemo(() => chapterIdsKey(chapters), [chapters]);
+
+  useEffect(() => {
+    const idx = readHighlightChapterIndex();
+    if (idx === null || idx >= chapters.length) return;
+    setCursor((cur) => {
+      if (cur.chapter === idx && cur.step === 0) return cur;
+      return { chapter: idx, step: 0 };
+    });
+  }, [chapterKey, chapters.length]);
+
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cursor));
+      window.localStorage.setItem(storageKey, JSON.stringify(cursor));
     } catch {
       /* ignore */
     }
-  }, [cursor]);
+  }, [cursor, storageKey]);
 
   const offsets = useMemo(() => {
     const arr: number[] = [];

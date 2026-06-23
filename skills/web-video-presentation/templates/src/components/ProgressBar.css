@@ -44,6 +44,16 @@
   transform: translateY(0);
 }
 
+/* Peek the bar when there are unreviewed chapter updates */
+.pb-hover.has-new-chapters .pb {
+  opacity: 0.55;
+  transform: translateY(calc(100% - 10px));
+}
+.pb-hover.has-new-chapters:hover .pb {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .pb-chapter {
   flex-shrink: 0;
   display: flex;
@@ -65,6 +75,30 @@
 .pb-active {
   color: var(--text);
   border-color: var(--accent);
+}
+.pb-chapter-new {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow:
+    0 0 0 1px var(--accent-glow),
+    0 0 18px var(--accent-glow);
+  animation: pb-new-pulse 2.4s ease-in-out infinite;
+}
+@keyframes pb-new-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px var(--accent-glow), 0 0 12px var(--accent-glow); }
+  50% { box-shadow: 0 0 0 1px var(--accent), 0 0 22px var(--accent-glow); }
+}
+.pb-new-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: var(--accent);
+  color: var(--shell);
 }
 .pb-num {
   color: var(--accent);

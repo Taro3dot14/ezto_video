@@ -20,6 +20,27 @@
 # ─────────────────────────────────────────────────────────────
 set -euo pipefail
 
+# ── 终端输出（同时流入 workflow ExecutionStream）──
+_TOTAL_STEPS=4
+_STEP=0
+
+progress() {
+  _STEP=$((_STEP + 1))
+  echo "▸ [${_STEP}/${_TOTAL_STEPS}] $*"
+}
+
+ok() {
+  echo "✓ $*"
+}
+
+detail() {
+  echo "  · $*"
+}
+
+fail() {
+  echo "✗ $*" >&2
+}
+
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 TEMPLATES="$SKILL_DIR/assets/templates"
 THEMES_DIR="$SKILL_DIR/assets/themes"
@@ -84,22 +105,54 @@ if [[ -d "$TARGET" && -n "$(ls -A "$TARGET" 2>/dev/null || true)" ]]; then
 fi
 
 if ! command -v npm >/dev/null; then
-  echo "✗ 需要 npm，但在 PATH 里没找到。" >&2
+  fail "需要 npm，但在 PATH 里没找到。"
   exit 1
 fi
 
-echo "▸ 在 $TARGET 创建 Vite + React + TS 项目"
-echo "▸ 使用主题：$THEME"
-npx --yes create-vite "$TARGET" --template react-ts --no-interactive 2>&1
+# node_modules 缓存 — 首次安装后写入缓存，后续优先链接/恢复
+_CACHE="$SKILL_DIR/runtime/cache/npm"
 
-cd "$TARGET"
-echo "▸ 安装依赖（可能要等一会）..."
-npm install 2>&1
+_restore_node_modules() {
+  detail "命中依赖缓存，链接 node_modules"
+  if ln -sfn "$_CACHE/node_modules" node_modules 2>/dev/null; then
+    ok "依赖就绪（缓存）"
+    return 0
+  fi
+  detail "缓存链接失败，改为 npm install"
+  npm install --prefer-offline --no-audit --no-fund >/dev/null 2>&1
+  ok "依赖就绪"
+}
 
-echo "▸ 安装 tsx（用于 extract-narrations 脚本）..."
-npm install --save-dev tsx 2>&1
+progress "创建 Vite + React + TS 项目 → ${TARGET}"
+detail "主题 ${THEME}"
 
-echo "▸ 用演示骨架替换默认 boilerplate"
+if [ -d "$_CACHE/node_modules" ]; then
+  if ! npx --yes create-vite "$TARGET" --template react-ts --no-interactive >/dev/null 2>&1; then
+    fail "create-vite 失败"
+    exit 1
+  fi
+  cd "$TARGET"
+  cp "$_CACHE/package-lock.json" . 2>/dev/null || true
+  progress "安装依赖"
+  _restore_node_modules
+else
+  if ! npx --yes create-vite "$TARGET" --template react-ts --no-interactive >/dev/null 2>&1; then
+    fail "create-vite 失败"
+    exit 1
+  fi
+  cd "$TARGET"
+  progress "安装依赖"
+  detail "首次安装，完成后写入缓存"
+  npm install >/dev/null 2>&1
+  npm install --save-dev tsx >/dev/null 2>&1
+  detail "缓存 node_modules 供后续项目复用"
+  mkdir -p "$_CACHE"
+  cp -r node_modules "$_CACHE/"
+  cp package-lock.json "$_CACHE/" 2>/dev/null || true
+  ok "依赖就绪"
+fi
+
+progress "部署演示骨架"
 
 # 干掉我们不要的 Vite 默认 boilerplate
 rm -f \
@@ -144,6 +197,7 @@ cp "$TEMPLATES/src/components/AutoToggle.css"     src/components/AutoToggle.css
 
 cp "$TEMPLATES/src/registry/types.ts"    src/registry/types.ts
 cp "$TEMPLATES/src/registry/chapters.ts" src/registry/chapters.ts
+cp "$TEMPLATES/src/registry/chapter-meta.ts" src/registry/chapter-meta.ts
 
 cp "$TEMPLATES/src/chapters/01-example/Example.tsx"     src/chapters/01-example/Example.tsx
 cp "$TEMPLATES/src/chapters/01-example/Example.css"     src/chapters/01-example/Example.css
@@ -172,74 +226,52 @@ p.scripts = Object.assign({}, p.scripts, {
 fs.writeFileSync("package.json", JSON.stringify(p, null, 2) + "\n");
 '
 
+ok "骨架与主题已就位"
+
 # 留个标记，以后能查这个项目从哪个主题起步的
 {
   echo "$THEME"
 } > .theme
 
 # 跑一次 typecheck 确认接线 OK
-echo "▸ 跑 typecheck ..."
-if npx tsc --noEmit; then
-  echo "✓ typecheck 通过"
+progress "TypeScript 检查"
+if npx tsc --noEmit >/dev/null 2>&1; then
+  ok "Typecheck 通过"
 else
-  echo "✗ typecheck 失败 —— 请看上面的错误" >&2
+  fail "Typecheck 失败 — 请查看上方错误输出"
+  npx tsc --noEmit
   exit 1
 fi
 
+DEV_PORT=$(grep -E 'port:\s*[0-9]+' vite.config.ts 2>/dev/null | head -1 | sed -E 's/.*port:\s*([0-9]+).*/\1/')
+DEV_PORT="${DEV_PORT:-5202}"
+PREVIEW_URL="http://localhost:${DEV_PORT}"
+
 cat <<EOF
 
-✓ 完成。下一步：
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ 演示项目已就绪
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  1. cd $TARGET
-  2. npm run dev      # 默认 http://localhost:5174（被占会自动换端口）
+  目录      ${TARGET}
+  主题      ${THEME}
+  预览      ${PREVIEW_URL}
 
-当前主题：${THEME}（见 .theme）
+  下一步
+  ────────────────────────────────────────────
+  开发      cd ${TARGET} && npm run dev
+  旁白      npm run extract-narrations
+  音频      npm run synthesize-audio
+            换 TTS：PRESENTATION_TTS=<name> npm run synthesize-audio
 
-然后：
+  播放模式（URL 参数）
+  ────────────────────────────────────────────
+  手动      默认 — 点击 / 方向键推进
+  伴音      ?audio=1 — 音频跟步，手动推进
+  录屏      ?auto=1 — SPACE 启动，整片自动播完
 
-  • 点舞台任意位置推进全局 step 计数器。
-  • 鼠标移到底部边缘可显出进度条；鼠标移到右上角可显出播放模式切换。
-  • 把 src/chapters/01-example/ 替换成你自己的章节
-    （流程见 SKILL.md "Phase 2.4 实现单章" —— 每章一次到位完整版本，
-     不分骨架 / 精修两步；动画选型由 chapter agent 按 CHAPTER-CRAFT.md
-     Part 0 原则 7 + Part 1 五问决定）。
-  • 在 src/registry/chapters.ts 注册每个新章节。
-  • **每章必须有 narrations.ts**（与 Example.tsx 同目录），
-    数组长度 = step 数，是音频合成 + Auto 模式的唯一真相源。
-  • 章节改了就 bump src/hooks/useStepper.ts 的 STORAGE_KEY 末尾版本号。
+  写章节    references/CHAPTER-CRAFT.md
+  换主题    cp themes/<id>/tokens.css src/styles/tokens.css
 
-录制：
-
-  • 手动模式：直接打开 http://localhost:5174（点击 / 方向键推进）
-  • 半自动：URL 加 ?audio=1 — 音频跟 step 切，但你手动推进
-  • 全自动录屏：URL 加 ?auto=1 — 按一次 SPACE 启动，整片自动播 + 推进
-                按 M 键随时切换三种模式。
-
-音频合成（可选，录制前做）：
-
-  npm run extract-narrations    # 扫所有章节 narrations.ts → audio-segments.json
-  npm run synthesize-audio      # 默认 minimax provider 合成 → public/audio/<id>/<step>.mp3
-                                # 换 provider：PRESENTATION_TTS=<name> npm run synthesize-audio
-                                # 自定义 / 没装 mmx 见 scripts/tts-providers/README.md
-
-写章节时必读（单一入口，路径在 SKILL 仓库内）：
-
-  • $SKILL_DIR/references/CHAPTER-CRAFT.md
-      Part 0 十条原则 / Part 1 开工 5 问 / Part 2 关系→动作决策树 /
-      Part 3 视觉工具箱 / Part 4 时长 / Part 5 反 AI 味反模式 /
-      Part 6 代码硬规则 / Part 7 完工自检 / Part 8 反馈速查
-  • $SKILL_DIR/themes/$THEME/theme.json
-      看 descriptionZh / mood / bestFor —— 参考主题气质
-      （动画 / 时长 / 字号 / emoji 由 chapter agent 在每章自由决定）
-
-卡壳时可翻：
-
-  • $SKILL_DIR/references/EXAMPLES/
-      完整章节 anchor（钩子型 / 列举型）—— 看"形"，不要照搬
-
-要换一个主题，覆盖 tokens.css 即可：
-  cp $SKILL_DIR/themes/<id>/tokens.css src/styles/tokens.css
-
-想自创主题，看 $SKILL_DIR/references/THEMES.md。
-
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF

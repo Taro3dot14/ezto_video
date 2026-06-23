@@ -7,6 +7,7 @@ preserves the original skill's semantics.
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from typing import Any, Literal
 
@@ -55,6 +56,13 @@ def _store_and_interrupt(payload: dict) -> Any:
         raise
 
 from ..core.state import VideoWorkflowState
+from .artifacts import (
+    built_chapter_step_counts,
+    count_built_chapters,
+    count_built_steps,
+    parse_outline_chapters,
+)
+from harness.services.tools.missing_assets import get_missing_assets
 
 # ── Payload type discriminators ──
 
@@ -87,7 +95,7 @@ def checkpoint_plan(
     response: dict[str, Any] = _store_and_interrupt(
         {
             "type": "checkpoint_plan",
-            "description": "一次对齐 5 件事：稿子 / outline / 主题 / 素材 / 开发模式",
+            "description": "一次对齐 5 件事：口播稿 / outline / 主题 / 素材 / 开发模式",
             "files": {
                 "script": _rel_path(state, "script.md"),
                 "outline": _rel_path(state, "outline.md"),
@@ -111,12 +119,46 @@ def checkpoint_plan(
     return _ensure_confirmations(response, "checkpoint_plan")
 
 
-def _preview_url(state: VideoWorkflowState, chapter_index: int) -> str | None:
-    """Build a preview URL pointing to a specific chapter (0-indexed)."""
+def _preview_url(
+    state: VideoWorkflowState,
+    *,
+    highlight_index: int | None = None,
+) -> str | None:
+    """Open the single-page presentation; optional highlight marks new chapter(s) in nav."""
     base = state.get("presentation_url")
     if not base:
         return None
-    return f"{base}?chapter={chapter_index}"
+    params: list[str] = []
+    wid = state.get("thread_id")
+    if wid:
+        params.append(f"wid={wid}")
+    if highlight_index is not None:
+        params.append(f"highlight={highlight_index}")
+    params.append(f"t={int(time.time())}")
+    return f"{base}?{'&'.join(params)}"
+
+
+def _chapter_id_at_index(state: VideoWorkflowState, chapter_index: int) -> str | None:
+    chapters = parse_outline_chapters(state)
+    if chapter_index < 1 or chapter_index > len(chapters):
+        return None
+    return chapters[chapter_index - 1].get("id")
+
+
+def _missing_assets_payload(state: VideoWorkflowState, chapter_id: str | None) -> dict[str, Any] | None:
+    if not chapter_id:
+        return None
+    entry = get_missing_assets(state, chapter_id)
+    if entry is None:
+        return None
+    items = entry.get("items") or []
+    note = entry.get("note") or ""
+    return {
+        "chapter_id": chapter_id,
+        "items": items,
+        "note": note,
+        "has_missing": bool(items),
+    }
 
 
 def checkpoint_chapter_1(state: VideoWorkflowState) -> dict:
@@ -125,12 +167,19 @@ def checkpoint_chapter_1(state: VideoWorkflowState) -> dict:
     Original semantics: chapter 1 is the style anchor and must be reviewed
     by the user before remaining chapters are built.
     """
+    chapter_id = _chapter_1_id(state)
     response: dict[str, Any] = _store_and_interrupt(
         {
             "type": "checkpoint_chapter_1",
             "description": "第 1 章强制验收 — 风格锚点，不可跳过",
-            "chapter_id": _chapter_1_id(state),
-            "preview_url": _preview_url(state, 0),
+            "chapter_id": chapter_id,
+            "chapter_index": 1,
+            "built_chapter_count": count_built_chapters(state),
+            "built_step_count": count_built_steps(state),
+            "chapter_step_counts": built_chapter_step_counts(state),
+            "highlight_chapter_index": 0,
+            "preview_url": _preview_url(state, highlight_index=0),
+            "missing_assets": _missing_assets_payload(state, chapter_id),
             "checklist": [
                 "视觉气质是否符合选定主题？",
                 "节奏是否合适？信息密度是否恰当？",
@@ -145,12 +194,19 @@ def checkpoint_chapter_1(state: VideoWorkflowState) -> dict:
 
 def checkpoint_chapter_n(state: VideoWorkflowState, chapter_index: int) -> dict:
     """Per-chapter acceptance (Mode A)."""
+    chapter_id = _chapter_id_at_index(state, chapter_index)
     response: dict[str, Any] = _store_and_interrupt(
         {
             "type": "checkpoint_chapter_n",
             "description": f"第 {chapter_index} 章验收",
+            "chapter_id": chapter_id,
             "chapter_index": chapter_index,
-            "preview_url": _preview_url(state, chapter_index - 1),
+            "built_chapter_count": count_built_chapters(state),
+            "built_step_count": count_built_steps(state),
+            "chapter_step_counts": built_chapter_step_counts(state),
+            "highlight_chapter_index": chapter_index - 1,
+            "preview_url": _preview_url(state, highlight_index=chapter_index - 1),
+            "missing_assets": _missing_assets_payload(state, chapter_id),
         }
     )
     return _ensure_confirmations(response, "checkpoint_chapter_n")
@@ -165,7 +221,11 @@ def checkpoint_remaining_batch(
             "type": "checkpoint_remaining_batch",
             "description": f"第 {chapter_indices[0]}~{chapter_indices[-1]} 章批量验收",
             "chapter_indices": chapter_indices,
-            "preview_url": _preview_url(state, chapter_indices[0] - 1),
+            "built_chapter_count": count_built_chapters(state),
+            "built_step_count": count_built_steps(state),
+            "chapter_step_counts": built_chapter_step_counts(state),
+            "highlight_chapter_index": chapter_indices[0] - 1,
+            "preview_url": _preview_url(state, highlight_index=chapter_indices[0] - 1),
         }
     )
     return _ensure_confirmations(response, "checkpoint_remaining_batch")
@@ -212,10 +272,10 @@ def _ensure_confirmations(response: dict, key: str) -> dict:
 
 def _chapter_1_id(state: VideoWorkflowState) -> str | None:
     """Extract chapter-1 id from outline if available."""
-    path = state["artifact_paths"].get("outline.md")
-    if not path:
-        return None
-    return "chapter_1"  # placeholder; real impl reads from outline
+    from harness.workflow.chapter_brief import parse_outline_chapters_from_state
+
+    chapters = parse_outline_chapters_from_state(state)
+    return chapters[0]["id"] if chapters else None
 
 
 def _rel_path(state: VideoWorkflowState, logical: str) -> str | None:

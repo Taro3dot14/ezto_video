@@ -16,7 +16,7 @@ Phase 1 内容编写
   自检 outline.md (OUTLINE-FORMAT.md)
   ↓
 Checkpoint Plan — 必须停，一次对齐 5 件事：
-  稿子 / outline / 主题 / 素材 / 开发模式
+  口播稿 / outline / 主题 / 素材 / 开发模式
   ↓
 Phase 2 网页开发
   2.1 脚手架 scaffold (选定主题)

@@ -9,9 +9,11 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
 
 from backend.core.logger import logger
+from harness.core.execution import ExecutionTracker, derive_runtime
+from harness.core.token_usage import bind_workflow_thread, reset_workflow_thread
 from harness.core.state import VideoWorkflowState
 from harness.workflow.interruptions import set_interrupt_node
-from harness.workflow.artifacts import think, parse_outline_chapters, get_repair_count, MAX_REPAIR_RETRIES
+from harness.workflow.artifacts import parse_outline_chapters, get_repair_count, get_max_repair_retries
 
 from .nodes.content import (
     wv_identify_input,
@@ -24,7 +26,6 @@ from .nodes.content import (
 )
 from .nodes.web import (
     wv_scaffold_presentation,
-    wv_remove_example_chapter,
     wv_build_chapter_1,
     wv_checkpoint_chapter_1_node,
     wv_build_chapter_n,
@@ -57,16 +58,25 @@ def _last_validation_passed(state: VideoWorkflowState, node: str) -> bool:
 def route_script_validation(state: VideoWorkflowState) -> str:
     if _last_validation_passed(state, "wv_validate_script"):
         return "wv_validate_outline"
-    return "wv_repair_script" if get_repair_count(state, "script.md") < MAX_REPAIR_RETRIES else "wv_validate_outline"
+    return "wv_repair_script" if get_repair_count(state, "script.md") < get_max_repair_retries("script.md") else "wv_validate_outline"
 
 
 def route_outline_validation(state: VideoWorkflowState) -> str:
     if _last_validation_passed(state, "wv_validate_outline"):
         return "wv_checkpoint_plan"
-    return "wv_repair_outline" if get_repair_count(state, "outline.md") < MAX_REPAIR_RETRIES else "wv_checkpoint_plan"
+    return "wv_repair_outline" if get_repair_count(state, "outline.md") < get_max_repair_retries("outline.md") else "wv_checkpoint_plan"
 
 
-def route_development_mode(state: VideoWorkflowState) -> str:
+def _checkpoint_approved(state: VideoWorkflowState, key: str) -> bool:
+    """Return True only when the user explicitly approved a chapter checkpoint."""
+    conf = state.get("user_confirmations", {}).get(key, {})
+    return isinstance(conf, dict) and conf.get("approved") is True
+
+
+def route_chapter_1_checkpoint(state: VideoWorkflowState) -> str:
+    """After chapter-1 review: rebuild on reject, else continue per dev mode."""
+    if not _checkpoint_approved(state, "checkpoint_chapter_1"):
+        return "wv_build_chapter_1"
     chapters = parse_outline_chapters(state)
     return "wv_build_chapter_n" if len(chapters) >= 2 else "wv_transition_to_phase3"
 
@@ -82,10 +92,16 @@ def route_build_chapter_n(state: VideoWorkflowState) -> str:
 
 
 def route_mode_a_checkpoint(state: VideoWorkflowState) -> str:
-    confirmations = state.get("user_confirmations", {}).get("checkpoint_chapter_n", {})
-    should_continue = confirmations.get("continue", True) if isinstance(confirmations, dict) else True
+    if not _checkpoint_approved(state, "checkpoint_chapter_n"):
+        return "wv_build_chapter_n"
     ci, total = state.get("current_chapter_index", 2), state.get("total_chapters", 0)
-    return "wv_build_chapter_n" if (should_continue and ci < total) else "wv_transition_to_phase3"
+    return "wv_build_chapter_n" if ci < total else "wv_transition_to_phase3"
+
+
+def route_batch_checkpoint(state: VideoWorkflowState) -> str:
+    if not _checkpoint_approved(state, "checkpoint_remaining_batch"):
+        return "wv_build_chapter_n"
+    return "wv_transition_to_phase3"
 
 
 def route_audio_decision(state: VideoWorkflowState) -> str:
@@ -106,17 +122,14 @@ def route_audio_decision(state: VideoWorkflowState) -> str:
 
 
 def _wrap_node(name: str, fn):
-    """Wrap a node function to auto-track completed_nodes, push thinking events, and log."""
+    """Wrap a node: maintain execution_trace as the single progress source."""
 
     def wrapped(state: VideoWorkflowState) -> dict:
         logger.info("▶ %s", name)
         t0 = time.perf_counter()
-
-        tlog: list[dict] = []
-        phase_labels = {"phase1": "内容编写", "phase2": "网页开发", "phase3": "音频合成", "phase4": "录屏"}
-        phase = state.get("current_phase", "phase1")
-        phase_cn = phase_labels.get(phase, phase)
-        think(tlog, "node_start", f"[{phase_cn}] {name}")
+        ctx = bind_workflow_thread(state.get("thread_id"))
+        tracker = ExecutionTracker(state)
+        step_id = tracker.begin(name)
 
         try:
             node_result = fn(state)
@@ -125,23 +138,13 @@ def _wrap_node(name: str, fn):
             node_thinking = node_result.pop("thinking_log", []) if isinstance(node_result, dict) else []
             result = dict(node_result) if isinstance(node_result, dict) else {"_raw": node_result}
 
-            result["current_node"] = name
+            tracker.add_events(node_thinking)
+            tracker.end(step_id, status="completed")
 
-            completed = list(state.get("completed_nodes", []))
-            if not completed or completed[-1] != name:
-                completed.append(name)
-            result["completed_nodes"] = completed
-
-            if "current_phase" not in result:
-                result["current_phase"] = state.get("current_phase", "phase1")
-
-            # 保留 scaffold 设置的 presentation_url
-            if "presentation_url" not in result and state.get("presentation_url"):
-                result["presentation_url"] = state["presentation_url"]
-
-            existing = state.get("thinking_log", [])
-            think(tlog, "node_end", f"✓ {name} ({elapsed:.0f}ms)")
-            result["thinking_log"] = existing + node_thinking + tlog
+            result.update(derive_runtime(state))
+            result["execution_trace"] = list(state.get("execution_trace", []))
+            result["execution_revision"] = state.get("execution_revision", 0)
+            result["thinking_log"] = []
 
             logger.info("✓ %s done (%.0fms)", name, elapsed)
             return result
@@ -151,11 +154,14 @@ def _wrap_node(name: str, fn):
                 logger.info("⏸ %s interrupted after %.0fms", name, elapsed)
                 set_interrupt_node(name)
                 raise
-            think(tlog, "node_error", f"✗ {name}: {e}")
-            existing = state.get("thinking_log", [])
-            result = {"current_node": name, "thinking_log": existing + tlog}
+            tracker.fail(step_id, f"✗ {name}: {e}")
+            result = derive_runtime(state)
+            result["execution_trace"] = list(state.get("execution_trace", []))
+            result["thinking_log"] = []
             logger.error("✗ %s FAILED after %.0fms: %s", name, elapsed, e)
             raise
+        finally:
+            reset_workflow_thread(ctx)
 
     return wrapped
 
@@ -179,7 +185,6 @@ def build_web_video_graph() -> StateGraph:
 
     # Phase 2
     builder.add_node("wv_scaffold_presentation", _wrap_node("wv_scaffold_presentation", wv_scaffold_presentation))
-    builder.add_node("wv_remove_example_chapter", _wrap_node("wv_remove_example_chapter", wv_remove_example_chapter))
     builder.add_node("wv_build_chapter_1", _wrap_node("wv_build_chapter_1", wv_build_chapter_1))
     builder.add_node("wv_checkpoint_chapter_1", _wrap_node("wv_checkpoint_chapter_1", wv_checkpoint_chapter_1_node))
     builder.add_node("wv_build_chapter_n", _wrap_node("wv_build_chapter_n", wv_build_chapter_n))
@@ -221,8 +226,8 @@ def build_web_video_graph() -> StateGraph:
     # Chapter 1: build → checkpoint (agent 内联自检，不再走 validate/repair 节点)
     builder.add_edge("wv_build_chapter_1", "wv_checkpoint_chapter_1")
 
-    builder.add_edge("wv_checkpoint_chapter_1", "wv_remove_example_chapter")
-    builder.add_conditional_edges("wv_remove_example_chapter", route_development_mode, {
+    builder.add_conditional_edges("wv_checkpoint_chapter_1", route_chapter_1_checkpoint, {
+        "wv_build_chapter_1": "wv_build_chapter_1",
         "wv_build_chapter_n": "wv_build_chapter_n",
         "wv_transition_to_phase3": "wv_transition_to_phase3",
     })
@@ -238,7 +243,10 @@ def build_web_video_graph() -> StateGraph:
         "wv_build_chapter_n": "wv_build_chapter_n",
         "wv_transition_to_phase3": "wv_transition_to_phase3",
     })
-    builder.add_edge("wv_checkpoint_remaining_batch", "wv_transition_to_phase3")
+    builder.add_conditional_edges("wv_checkpoint_remaining_batch", route_batch_checkpoint, {
+        "wv_build_chapter_n": "wv_build_chapter_n",
+        "wv_transition_to_phase3": "wv_transition_to_phase3",
+    })
 
     # ── Phase 3 edges ──
     builder.add_edge("wv_transition_to_phase3", "wv_checkpoint_audio")

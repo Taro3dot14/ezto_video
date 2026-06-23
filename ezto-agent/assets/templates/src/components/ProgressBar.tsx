@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { ChapterDef } from "../registry/types";
+import { NEW_CHAPTER_IDS } from "../registry/chapter-meta";
 import "./ProgressBar.css";
 
 interface Props {
@@ -16,17 +17,27 @@ interface Props {
 const DEFAULT_GITHUB_URL =
   "https://github.com/ConardLi/garden-skills";
 
+function useNewChapterIds(chapters: ChapterDef[]): Set<string> {
+  return useMemo(() => {
+    const ids = new Set(NEW_CHAPTER_IDS);
+    if (typeof window !== "undefined") {
+      const highlight = new URLSearchParams(window.location.search).get("highlight");
+      if (highlight !== null) {
+        const idx = Number(highlight);
+        const ch = chapters[idx];
+        if (ch) ids.add(ch.id);
+      }
+    }
+    return ids;
+  }, [chapters]);
+}
+
 /**
  * Hidden-on-hover progress bar, fixed to the bottom of the viewport.
  * Click chapter pill or pip to jump.
  *
- * Width is content-adaptive and capped at `100vw - 32px`; if total chapters
- * (or an active chapter's step pips) overflow, the bar scrolls horizontally
- * instead of squeezing items. The active chapter is auto-scrolled into view
- * on chapter change so it's visible the moment hover reveals the bar.
- *
- * A GitHub link sits to the right of the viewport, sharing the same hover
- * trigger so it appears/disappears in sync with the bar.
+ * Chapters in NEW_CHAPTER_IDS (since last approval) are highlighted with
+ * an accent badge so reviewers can spot the latest updates quickly.
  */
 export function ProgressBar({
   chapters,
@@ -35,6 +46,8 @@ export function ProgressBar({
   githubUrl = DEFAULT_GITHUB_URL,
 }: Props) {
   const activeRef = useRef<HTMLButtonElement | null>(null);
+  const newChapterIds = useNewChapterIds(chapters);
+  const hasNewChapters = newChapterIds.size > 0;
 
   useEffect(() => {
     activeRef.current?.scrollIntoView({
@@ -45,21 +58,28 @@ export function ProgressBar({
   }, [cursor.chapter]);
 
   return (
-    <div className="pb-hover" data-no-advance>
+    <div
+      className={`pb-hover${hasNewChapters ? " has-new-chapters" : ""}`}
+      data-no-advance
+    >
       <div className="pb">
         {chapters.map((c, i) => {
           const isActive = i === cursor.chapter;
+          const isNew = newChapterIds.has(c.id);
           return (
             <button
               key={c.id}
               ref={isActive ? activeRef : undefined}
-              className={`pb-chapter ${isActive ? "pb-active" : ""}`}
+              className={`pb-chapter ${isActive ? "pb-active" : ""}${
+                isNew ? " pb-chapter-new" : ""
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
                 onJumpChapter(i, 0);
               }}
             >
               <span className="pb-num">{String(i + 1).padStart(2, "0")}</span>
+              {isNew && <span className="pb-new-badge">新</span>}
               <span className="pb-title">{c.title}</span>
               {isActive && (
                 <div className="pb-pips">

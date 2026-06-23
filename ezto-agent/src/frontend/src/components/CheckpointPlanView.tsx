@@ -58,14 +58,17 @@ export default function CheckpointPlanView({ interrupt, threadId, onResume }: Pr
 
   return (
     <div className="cp-view">
-      <h3>Checkpoint Plan — 一次对齐 5 件事</h3>
-      <p className="cp-desc">
-        内容计划已写完。下面 5 件事一次确认，确认后进入网页开发阶段。
-      </p>
+      <div className="cp-view-head">
+        <h3>核对清单</h3>
+        <p className="cp-desc">
+          内容计划已写完。下面 5 件事一次确认，确认后进入网页开发阶段。
+        </p>
+      </div>
 
+      <div className="cp-view-scroll wf-clay-scroll">
       {/* 1. Script */}
       <section className="cp-section">
-        <h4>1. 稿子 (script.md)</h4>
+        <h4>1. 口播稿 (script.md)</h4>
         <p className="cp-hint">文件：{files?.script ?? ""}</p>
         <textarea className="cp-file-content" readOnly rows={10}
           value={scriptContent ?? "加载中…"} />
@@ -200,10 +203,13 @@ export default function CheckpointPlanView({ interrupt, threadId, onResume }: Pr
           </label>
         </div>
       </section>
+      </div>
 
-      <button className="btn btn-primary btn-lg" onClick={handleConfirm}>
-        确认并继续
-      </button>
+      <div className="cp-view-foot">
+        <button className="btn btn-primary btn-lg" onClick={handleConfirm}>
+          确认并继续
+        </button>
+      </div>
     </div>
   );
 }

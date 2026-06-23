@@ -2,34 +2,39 @@
 
 from __future__ import annotations
 
-import asyncio
-import json
 import time
-from typing import AsyncGenerator
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 
 from backend.core.logger import logger, log_api_request
-
-from harness.services.tools.shell import drain_scaffold_log
+from backend.services.event_service import event_generator
 
 from .models import (
     ArtifactInfo,
     ErrorResponse,
+    ProjectDetail,
+    ProjectSummary,
+    RenameProjectRequest,
+    DeleteProjectResponse,
     ResumeRequest,
     StartRequest,
     StartWorkflowResponse,
     ResumeWorkflowResponse,
+    PauseWorkflowResponse,
+    ContinueWorkflowResponse,
     ThemeInfo,
     WorkflowStateResponse,
 )
 from backend.services.workflow_service import WorkflowManager
+from backend.services.project_service import ProjectService
+from harness.core.execution import derive_runtime, total_node_count
 
 router = APIRouter(prefix="/api")
 
 # Shared manager instance (set by server.py on startup)
 _manager: WorkflowManager | None = None
+_project_service: ProjectService | None = None
 
 
 def get_manager() -> WorkflowManager:
@@ -37,9 +42,19 @@ def get_manager() -> WorkflowManager:
     return _manager
 
 
+def get_project_service() -> ProjectService:
+    assert _project_service is not None, "ProjectService not initialized"
+    return _project_service
+
+
 def set_manager(m: WorkflowManager) -> None:
     global _manager
     _manager = m
+
+
+def set_project_service(s: ProjectService) -> None:
+    global _project_service
+    _project_service = s
 
 
 # Helper to read file content with path traversal protection
@@ -120,6 +135,64 @@ async def resume_workflow(thread_id: str, req: ResumeRequest):
     )
 
 
+@router.post(
+    "/workflow/{thread_id}/pause",
+    response_model=PauseWorkflowResponse,
+    responses={
+        404: {"model": ErrorResponse},
+        400: {"model": ErrorResponse},
+    },
+)
+async def pause_workflow(thread_id: str):
+    """Pause a running workflow by cancelling the background graph task."""
+    t0 = time.perf_counter()
+    mgr = get_manager()
+
+    if mgr.get_state(thread_id) is None:
+        raise HTTPException(404, detail=f"Workflow {thread_id} not found")
+
+    try:
+        state = await mgr.pause_workflow(thread_id)
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e))
+
+    elapsed = (time.perf_counter() - t0) * 1000
+    log_api_request("POST", f"/workflow/{thread_id}/pause", 200, elapsed)
+    return PauseWorkflowResponse(
+        thread_id=thread_id,
+        state=_state_to_response(state),
+    )
+
+
+@router.post(
+    "/workflow/{thread_id}/continue",
+    response_model=ContinueWorkflowResponse,
+    responses={
+        404: {"model": ErrorResponse},
+        400: {"model": ErrorResponse},
+    },
+)
+async def continue_workflow(thread_id: str):
+    """Continue a paused workflow from the LangGraph checkpoint."""
+    t0 = time.perf_counter()
+    mgr = get_manager()
+
+    if mgr.get_state(thread_id) is None:
+        raise HTTPException(404, detail=f"Workflow {thread_id} not found")
+
+    try:
+        state = await mgr.continue_workflow(thread_id)
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e))
+
+    elapsed = (time.perf_counter() - t0) * 1000
+    log_api_request("POST", f"/workflow/{thread_id}/continue", 200, elapsed)
+    return ContinueWorkflowResponse(
+        thread_id=thread_id,
+        state=_state_to_response(state),
+    )
+
+
 @router.get(
     "/workflow/{thread_id}",
     response_model=WorkflowStateResponse,
@@ -139,67 +212,23 @@ async def get_workflow_state(thread_id: str):
     "/workflow/{thread_id}/events",
     responses={404: {"model": ErrorResponse}},
 )
-async def workflow_events(thread_id: str):
+async def workflow_events(
+    thread_id: str,
+    request: Request,
+    from_: int = Query(0, alias="from", ge=0),
+):
     """SSE event stream for workflow state changes."""
     mgr = get_manager()
     if mgr.get_state(thread_id) is None:
         raise HTTPException(404, detail=f"Workflow {thread_id} not found")
 
-    async def event_generator() -> AsyncGenerator[str, None]:
-        last_node_count = -1
-        last_think_count = 0
-        last_pending_interrupt: dict | None = None
-        last_scaffold_count = 0
-        while True:
-            state = mgr.get_state(thread_id)
-            if state is None:
-                yield f"event: error\ndata: {json.dumps({'message': 'workflow deleted'})}\n\n"
-                break
-
-            nodes = state.get("completed_nodes", [])
-            thinking = state.get("thinking_log", [])
-            current_pi = state.get("pending_interrupt")
-
-            # Push new thinking events (incrementally)
-            new_think = thinking[last_think_count:]
-            if new_think:
-                last_think_count = len(thinking)
-                yield f"event: think\ndata: {json.dumps(new_think, ensure_ascii=False)}\n\n"
-
-            # Push new scaffold log lines as thinking events (type="step")
-            # so they appear inline in the ExecutionStream.
-            new_scaffold, last_scaffold_count = drain_scaffold_log(thread_id, last_scaffold_count)
-            if new_scaffold:
-                scaffold_think = [
-                    {"type": "step", "content": line, "ts": time.time()}
-                    for line in new_scaffold
-                ]
-                yield f"event: think\ndata: {json.dumps(scaffold_think, ensure_ascii=False)}\n\n"
-
-            # Push state change when nodes advance OR when pending_interrupt appears
-            pi_changed = current_pi and current_pi != last_pending_interrupt
-            if len(nodes) != last_node_count or pi_changed:
-                last_node_count = len(nodes)
-                if pi_changed:
-                    last_pending_interrupt = current_pi
-                event = {
-                    "type": "state_change",
-                    "current_phase": state.get("current_phase"),
-                    "current_node": state.get("current_node"),
-                    "completed_nodes": nodes,
-                    "pending_interrupt": state.get("pending_interrupt"),
-                    "final_summary": state.get("final_summary"),
-                }
-                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
-
-            if state.get("final_summary") is not None:
-                yield f"event: completed\ndata: {json.dumps({'summary': state['final_summary']})}\n\n"
-                break
-
-            await asyncio.sleep(1)
-
     return StreamingResponse(
-        event_generator(),
+        event_generator(
+            thread_id,
+            mgr,
+            revision_from=from_,
+            last_event_id=request.headers.get("last-event-id"),
+        ),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
@@ -246,6 +275,123 @@ async def list_themes():
     return [ThemeInfo(**t) for t in themes]
 
 
+# ── Project management ──
+
+
+@router.get("/projects", response_model=list[ProjectSummary])
+async def list_projects():
+    """List all workspace projects (historical + active)."""
+    mgr = get_manager()
+    svc = get_project_service()
+    active_ids = mgr.active_thread_ids()
+    rows = svc.list_projects(active_ids)
+    return [ProjectSummary(**{k: v for k, v in r.items() if k != "user_request"}) for r in rows]
+
+
+@router.get(
+    "/projects/{project_id}",
+    response_model=ProjectDetail,
+    responses={404: {"model": ErrorResponse}},
+)
+async def get_project(project_id: str):
+    """Get project metadata and disk artifacts."""
+    mgr = get_manager()
+    svc = get_project_service()
+    active = project_id in mgr.active_thread_ids()
+    project = svc.get_project(project_id, active=active)
+    if project is None:
+        raise HTTPException(404, detail=f"Project {project_id} not found")
+    return ProjectDetail(
+        **{k: v for k, v in project.items() if k != "artifacts"},
+        artifacts=[ArtifactInfo(**a) for a in project["artifacts"]],
+    )
+
+
+@router.patch(
+    "/projects/{project_id}",
+    response_model=ProjectSummary,
+    responses={404: {"model": ErrorResponse}, 400: {"model": ErrorResponse}},
+)
+async def rename_project(project_id: str, req: RenameProjectRequest):
+    """Rename a project."""
+    mgr = get_manager()
+    svc = get_project_service()
+    try:
+        meta = svc.rename_project(project_id, req.name)
+    except FileNotFoundError:
+        raise HTTPException(404, detail=f"Project {project_id} not found")
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e))
+
+    active = project_id in mgr.active_thread_ids()
+    row = svc.get_project(project_id, active=active) or meta
+    return ProjectSummary(
+        id=row["id"],
+        name=row["name"],
+        status=row.get("status", "empty"),
+        artifact_count=row.get("artifact_count", 0),
+        is_active=active,
+        created_at=row.get("created_at", ""),
+        updated_at=row.get("updated_at", ""),
+        input_type=row.get("input_type"),
+    )
+
+
+@router.delete(
+    "/projects/{project_id}",
+    response_model=DeleteProjectResponse,
+    responses={404: {"model": ErrorResponse}, 400: {"model": ErrorResponse}},
+)
+async def delete_project(project_id: str):
+    """Delete a project workspace and drop any in-memory workflow."""
+    mgr = get_manager()
+    svc = get_project_service()
+    try:
+        meta = svc.get_project(project_id)
+        if meta is None:
+            raise FileNotFoundError(f"Project {project_id} not found")
+        await mgr.remove_workflow(project_id)
+        svc.delete_project(project_id)
+    except FileNotFoundError:
+        raise HTTPException(404, detail=f"Project {project_id} not found")
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e))
+    except OSError as e:
+        raise HTTPException(500, detail=f"Failed to delete project: {e}")
+
+    log_api_request("DELETE", f"/projects/{project_id}", 200, 0)
+    return DeleteProjectResponse(id=project_id, name=meta.get("name", ""))
+
+
+@router.get(
+    "/projects/{project_id}/artifacts",
+    responses={404: {"model": ErrorResponse}},
+)
+async def list_project_artifacts(project_id: str):
+    """List artifact files for a project (disk scan)."""
+    svc = get_project_service()
+    if not svc.project_dir(project_id).is_dir():
+        raise HTTPException(404, detail=f"Project {project_id} not found")
+    artifacts = svc.scan_disk_artifacts(project_id)
+    return {"artifacts": artifacts}
+
+
+@router.get(
+    "/projects/{project_id}/artifact/{path:path}",
+    responses={404: {"model": ErrorResponse}},
+)
+async def read_project_artifact(project_id: str, path: str):
+    """Read a project artifact from disk."""
+    svc = get_project_service()
+    try:
+        content, resolved = svc.read_artifact(project_id, path)
+    except FileNotFoundError:
+        raise HTTPException(404, detail=f"Artifact not found: {path}")
+    except PermissionError:
+        raise HTTPException(403, detail="Path traversal denied")
+    return {"content": content, "path": resolved}
+
+
 # ── Internal ──
 
 
@@ -265,12 +411,18 @@ def _state_to_response(state: VideoWorkflowState) -> WorkflowStateResponse:
             )
         )
 
+    runtime = derive_runtime(state)
+
     return WorkflowStateResponse(
         thread_id=state.get("thread_id", ""),
-        current_phase=state.get("current_phase", ""),
-        current_node=state.get("current_node", ""),
-        completed_nodes=state.get("completed_nodes", []),
-        thinking_log=state.get("thinking_log", []),
+        current_phase=runtime["current_phase"],
+        current_node=runtime["current_node"],
+        completed_nodes=runtime["completed_nodes"],
+        execution_trace=state.get("execution_trace", []),
+        execution_revision=state.get("execution_revision", 0),
+        total_nodes=total_node_count(),
+        token_usage=state.get("token_usage") or {},
+        thinking_log=[],
         pending_interrupt=state.get("pending_interrupt"),
         errors=state.get("errors", []),
         artifacts=artifacts,
@@ -281,4 +433,6 @@ def _state_to_response(state: VideoWorkflowState) -> WorkflowStateResponse:
         validation_results=state.get("validation_results", []),
         user_confirmations=state.get("user_confirmations", {}),
         presentation_url=state.get("presentation_url"),
+        paused=bool(state.get("paused")),
+        paused_at=state.get("paused_at"),
     )
