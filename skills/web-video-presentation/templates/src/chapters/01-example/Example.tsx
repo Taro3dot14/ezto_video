@@ -1,104 +1,132 @@
 import { MaskReveal } from "../../components/MaskReveal";
+import { GridSlot, ListGrid } from "../../components/GridSlot";
+import { SceneChrome } from "../../components/SceneChrome";
 import type { ChapterStepProps } from "../../registry/types";
 import "./Example.css";
 
+const BRAND = "Layout Shell Lab";
+
 /**
- * Reference chapter — replace with your own.
+ * Layout Shell Lab — reference chapter for all agents.
  *
- * Demonstrates the per-step takeover pattern AND the design-token system:
- * each step uses SEMANTIC tokens (--text, --accent, --t-*, --space-*) so
- * you can swap themes without editing the chapter at all.
- *
- * See SKILL.md "non-negotiable #3" for why each step is its own layout.
+ * Steps: cover → split → grid-3 (list-reveal) → quote.
  */
 export default function ExampleChapter({ step }: ChapterStepProps) {
-  /* Step 0 — magazine cover, headline + kicker + click cue */
   if (step === 0) {
     return (
-      <div className="ex-scene scene-pad">
-        <header className="masthead">
-          <span className="brand">Your Presentation</span>
-          <span className="issue">Issue · 01 — Replace this</span>
-        </header>
-        <hr className="rule" style={{ marginTop: "var(--space-5)" }} />
-
-        <div className="ex-cover-body">
-          <div className="kicker">Chapter 01 — Example</div>
-          <h1 className="ex-cover-h">
+      <SceneChrome
+        brand={BRAND}
+        issue="EXAMPLE 01 · RULE 01 · READ LAYOUT-SYSTEM.MD"
+      >
+        <div className="lx-cover-body">
+          <div className="lx-kicker">Shell · Cover</div>
+          <h1 className="lx-hero">
             <MaskReveal show duration={900}>
-              <span className="serif-cn">这是&nbsp;</span>
+              <span className="serif-cn">固定舞台</span>
             </MaskReveal>
+            <br />
             <MaskReveal show delay={300} duration={900}>
-              <span className="serif-it ex-em">first&nbsp;step</span>
-            </MaskReveal>
-            <MaskReveal show delay={650} duration={900}>
-              <span className="serif-cn">.</span>
+              <span className="display-en-soft ex-em">排版锁在 shell</span>
             </MaskReveal>
           </h1>
-          <div className="ex-cover-foot label-mono">
-            <span className="dot-accent" /> &nbsp;Tap anywhere to advance
+          <p className="lx-body">
+            Agent 只填内容与 ch-* 动画，不发明 font-size 或 gap。
+          </p>
+          <div className="lx-cover-foot lx-caption">
+            <span className="dot-accent" /> Tap to advance
           </div>
         </div>
-      </div>
+      </SceneChrome>
     );
   }
 
-  /* Step 1 — split layout: hero number + body */
   if (step === 1) {
     return (
-      <div className="ex-scene scene-pad">
-        <header className="masthead">
-          <span className="brand">Your Presentation</span>
-          <span className="issue">Issue · 01</span>
-        </header>
-        <hr className="rule" style={{ marginTop: "var(--space-5)" }} />
-
-        <div className="ex-split">
-          <div className="ex-split-num hero-num">02</div>
-          <div className="ex-split-body">
-            <div className="kicker">每一步</div>
-            <h2 className="ex-split-h">
-              <MaskReveal show duration={900}>
-                <span className="serif-cn">独占&nbsp;</span>
-              </MaskReveal>
-              <MaskReveal show delay={300} duration={900}>
-                <span className="serif-it ex-em">整个屏幕</span>
-              </MaskReveal>
-              <MaskReveal show delay={650} duration={900}>
-                <span className="serif-cn">.</span>
-              </MaskReveal>
-            </h2>
-            <p className="ex-split-p">
-              The current theme controls every visual detail — palette,
-              fonts, hero-number style, rule weight, decoration, motion.
-              The chapter code is theme-agnostic.
-            </p>
+      <SceneChrome
+        brand={BRAND}
+        issue="EXAMPLE 01 · RULE 02 · READ LAYOUT-SYSTEM.MD"
+      >
+        <section className="lx-split-section" aria-label="Split shell demo">
+          <div className="lx-split-rail">
+            <span className="lx-split-index" aria-hidden>
+              02
+            </span>
           </div>
-        </div>
-      </div>
+          <div className="lx-split-rule" aria-hidden />
+          <article className="lx-split-panel">
+            <div className="lx-split-panel-main">
+              <div className="lx-kicker">Shell · Split</div>
+              <h2 className="lx-title">
+                <MaskReveal show duration={900}>
+                  <span className="serif-cn">大数字 + 正文</span>
+                </MaskReveal>
+              </h2>
+              <p className="lx-body">
+                左侧 accent 数字轨，右侧 surface 面板 — 垂直居中，不再头重脚轻。
+              </p>
+            </div>
+            <aside className="lx-split-meta" aria-label="Layout metadata">
+              <span className="lx-split-meta-label">Layout rule</span>
+              <span className="lx-split-meta-value">
+                Rail · rule · panel — one unified section
+              </span>
+            </aside>
+          </article>
+        </section>
+      </SceneChrome>
     );
   }
 
-  /* Step 2 — pull-quote close */
+  if (step === 2) {
+    return (
+      <SceneChrome
+        brand={BRAND}
+        issue="EXAMPLE 01 · RULE 03 · READ LAYOUT-SYSTEM.MD"
+      >
+        <div className="lx-kicker">Shell · Grid 3 — one item per step</div>
+        <h2 className="lx-subtitle">列举时：ghost → active → past</h2>
+        <ListGrid>
+          <GridSlot
+            state="past"
+            num="01"
+            title="已讲过的项"
+            body="past 态保留上下文，灰化。"
+          />
+          <GridSlot
+            state="active"
+            num="02"
+            title="当前 step 独占"
+            body="active 态高亮边框 + 数字砸下动画。"
+          />
+          <GridSlot
+            state="ghost"
+            num="03"
+            title="尚未揭示"
+            body="ghost 态虚线占位。"
+          />
+        </ListGrid>
+      </SceneChrome>
+    );
+  }
+
   return (
-    <div className="ex-scene scene-pad ex-close">
-      <div className="ex-close-inner">
-        <div className="kicker">Now</div>
-        <div className="pull-quote ex-quote">
+    <SceneChrome
+      brand={BRAND}
+      issue="EXAMPLE 01 · RULE 04 · READ LAYOUT-SYSTEM.MD"
+    >
+      <div className="lx-quote-body">
+        <div className="lx-kicker">Shell · Quote</div>
+        <div className="pull-quote lx-quote-text">
           <MaskReveal show duration={1100}>
-            <span className="serif-cn">Replace this with </span>
+            <span className="serif-cn">换章节时</span>
           </MaskReveal>
           <MaskReveal show delay={400} duration={1100}>
-            <span className="serif-it ex-em">your own&nbsp;</span>
-          </MaskReveal>
-          <MaskReveal show delay={760} duration={1100}>
-            <span className="serif-cn">chapters.</span>
+            <span className="display-en-soft ex-em">&nbsp;只换内容与动画</span>
           </MaskReveal>
         </div>
-        <div className="ex-close-foot label-mono">
-          See SKILL.md / CHAPTER-CRAFT.md / THEMES.md
-        </div>
+        <div className="lx-caption">layouts/LAYOUT-SYSTEM.md · CHAPTER-CRAFT.md</div>
       </div>
-    </div>
+    </SceneChrome>
   );
 }
+

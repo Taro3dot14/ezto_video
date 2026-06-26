@@ -18,7 +18,7 @@ _GLOBAL_CLASSES = frozenset({
     "corner-mark", "display-en", "dot-accent", "fade-in", "fill", "hero-num",
     "is-accent", "issue", "kicker", "label-mono", "mono", "masthead", "no-advance",
     "ord", "pull-quote", "row", "rule", "rule-accent", "scene", "scene-pad",
-    "serif-cn", "serif-it", "slash", "stack", "tr-rule", "visible",
+    "serif-cn", "display-en", "display-en-soft", "slash", "stack", "tr-rule", "visible",
 })
 
 

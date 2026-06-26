@@ -361,6 +361,21 @@ def test_craft_checklist_snapshot_for_frontend(tmp_path):
     assert snap["items"][0]["state"] in ("pass", "fail", "pending", "deferred")
 
 
+def test_no_ai_slop_fails_italic(tmp_path):
+    ws = tmp_path
+    _write_minimal_chapter(ws)
+    ch = ws / "presentation" / "src" / "chapters" / "chapter_1"
+    (ch / "index.tsx").write_text(
+        (ch / "index.tsx").read_text(encoding="utf-8")
+        + '\n  if (step === 9) return <span className="serif-it">bad</span>;\n',
+        encoding="utf-8",
+    )
+    ctx: dict = {}
+    hints = run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
+    assert hints["NO_AI_SLOP"]["pass"] is False
+    assert "serif-it" in hints["NO_AI_SLOP"]["evidence"]
+
+
 def test_no_ai_slop_allows_terminal_symbols(tmp_path):
     ws = tmp_path
     _write_minimal_chapter(ws)

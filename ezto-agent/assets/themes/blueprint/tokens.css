@@ -6,11 +6,11 @@
  *   are mono cyan with ticks.
  *
  *   character knobs:
- *     • hero numbers   — mono cyan, 0 letter-spacing
- *     • rule           — 2px DASHED cyan (drafting line)
- *     • card           — 2px solid border, 0 radius
- *     • surface        — 60px drafting grid
- *     • motion         — measured (precise drafting tools)
+ *     �?hero numbers   �?mono cyan, 0 letter-spacing
+ *     �?rule           �?2px DASHED cyan (drafting line)
+ *     �?card           �?2px solid border, 0 radius
+ *     �?surface        �?60px drafting grid
+ *     �?motion         �?measured (precise drafting tools)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -40,10 +40,10 @@
   --dur-cinematic:  1200ms;
 
   /* ─── design identity: drafting board ─── */
-  --r-card:        var(--r-flat);    /* SIGNATURE — engineering, not branding */
+  --r-card:        var(--r-flat);    /* SIGNATURE �?engineering, not branding */
   --r-stage:       0;
   --rule-w:        2px;
-  --rule-style:    dashed;            /* SIGNATURE — drafting line */
+  --rule-style:    dashed;            /* SIGNATURE �?drafting line */
   --hero-num-font:    var(--font-mono);
   --hero-num-style:   normal;
   --hero-num-weight:  500;

@@ -4,15 +4,15 @@
  *   charcoal-brown ink, near-zero accent saturation (clay-brown). Inter
  *   for display (architecture portfolios love Inter / Helvetica), Source
  *   Serif for body (gallery wall-text feel). SIGNATURE: NO decoration,
- *   NO pattern, NO vignette — purity. Like monochrome-print but warmer
+ *   NO pattern, NO vignette �?purity. Like monochrome-print but warmer
  *   and with sans-serif headlines instead of serif.
  *
  *   character knobs:
- *     • hero numbers   — Inter, weight 300 (light, refined)
- *     • rule           — 1px solid faint sand hairline
- *     • card           — refined small radius (paper-lift)
- *     • surface        — clean (NO pattern, NO vignette)
- *     • motion         — quietest pace (sand barely moves)
+ *     �?hero numbers   �?Inter, weight 300 (light, refined)
+ *     �?rule           �?1px solid faint sand hairline
+ *     �?card           �?refined small radius (paper-lift)
+ *     �?surface        �?clean (NO pattern, NO vignette)
+ *     �?motion         �?quietest pace (sand barely moves)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -42,7 +42,7 @@
   --dur-cinematic:  1750ms;
 
   /* ─── design identity: gallery restraint ─── */
-  --r-card:        var(--r-xs);     /* 4px — barely-there refinement */
+  --r-card:        var(--r-xs);     /* 4px �?barely-there refinement */
   --r-stage:       0;
   --rule-w:        1px;
   --rule-style:    solid;
@@ -58,5 +58,5 @@
   --shadow-stage:
     0 60px 160px rgba(60, 40, 20, 0.30),
     0 0 0 1px rgba(0, 0, 0, 0.04);
-  /* SIGNATURE: NO surface-pattern, NO vignette — desert dusk purity. */
+  /* SIGNATURE: NO surface-pattern, NO vignette �?desert dusk purity. */
 }

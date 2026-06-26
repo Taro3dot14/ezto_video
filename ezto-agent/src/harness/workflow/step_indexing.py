@@ -129,9 +129,10 @@ def brief_build_order_block() -> str:
     return "\n".join([
         "## Build order (strict)",
         "1. `write_narrations` — one string per **code step** (`narrations.length` = screen count)",
-        "2. `write_file` index.tsx — one full-screen `if (step === k)` per code step 0..N-1",
-        "   - **Icons: inline SVG or CSS only — never emoji** (🔧🔍📊 etc. fail NO_AI_SLOP)",
-        "3. `write_file` index.css — theme tokens only",
+        "2. `write_file` index.tsx — SceneChrome + one layout shell per code step (`lx-cover`, `lx-split`, …)",
+        "   - Typography: `.lx-hero` / `.lx-title` / `.lx-body` — never raw font-size on copy",
+        "   - Icons: inline SVG or CSS only — never emoji",
+        "3. `write_file` index.css — `ch-*` animation classes only (layout is global)",
         "4. `craft_auto_check` — fix emoji/slop before registry if flagged",
         "5. `update_registry` → `done` (reviewer runs craft checks)",
         "",
@@ -156,7 +157,7 @@ def count_narration_lines(nar_text: str) -> int:
 def example_file_hints() -> tuple[tuple[str, str], ...]:
     """(filename, one-line hint) for 01-example bundle."""
     return (
-        ("Example.tsx", "One `if (step === k)` full-screen branch per code step"),
+        ("Example.tsx", "SceneChrome + lx-* layout shells per step"),
+        ("Example.css", "Chapter-specific only (`ch-*` or accent overrides)"),
         ("narrations.ts", "narrations.length === screen count; narrations[i] ↔ step === i"),
-        ("Example.css", "Theme tokens + projection-friendly scale"),
     )

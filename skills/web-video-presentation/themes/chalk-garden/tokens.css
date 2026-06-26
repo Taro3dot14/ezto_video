@@ -5,11 +5,11 @@
  *   whole stage feels like a 35mm photo of a real chalkboard.
  *
  *   character knobs:
- *     • hero numbers   — chunky chalk-handwritten
- *     • rule           — 2px DASHED chalk
- *     • card           — soft 16px radius, slight rotation in chapter
- *     • surface        — film grain (overlay) + edge vignette
- *     • motion         — soft, hand-drawn pace
+ *     �?hero numbers   �?chunky chalk-handwritten
+ *     �?rule           �?2px DASHED chalk
+ *     �?card           �?soft 16px radius, slight rotation in chapter
+ *     �?surface        �?film grain (overlay) + edge vignette
+ *     �?motion         �?soft, hand-drawn pace
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -42,7 +42,7 @@
   --r-card:        var(--r-md);
   --r-stage:       0;
   --rule-w:        2px;
-  --rule-style:    dashed;       /* SIGNATURE — every divider is dashed */
+  --rule-style:    dashed;       /* SIGNATURE �?every divider is dashed */
   --hero-num-font:    var(--font-display-en);
   --hero-num-style:   normal;
   --hero-num-weight:  400;

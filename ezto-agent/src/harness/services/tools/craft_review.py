@@ -61,7 +61,7 @@ CRAFT_REVIEW_ITEMS: tuple[CraftReviewItem, ...] = (
     CraftReviewItem("WHITESPACE_COLOR", "留白舒服、配色舒服", "manual"),
     CraftReviewItem("LIST_ONE_PER_STEP", "清单/列表逐个揭示，1 项 = 1 step", "manual"),
     CraftReviewItem("RICHER_THAN_SCRIPT", "画面信息比口播稿多（回了原文章抽细节）", "manual"),
-    CraftReviewItem("NO_AI_SLOP", "无紫粉渐变 / 装饰性细边框小卡片 / emoji / 假数据 / 假 logo", "auto"),
+    CraftReviewItem("NO_AI_SLOP", "无紫粉渐变 / 装饰性细边框小卡片 / emoji / 斜体 / 假数据 / 假 logo", "auto"),
     CraftReviewItem("PLACEHOLDER_NOT_FAKE", "缺的素材用 placeholder，不是 fake", "manual"),
     CraftReviewItem("THEME_TOKENS", "颜色与字体走 token；primitive class 接入主题", "auto"),
     CraftReviewItem("MISSING_ASSETS_NOTE", "交付时主动说明本章还缺哪些素材", "manual"),
@@ -311,7 +311,7 @@ def failed_item_ids(ctx: dict[str, Any]) -> list[str]:
 
 
 _AUTO_FAIL_DEFAULT_FIX: dict[str, str] = {
-    "NO_AI_SLOP": "Remove emoji / purple-gradient / thin-border slop from index.tsx and index.css",
+    "NO_AI_SLOP": "Remove emoji / italic / purple-gradient / thin-border slop from index.tsx and index.css",
     "NO_TINY_TEXT_WALL": "Raise primary body copy to ≥36px or move small text to auxiliary classes only",
     "THEME_TOKENS": "Replace hardcoded colors with theme CSS variables in index.css",
     "NARRATIONS_SYNC": "Align narrations.ts length with screen count (code steps 0..N-1)",
@@ -420,9 +420,15 @@ def _check_no_ai_slop(tsx: str, css: str) -> tuple[bool, str]:
         issues.append("purple/pink gradient")
     if re.search(r"border:\s*1px\s+solid[^;]{0,40}px", css) and "min-height" not in css:
         issues.append("thin decorative border card pattern")
+    if re.search(r"font-style\s*:\s*italic", blob, re.I):
+        issues.append("italic font-style")
+    if re.search(r"""fontStyle\s*:\s*['"]italic['"]""", tsx):
+        issues.append("italic fontStyle")
+    if re.search(r"serif-it", blob):
+        issues.append("serif-it class (italic banned)")
     if issues:
         return False, "; ".join(issues)
-    return True, "no emoji / purple gradient / thin-border slop"
+    return True, "no emoji / italic / purple gradient / thin-border slop"
 
 
 def _css_without_terminal_hex(css: str) -> str:

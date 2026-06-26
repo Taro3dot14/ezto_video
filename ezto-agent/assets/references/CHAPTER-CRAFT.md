@@ -90,12 +90,34 @@ hero 标语 / 一个数字 / 一组对比 + 必要的视觉演示。
 
 视频观众离屏幕远、注意力浮动，所以：
 
-- **字号要大** —— 具体下限见下方 **「投影可读性（硬约束）」**（hero ≥ 96px，正文 ≥ 36px）
-- **留白要多** —— 舞台四边都要让出大留白，画面不要塞满
+- **字号要大** —— 使用 **Layout Shell  typography 角色**（`lx-hero` / `lx-body` 等），
+  见 `presentation/src/layouts/LAYOUT-SYSTEM.md`；具体下限见下方「投影可读性」
+- **留白要多** —— `SceneChrome` + shell 已内置 `--stage-pad-*` 与 `--space-*` 节奏；
+  **禁止**在章节 CSS 里用 magic-number margin/gap 重造布局
 - **配色要舒服** —— **颜色和字体家族必须用主题 token**（保证换主题不破）；
-  字号 / 间距 / 时长这些章节按内容自由发挥（详见下方「代码层最小约束」）
-- **动画要舒服 + 炫酷** —— 出现得干净利落，停下来不抢戏；炫酷靠
-  **设计巧思**（内容驱动的演示动画），不靠**速度暴力**或**密集闪烁**
+  动画时长参考 `theme.json` 的 `mood`
+- **动画要舒服 + 炫酷** —— 内容驱动的演示动画；`ch-*` 类写在章节 index.css
+- **禁止斜体** —— 投影 + MaskReveal 会裁切斜体末字；NO_AI_SLOP 自动检测。
+  英文强调用 `.display-en` / `.display-en-soft`，**不得** `font-style: italic` 或 `serif-it`
+
+### Layout Shell System（排版真相源）
+
+> 章节 **不得**从零写 flex/grid + 随意 font-size。每 step 选一个 shell：
+
+| Shell | 类名 | 场景 |
+|-------|------|------|
+| Cover | `lx-cover-body` | 开场 hero |
+| Split | `lx-split` | 大数字 + 说明 |
+| Solo | `lx-solo` | 78% 宽单主视觉 |
+| Grid 3 | `lx-grid-3` + `GridSlot` | 列举逐步亮（1 项 / step） |
+| Grid 2 | `lx-grid-2` | 两列对比 |
+| Stack | `lx-stack` | 章节引言 / 过渡 |
+| Quote | `lx-quote-body` | 收尾引语 |
+| Terminal | `lx-terminal` | 代码/对话窗 |
+
+包装：`<SceneChrome>` · 列表格：`<GridSlot state="ghost|active|past">`
+
+完整规范在 scaffold 后的 `src/layouts/LAYOUT-SYSTEM.md`。
 
 ---
 
@@ -198,13 +220,11 @@ AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
 
 ### 可硬编码 / 可 token，按内容自由（解锁章节自由设计）
 
-- **字号**：**主文案必须 ≥ 投影可读性下限**（见上文）；想用 `var(--t-projection-body)`
-  / `var(--t-h1)` 也行，需要更大就写更大 px
-- **间距 / padding / margin**：按画面节奏写具体值
-- **动画时长 / 缓动 / keyframe**：按动画意图写具体值
-  （**节奏气质**参考 `theme.json` 的 `mood` —— 慢主题别写 200ms 的快动画）
-- **边框宽度 / 非性格圆角 / 字距**：随手写
-- **gap / grid 布局尺寸**：按画面构图写
+- **字号 / 间距 / 布局**：**优先 Layout Shell**（`layouts.css` + `lx-*`）。
+  主文案 **禁止**在章节 CSS 写 `font-size` —— 用 `.lx-hero` / `.lx-body` 等角色。
+  间距 **禁止** magic px —— 用 `--space-*`（shell 已预设 gap/padding）。
+- **动画时长 / 缓动 / keyframe**：章节 `ch-*` 类按内容写（参考 `theme.json` `mood`）
+- **边框宽度 / 非性格圆角 / 字距**：仅在 `ch-*` 装饰元素上按需写
 
 ### 其它工程红线
 

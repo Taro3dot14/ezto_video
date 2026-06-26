@@ -61,3 +61,15 @@
 @keyframes letter-rise {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-reveal,
+  .rule-grow,
+  .letter-stagger > .letter {
+    animation: none !important;
+    transition: none !important;
+    clip-path: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

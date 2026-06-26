@@ -85,6 +85,9 @@ def test_format_brief():
     assert "ZERO emoji" in prompt or "never emoji" in prompt.lower()
     assert "craft_auto_check" in prompt
     assert "NO_AI_SLOP" in prompt
+    assert "Layout Shell" in prompt
+    assert "lx-cover" in prompt
+    assert "SceneChrome" in prompt
 
 
 def test_parse_article_refs_from_outline():
@@ -137,7 +140,7 @@ def test_read_chapter_context_tool(tmp_path):
     )
     assert "01-example" in out
     assert "Steps: outline labels vs code" in out
-    assert "NO_AI_SLOP" in out or "never emoji" in out.lower()
+    assert "Layout Shell" in out or "lx-cover" in out
     assert "Example.tsx" in out
     assert "export default function X" in out
     assert "Hook intro" in out or "article §1" in out

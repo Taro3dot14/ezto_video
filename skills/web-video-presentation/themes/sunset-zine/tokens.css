@@ -5,11 +5,11 @@
  *   feel), springy motion. Hero numbers are oversized italic Fraunces.
  *
  *   character knobs:
- *     • hero numbers   — italic Fraunces, very tight tracking
- *     • rule           — 1.5px DASHED (zine cut line)
- *     • card           — 12px radius (slight softening)
- *     • surface        — coarser peach paper grain (riso noise)
- *     • motion         — springy with overshoot (playful)
+ *     �?hero numbers   �?italic Fraunces, very tight tracking
+ *     �?rule           �?1.5px DASHED (zine cut line)
+ *     �?card           �?12px radius (slight softening)
+ *     �?surface        �?coarser peach paper grain (riso noise)
+ *     �?motion         �?springy with overshoot (playful)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -42,9 +42,9 @@
   --r-card:        var(--r-md);       /* slight softening */
   --r-stage:       0;
   --rule-w:        2px;
-  --rule-style:    dashed;             /* SIGNATURE — cut-and-paste */
+  --rule-style:    dashed;             /* SIGNATURE �?cut-and-paste */
   --hero-num-font:    var(--font-display-en);
-  --hero-num-style:   italic;
+  --hero-num-style:   normal;
   --hero-num-weight:  600;
   --hero-num-track:   -0.04em;
   --stage-pad-x:   110px;

@@ -23,13 +23,23 @@ Reviewer **NO_AI_SLOP** auto-check regex-fails emoji → mandatory Repair (expen
 - Colored status dots → `<span className="wc-dot wc-dot-warn" />` + CSS `border-radius:50%` + `var(--accent)` / token colors
 - Arrows / checks → Unicode **symbols** OK: `→` `✓` `▌` `·` `⚠` (these are NOT emoji)
 
-Also banned under NO_AI_SLOP: purple/pink gradients, thin decorative border cards, fake stats/logos.
+Also banned under NO_AI_SLOP: purple/pink gradients, thin decorative border cards, fake stats/logos, **italic** (no `serif-it`, no `font-style: italic`).
+
+## Typography — NO italic (HARD FAIL)
+Projection + MaskReveal clip italic glyph overhang. Use `.display-en` / `.display-en-soft` for English accent — always `font-style: normal`.
+
+## Layout Shell System (MANDATORY)
+Every step uses **one shell** from `layouts.css` + **SceneChrome** wrapper.
+Typography: `.lx-hero` / `.lx-title` / `.lx-body` / `.lx-caption` — **never raw font-size on copy**.
+Chapter CSS: `ch-*` animations only. See LAYOUT-SYSTEM.md in read_chapter_context.
+
+**List reveal:** `import {{ GridSlot, ListGrid }} from "../../components/GridSlot"`
 
 ## Build order (MANDATORY)
 SOURCE_READ → NARRATIONS_TS → INDEX_TSX → PREFLIGHT → REGISTRY — call todolist_check after each step.
 
 1. **read_chapter_context** + **read_reference**(CHAPTER-CRAFT.md)
-2. **write_narrations** → **write_file** index.tsx + index.css
+2. **write_narrations** → **write_file** index.tsx (SceneChrome + lx-* shells) + index.css (`ch-*` only)
 3. **craft_auto_check** — if `emoji detected` or other NO_AI_SLOP issues, **edit files and re-check** before registry
 4. **update_registry** → **done**
 

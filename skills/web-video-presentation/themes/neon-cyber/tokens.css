@@ -7,11 +7,11 @@
  *   on hero text.
  *
  *   character knobs:
- *     • hero numbers   — Clash Display, weight 700, tabular figures
- *     • rule           — 1px solid cyan (low alpha)
- *     • card           — slight radius (8-12px) with cyan inset glow
- *     • surface        — fine cyan grid (40px) + soft scan vignette
- *     • motion         — snappy + futuristic (faster than midnight)
+ *     �?hero numbers   �?Clash Display, weight 700, tabular figures
+ *     �?rule           �?1px solid cyan (low alpha)
+ *     �?card           �?slight radius (8-12px) with cyan inset glow
+ *     �?surface        �?fine cyan grid (40px) + soft scan vignette
+ *     �?motion         �?snappy + futuristic (faster than midnight)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -26,7 +26,7 @@
   --rule:         rgba(0, 255, 204, 0.22);
   --accent:       #00ffcc;             /* electric cyan */
   --accent-soft:  rgba(0, 255, 204, 0.10);
-  --accent-glow:  rgba(255, 0, 170, 0.55);   /* SIGNATURE — magenta glow */
+  --accent-glow:  rgba(255, 0, 170, 0.55);   /* SIGNATURE �?magenta glow */
 
   /* ─── fonts ─── */
   --font-display-cn: "Noto Sans SC", "Source Han Sans SC", -apple-system, sans-serif;
@@ -54,7 +54,7 @@
   --stage-pad-y:   80px;
   --text-shadow:
     0 0 12px rgba(0, 255, 204, 0.35),
-    0 0 24px rgba(255, 0, 170, 0.12);    /* SIGNATURE — cyan + magenta tail */
+    0 0 24px rgba(255, 0, 170, 0.12);    /* SIGNATURE �?cyan + magenta tail */
   --card-shadow:
     inset 0 0 0 1px var(--rule),
     0 0 40px rgba(0, 255, 204, 0.06);

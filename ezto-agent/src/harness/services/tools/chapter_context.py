@@ -7,6 +7,7 @@ from pathlib import Path
 from harness.core.state import VideoWorkflowState
 from harness.services.tools.shell import _record_tool_call
 from harness.workflow.chapter_brief import (
+    LAYOUT_SYSTEM_BLOCK,
     NO_AI_SLOP_BLOCK,
     PROJECTION_READABILITY_BLOCK,
     get_chapter_brief,
@@ -68,6 +69,14 @@ def read_chapter_context(
 
     parts.append(load_example_chapter_pattern(workspace_root))
 
+    layout_spec = workspace_root / "presentation" / "src" / "layouts" / "LAYOUT-SYSTEM.md"
+    if layout_spec.is_file():
+        parts += [
+            "",
+            "## Layout Shell System (presentation/src/layouts/LAYOUT-SYSTEM.md)",
+            layout_spec.read_text(encoding="utf-8", errors="replace")[:8000],
+        ]
+
     mask = workspace_root / "presentation" / "src" / "components" / "MaskReveal.tsx"
     if mask.exists():
         parts += [
@@ -84,11 +93,13 @@ def read_chapter_context(
         "",
         NO_AI_SLOP_BLOCK,
         "",
+        LAYOUT_SYSTEM_BLOCK,
+        "",
         PROJECTION_READABILITY_BLOCK,
         "",
         "## Global primitive classes (in base.css — do NOT re-read)",
         "scene-pad, masthead, kicker, hero-num, label-mono, rule, card, pull-quote, "
-        "serif-cn, serif-it, dot-accent — use theme tokens `--t-*`, `--text`, `--accent`.",
+        "serif-cn, display-en, display-en-soft, dot-accent — use theme tokens `--t-*`, `--text`, `--accent`.",
         "",
         "## Do NOT read_file presentation/src/styles/* — sizes are in tokens above.",
     ]

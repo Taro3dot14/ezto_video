@@ -165,7 +165,7 @@ rmdir src/assets 2>/dev/null || true
 
 # 把脚手架文件拷到项目根
 mkdir -p \
-  src/styles src/hooks src/components src/registry \
+  src/styles src/hooks src/components src/registry src/layouts \
   src/chapters/01-example \
   public scripts
 
@@ -181,6 +181,9 @@ cp "$TEMPLATES/src/styles/base.css"         src/styles/base.css
 cp "$TEMPLATES/src/styles/animations.css"   src/styles/animations.css
 cp "$TEMPLATES/src/styles/fonts.css"        src/styles/fonts.css
 
+cp "$TEMPLATES/src/layouts/layouts.css"        src/layouts/layouts.css
+cp "$TEMPLATES/src/layouts/LAYOUT-SYSTEM.md"   src/layouts/LAYOUT-SYSTEM.md
+
 cp "$TEMPLATES/src/hooks/useStageScale.ts"   src/hooks/useStageScale.ts
 cp "$TEMPLATES/src/hooks/useStepper.ts"      src/hooks/useStepper.ts
 cp "$TEMPLATES/src/hooks/useAudioPlayer.ts"  src/hooks/useAudioPlayer.ts
@@ -188,6 +191,8 @@ cp "$TEMPLATES/src/hooks/useAutoMode.ts"     src/hooks/useAutoMode.ts
 
 cp "$TEMPLATES/src/components/Stage.tsx"          src/components/Stage.tsx
 cp "$TEMPLATES/src/components/MaskReveal.tsx"     src/components/MaskReveal.tsx
+cp "$TEMPLATES/src/components/SceneChrome.tsx"    src/components/SceneChrome.tsx
+cp "$TEMPLATES/src/components/GridSlot.tsx"     src/components/GridSlot.tsx
 cp "$TEMPLATES/src/components/ProgressBar.tsx"    src/components/ProgressBar.tsx
 cp "$TEMPLATES/src/components/ProgressBar.css"    src/components/ProgressBar.css
 cp "$TEMPLATES/src/components/AutoStartGate.tsx"  src/components/AutoStartGate.tsx

@@ -2,16 +2,16 @@
  * Theme · pastel-dream
  *   Friendly modern pastel. Soft blue-gray shell, cream card surface,
  *   single sage-green as the only saturated accent. Plus Jakarta Sans
- *   everywhere — rounded geometric sans. SIGNATURE: large rounded
+ *   everywhere �?rounded geometric sans. SIGNATURE: large rounded
  *   cards (20px+) + faint multi-tone pill ribbon decoration (sage /
  *   lavender / blush / cream) tucked along the right edge.
  *
  *   character knobs:
- *     • hero numbers   — Plus Jakarta Sans, weight 800
- *     • rule           — 1px solid soft gray
- *     • card           — large 20px radius (friendly, rounded)
- *     • surface        — pastel pill ribbon at right edge (very faint)
- *     • motion         — soft springy (gentle overshoot)
+ *     �?hero numbers   �?Plus Jakarta Sans, weight 800
+ *     �?rule           �?1px solid soft gray
+ *     �?card           �?large 20px radius (friendly, rounded)
+ *     �?surface        �?pastel pill ribbon at right edge (very faint)
+ *     �?motion         �?soft springy (gentle overshoot)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -41,7 +41,7 @@
   --dur-cinematic:  1200ms;
 
   /* ─── design identity: friendly rounded ─── */
-  --r-card:        var(--r-lg);     /* SIGNATURE — 20px+ friendly rounding */
+  --r-card:        var(--r-lg);     /* SIGNATURE �?20px+ friendly rounding */
   --r-stage:       0;
   --rule-w:        1px;
   --rule-style:    solid;
@@ -58,7 +58,7 @@
     0 60px 160px rgba(50, 70, 90, 0.25),
     0 0 0 1px rgba(0, 0, 0, 0.03);
 
-  /* ─── decoration: SIGNATURE — pastel pill ribbon at right edge ─── */
+  /* ─── decoration: SIGNATURE �?pastel pill ribbon at right edge ─── */
   --surface-pattern:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080' preserveAspectRatio='xMaxYMid slice'><g><rect x='1820' y='180' width='44' height='160' rx='22' fill='%23f0b4d4' opacity='0.55'/><rect x='1820' y='360' width='44' height='220' rx='22' fill='%23a8d4c4' opacity='0.55'/><rect x='1820' y='600' width='44' height='140' rx='22' fill='%23c7b8ea' opacity='0.55'/><rect x='1820' y='760' width='44' height='180' rx='22' fill='%23ffe6a7' opacity='0.55'/></g></svg>");
   --surface-pattern-size: 100% 100%;

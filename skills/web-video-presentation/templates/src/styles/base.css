@@ -6,11 +6,10 @@
  *     "personality knobs" that make themes recognizable
  *     (--r-card / --rule-* / --hero-num-* / --card-shadow / decorative
  *     pattern + vignette).
- *   • Chapters use COLOR + FONT tokens (mandatory) and the personality
- *     primitive classes (.hero-num / .rule / .card / .stage-frame).
- *     Everything else — font sizes, spacing, motion timings, easings,
- *     border widths, generic radii — chapters write freely (token OR
- *     hard-coded value, whatever the content needs).
+ *   • layouts/layouts.css owns TYPOGRAPHY ROLES + SPACING + SHELL geometry
+ *     (lx-* classes) — chapters must not redeclare font-size on copy.
+ *   • Chapters use COLOR + FONT tokens (mandatory) and pick layout shells.
+ *     Chapter index.css: ch-* animation/demo classes only.
  *
  * The variables defined below are kept ONLY for the primitive classes
  * in this file (.label-mono / .kicker / .corner-mark / .click-cue /
@@ -44,8 +43,7 @@ body {
  *    A theme can override any of these in its tokens.css.
  * ───────────────────────────────────────────────────────────────────── */
 :root {
-  /* ── Type scale (used by primitive classes below; chapters can use
-        these OR write hard-coded sizes — projection floor for video) ── */
+  /* ── Type scale (defaults for layouts.css lx-* roles + primitive classes) ── */
   --t-display-1:   clamp(140px, 11vw, 200px);
   --t-display-2:   clamp(96px, 8vw, 140px);
   --t-h1:          clamp(72px, 6vw, 96px);
@@ -67,12 +65,15 @@ body {
   --track-snug:    -0.005em;   /* body */
   --track-caps:     0.22em;    /* mono uppercase labels */
 
-  /* ── Spacing scale (used by primitive classes) ── */
+  /* ── Spacing scale (used by primitive classes + layout shells) ── */
+  --space-1:    4px;
   --space-2:    8px;
   --space-3:    12px;
   --space-4:    16px;
   --space-5:    24px;
+  --space-6:    32px;
   --space-7:    48px;
+  --space-8:    64px;
   --space-9:    96px;
 
   /* ── Stage padding (theme can dial density) ── */
@@ -98,8 +99,7 @@ body {
   --rule-w:        1px;
   --rule-style:    solid;
 
-  /* ── Motion (used by primitive class transitions; chapters time their
-        own motion freely, ideally guided by theme.json `mood`) ── */
+  /* ── Motion (theme may override; chapters use ch-* in index.css only) ── */
   --ease-quart:     cubic-bezier(0.19, 1, 0.22, 1);
   --ease-expo:      cubic-bezier(0.86, 0, 0.07, 1);
   --ease-soft:      cubic-bezier(0.4, 0, 0.1, 1);
@@ -111,7 +111,7 @@ body {
 
   /* ── Hero number style (themes redefine for terminal / chunky / chalk) ── */
   --hero-num-font:    var(--font-display-en);
-  --hero-num-style:   italic;
+  --hero-num-style:   normal;
   --hero-num-weight:  400;
   --hero-num-track:   var(--track-tight);
 
@@ -212,8 +212,9 @@ body {
   z-index: 1;
 }
 
-/* every chapter root */
+/* every chapter root — italic banned (projection clip + glyph overhang) */
 .scene { position: absolute; inset: 0; z-index: 2; }
+.scene, .scene * { font-style: normal !important; }
 
 /* ─────────────────────────────────────────────────────────────────────
  * 4. Type primitives — chapters compose with these instead of hard sizes.
@@ -221,20 +222,21 @@ body {
 .serif-cn {
   font-family: var(--font-display-cn);
   font-weight: 700;
-  font-style: normal;          /* prevent inherited italic on CJK */
+  font-style: normal;
   letter-spacing: var(--track-tight);
   text-shadow: var(--text-shadow, none);
 }
-.serif-it {
-  font-family: var(--font-display-en);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: var(--track-tight);
-  text-shadow: var(--text-shadow, none);
-}
+/* English display accent — use instead of deprecated serif-it (italic banned) */
 .display-en {
   font-family: var(--font-display-en);
   font-weight: 700;
+  font-style: normal;
+  letter-spacing: var(--track-tight);
+  text-shadow: var(--text-shadow, none);
+}
+.display-en-soft {
+  font-family: var(--font-display-en);
+  font-weight: 400;
   font-style: normal;
   letter-spacing: var(--track-tight);
   text-shadow: var(--text-shadow, none);
@@ -334,7 +336,7 @@ body {
 }
 .corner-mark .ord {
   font-family: var(--font-display-en);
-  font-style: italic;
+  font-style: normal;
   font-size: 28px;
   line-height: 1;
   letter-spacing: 0;
@@ -364,7 +366,7 @@ body {
 .click-cue .arrow {
   display: inline-block;
   font-family: var(--font-display-en);
-  font-style: italic;
+  font-style: normal;
   font-size: 20px;
   letter-spacing: 0;
   animation: nudge 2.4s var(--ease-soft) infinite;
@@ -429,23 +431,30 @@ body {
 .masthead {
   display: flex;
   align-items: baseline;
-  gap: var(--space-5);
+  justify-content: space-between;
+  gap: var(--space-6);
   width: 100%;
 }
 .masthead .brand {
   font-family: var(--font-display-en);
-  font-style: italic;
-  font-size: 22px;
-  color: var(--text);
-  letter-spacing: 0;
+  font-style: normal;
+  font-size: clamp(22px, 1.6vw, 26px);
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0.01em;
 }
-.masthead .issue {
+.masthead .issue,
+.lx-masthead .issue {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: var(--track-caps);
+  font-size: clamp(20px, 1.4vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-mute);
+  text-align: right;
+  max-width: 62ch;
+  line-height: 1.35;
 }
 
 /* ─────────────────────────────────────────────────────────────────────

@@ -29,12 +29,40 @@ Reviewer **NO_AI_SLOP** auto-check **regex-scans** index.tsx + index.css. Emoji 
 | Status / theory dot | `<span className="dot dot-1" />` + `border-radius:50%` + `background: var(--accent)` |
 | Trophy / badge | Simple SVG path or geometric CSS — never 🏆 |
 
-Also banned: purple/pink gradients, thin decorative border cards, fake user counts/logos.
+Also banned: purple/pink gradients, thin decorative border cards, fake user counts/logos, **italic** (`font-style: italic`, class `serif-it`, `fontStyle: "italic"`).
+
+**English accent copy:** use `.display-en` or `.display-en-soft` — never italic.
 
 **Before update_registry:** run **craft_auto_check**; if emoji flagged, replace with SVG/CSS first.
 """
 
-PROJECTION_READABILITY_BLOCK = """## Projection readability (MANDATORY — every chapter)
+LAYOUT_SYSTEM_BLOCK = """## Layout Shell System (MANDATORY — locked typography + spacing)
+
+Do **not** invent layout, font-size, or gap from scratch. Pick a shell per step:
+
+| Shell | Root classes | Use when |
+|-------|--------------|----------|
+| Cover | `lx-cover-body` | Hero opener |
+| Split | `lx-split-section` + `lx-split-rail` + `lx-split-rule` + `lx-split-panel` | Rule index rail + unified content card |
+| Solo | `lx-solo` + `lx-solo-panel` | Single centered demo (78% width) |
+| Grid 3 | `<ListGrid>` + `<GridSlot state=…>` | List reveal — **one active slot per step** |
+| Grid 2 | `lx-grid-2` | Two-column comparison |
+| Quote | `lx-quote-body` + `lx-quote-text` | Closing pull-quote |
+| Stack | `lx-stack` / `lx-stack-center` | Intro or transition beat |
+| Terminal | `lx-terminal` + `lx-terminal-window` | Code / chat simulation |
+
+**Typography roles** (never set raw `font-size` on primary copy):
+`.lx-hero` · `.lx-title` · `.lx-subtitle` · `.lx-body` · `.lx-caption` · `.lx-kicker`
+
+**Scene wrapper:** `SceneChrome` · **List reveal:** `GridSlot` + `ListGrid`
+
+**Chapter `index.css`:** only `ch-*` animation/demo classes.
+
+Golden reference: `01-example/Example.tsx` (cover → split → grid-3 → quote).
+Full catalog: `presentation/src/layouts/LAYOUT-SYSTEM.md`.
+"""
+
+PROJECTION_READABILITY_BLOCK = """## Projection readability (enforced by layout shells)
 
 Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 stage:
 
@@ -62,7 +90,7 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 |-----------|------|-------|------|-------------|
 | hook-chapter | `--t-display-1` (140–200px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
 | list-reveal | intro `--t-display-2` | slot title `--t-h2` | slot body `--t-body` | 3-col grid, `min-height: 360px` |
-| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (36px) | split body **≥ 1056px** |
+| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (36px) | split panel **≥ 1056px** |
 """
 
 def _split_title_and_steps(rest: str) -> tuple[str, int | None]:
@@ -369,7 +397,7 @@ def format_brief_for_prompt(brief: dict[str, Any], title: str) -> str:
     if brief.get("script_excerpt"):
         parts += ["## Script beats (narration source — write narrations.ts from these)", brief["script_excerpt"], ""]
 
-    parts += [NO_AI_SLOP_BLOCK, "", PROJECTION_READABILITY_BLOCK, ""]
+    parts += [NO_AI_SLOP_BLOCK, "", LAYOUT_SYSTEM_BLOCK, "", PROJECTION_READABILITY_BLOCK, ""]
 
     parts += [
         "## Source reads (MANDATORY before writing code)",

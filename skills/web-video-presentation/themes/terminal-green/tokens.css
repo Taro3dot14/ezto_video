@@ -2,14 +2,14 @@
  * Theme · terminal-green
  *   80s phosphor terminal. True-black backdrop, single phosphor green.
  *   JetBrains Mono is the ONLY font. Sharp 0-2px corners. CRT scanline
- *   overlay. Snappy motion (240ms / 480ms / 800ms) — terminal speed.
+ *   overlay. Snappy motion (240ms / 480ms / 800ms) �?terminal speed.
  *
  *   character knobs:
- *     • hero numbers   — mono, 0 letter-spacing, glow drop-shadow
- *     • rule           — 1px solid phosphor green
- *     • card           — 0 radius (terminal cells)
- *     • surface        — horizontal scanlines (2px) + soft phosphor glow
- *     • motion         — snappy + linear (terminal not springy)
+ *     �?hero numbers   �?mono, 0 letter-spacing, glow drop-shadow
+ *     �?rule           �?1px solid phosphor green
+ *     �?card           �?0 radius (terminal cells)
+ *     �?surface        �?horizontal scanlines (2px) + soft phosphor glow
+ *     �?motion         �?snappy + linear (terminal not springy)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -42,7 +42,7 @@
   --dur-cinematic: 1000ms;
 
   /* ─── design identity: terminal cells ─── */
-  --r-card:        var(--r-flat);    /* SIGNATURE — sharp corners */
+  --r-card:        var(--r-flat);    /* SIGNATURE �?sharp corners */
   --r-stage:       0;
   --rule-w:        1px;
   --rule-style:    solid;
