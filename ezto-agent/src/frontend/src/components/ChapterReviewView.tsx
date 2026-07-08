@@ -1,8 +1,12 @@
 import { useState } from "react";
 
+import { resolvePresentationPreviewUrl } from "../utils/presentationPreview";
+import type { WorkflowState } from "../api/client";
+
 interface Props {
   interrupt: Record<string, unknown>;
   threadId: string;
+  workflowState?: WorkflowState | null;
   onResume: (confirmations: Record<string, unknown>) => void;
 }
 
@@ -14,7 +18,12 @@ const DEFAULT_CHECKLIST = [
   "反 AI 味：有无紫粉渐变 / 圆角彩色边框 / emoji / 假数据？",
 ];
 
-export default function ChapterReviewView({ interrupt, onResume }: Props) {
+export default function ChapterReviewView({
+  interrupt,
+  threadId,
+  workflowState,
+  onResume,
+}: Props) {
   const [checks, setChecks] = useState<Record<number, boolean>>({});
   const [feedback, setFeedback] = useState("");
 
@@ -23,7 +32,9 @@ export default function ChapterReviewView({ interrupt, onResume }: Props) {
   const chapterIdx = interrupt.chapter_index as number | undefined;
   const chapterLabel = chapterId || `第 ${chapterIdx ?? "?"} 章`;
   const isBatch = interrupt.type === "checkpoint_remaining_batch";
-  const previewUrl = interrupt.preview_url as string | undefined;
+  const previewUrl = workflowState
+    ? resolvePresentationPreviewUrl(workflowState, threadId, interrupt)
+    : ((interrupt.preview_url as string | undefined) ?? null);
   const builtCount = interrupt.built_chapter_count as number | undefined;
   const builtSteps = interrupt.built_step_count as number | undefined;
   const highlightIdx = interrupt.highlight_chapter_index as number | undefined;

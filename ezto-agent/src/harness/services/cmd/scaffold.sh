@@ -165,7 +165,7 @@ rmdir src/assets 2>/dev/null || true
 
 # 把脚手架文件拷到项目根
 mkdir -p \
-  src/styles src/hooks src/components src/registry src/layouts \
+  src/styles src/hooks src/components src/registry src/layouts src/motion \
   src/chapters/01-example \
   public scripts
 
@@ -183,6 +183,9 @@ cp "$TEMPLATES/src/styles/fonts.css"        src/styles/fonts.css
 
 cp "$TEMPLATES/src/layouts/layouts.css"        src/layouts/layouts.css
 cp "$TEMPLATES/src/layouts/LAYOUT-SYSTEM.md"   src/layouts/LAYOUT-SYSTEM.md
+
+cp "$TEMPLATES/src/motion/presets.css"       src/motion/presets.css
+cp "$TEMPLATES/src/motion/MOTION-SYSTEM.md"  src/motion/MOTION-SYSTEM.md
 
 cp "$TEMPLATES/src/hooks/useStageScale.ts"   src/hooks/useStageScale.ts
 cp "$TEMPLATES/src/hooks/useStepper.ts"      src/hooks/useStepper.ts

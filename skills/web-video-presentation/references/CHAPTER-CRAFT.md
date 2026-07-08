@@ -2,17 +2,51 @@
 
 ---
 
+## 文档索引（稳定锚点 — 其它 reference 请链到这里）
+
+| 主题 | 锚点 |
+|------|------|
+| 视频 vs PPT / SceneChrome | [#scene-chrome-policy](#scene-chrome-policy) |
+| 双源原则（script + article） | [#dual-source](#dual-source) |
+| 清单逐步揭示（1 项 = 1 step） | [#list-reveal-one-per-step](#list-reveal-one-per-step) |
+| 视觉演示底线 | [#visual-demos-required](#visual-demos-required) |
+| Layout Shell System | [#layout-shell-system](#layout-shell-system) |
+| Motion presets (`mot-*`) | scaffold `src/motion/MOTION-SYSTEM.md` via read_chapter_context |
+| 避免 AI 味 / 同质化动画 | [#no-ai-slop](#no-ai-slop) |
+| 完工自检 | [#self-check](#self-check) |
+
+> **可复制代码样本（优先）：** scaffold 后的 `chapters/01-example/` + `layouts/LAYOUT-SYSTEM.md` + `motion/MOTION-SYSTEM.md`（经 `read_chapter_context` 注入）。
+> `EXAMPLES/hook-chapter` · `list-reveal` 仅保留**节奏骨架**说明；`chapter.tsx` 已改为 **SceneChrome + lx-\*** 写法。
+
+---
+
+<a id="scene-chrome-policy"></a>
 ## 这是视频，不是 PPT
 
 正在做的是**视频网页** —— 讲者点击 + 口播 + 录屏发出去给观众看。
 判断每一步做对没有，标准非常朴素：
 
-- **不像 PPT** —— 观众感觉是在看视频，不是在看翻页幻灯（页面中不得包含页眉页脚，突出主视觉元素）
+- **不像 PPT** —— 观众感觉是在看视频，不是在看翻页幻灯
 - **看起来舒服** —— 配色、字体、节奏都让人放松，不得出现大量的纯文字、不得出现字体太小的文字
 - **有视觉冲击** —— 画面在演事情，不只是文字堆砌，不得一次性全部罗列所有元素，关键元素随进度逐步推进展现
 
+### 页眉页脚 — 零容忍（必读）
+
+| 禁止 | 说明 |
+|------|------|
+| 任何 `<header>` / 页眉 / brand 条 / 章节标题栏 | 舞台**只有内容**，没有顶栏 metadata |
+| `SceneChrome brand=` / `issue=` | 模板已移除 masthead — **禁止**传这两个 prop |
+| 页码、页脚版权、导航条 | 进度条仅在 hover 时出现（App 内置） |
+| className 含 `masthead` / `topbar` / `navbar` / `page-header` | 一律视为页眉 chrome |
+
+**唯一包装：** `<SceneChrome>` → shell 内容（`lx-cover-body` / `lx-split-section` / …）。  
+面板内 `lx-split-foot` 是**卡片脚注**，不是页面页脚，允许。
+
+> 自检 `NO_HEADER_FOOTER`：**write_file 带页眉会直接 BLOCK**；Reviewer auto-check 同步拦截。
+
 ---
 
+<a id="visual-demos-required"></a>
 ## 必须用 CSS / SVG / Canvas / JS 大胆绘制视觉演示
 
 > **这是底线。**
@@ -34,6 +68,7 @@
 
 ---
 
+<a id="list-reveal-one-per-step"></a>
 ## 逐步揭示，禁止一次全展示
 
 整页内容由**全局 `step` 计数器**驱动 —— 点击空白处或按 → 键推进
@@ -69,6 +104,7 @@ hero 标语 / 一个数字 / 一组对比 + 必要的视觉演示。
 
 ---
 
+<a id="dual-source"></a>
 ## 双源：节奏跟口播稿，细节回原文章
 
 > **节奏 / 顺序 / 节拍切分** 跟 **`script.md` 口播稿** —— **关键顺序不能乱**。
@@ -101,6 +137,8 @@ hero 标语 / 一个数字 / 一组对比 + 必要的视觉演示。
   英文强调用 `.display-en` / `.display-en-soft`，**不得** `font-style: italic` 或 `serif-it`
 
 ### Layout Shell System（排版真相源）
+
+<a id="layout-shell-system"></a>
 
 > 章节 **不得**从零写 flex/grid + 随意 font-size。每 step 选一个 shell：
 
@@ -166,6 +204,7 @@ hero 标语 / 一个数字 / 一组对比 + 必要的视觉演示。
 
 ---
 
+<a id="no-ai-slop"></a>
 ## 避免 AI 味
 
 AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
@@ -176,7 +215,7 @@ AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
 - 渐变按钮 + 大圆角药丸
 - emoji 当图标用
 - 假数据 / 假 logo / 假"X 万用户"
-- 整章 N 步用同一种入场动画（全场 fade / 全场 blur）
+- 整章 N 步用**同一种**入场动画（全场 fade / 全场 blur）—— 见 [#no-ai-slop](#no-ai-slop)
 - 每步都挂 ken burns / 光晕呼吸 / 持续闪烁
 - 每屏右下角都挂 mono 角标 / 序号
 
@@ -245,6 +284,7 @@ AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
 
 ---
 
+<a id="self-check"></a>
 ## 完工自检（写完每章**强制**执行，不可跳过）
 
 > ⚠️ **硬性流程**：章节实现完成后**必须**走完下面的自检 → 修复 → 汇报
@@ -253,7 +293,7 @@ AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
 > **执行方式**（按能力降级）：
 >
 > 1. **优先 Agent Teams**：开一个独立的 reviewer agent，传入本章代码路径
->    + 本文件 Part「完工自检」清单，让它**逐项核查 + 出结论**（哪几条
+>    + 本文件 [#self-check](#self-check) 清单，让它**逐项核查 + 出结论**（哪几条
 >    pass / 哪几条 fail + 证据）。
 > 2. **其次 subAgent**：当前 agent 没有 Teams 能力但能开 subagent，用 subagent
 >    走同样的流程。
@@ -280,7 +320,7 @@ AI 生成的网页有几种共有的"视觉指纹"，**全部不要**：
       达标 = 换主题就破
 - [ ] 章节交付时**主动告诉用户**："本章还缺这些素材"
 - [ ] 禁止出现小号字体、大量纯文字（正文 < 36px = 违规，必须回去改）
-- [ ] 禁止出现任何形式的页眉页脚，仅展示关键内容（出现后必须回去改）
+- [ ] 禁止页眉页脚 / masthead / SceneChrome brand·issue — 舞台仅 SceneChrome + shell 内容
 - [ ] **`npx tsc --noEmit` 通过** —— 不通过禁止汇报"做完了"
 - [ ] 章节代码物理隔离：独立 CSS 类前缀（`.cd-` / `.mg-` / ...），
       未跨章 import，未修改 `chapters.ts` 之外的共享文件

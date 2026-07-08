@@ -50,6 +50,20 @@ class ResumeChapterConfirmations(BaseModel):
     feedback: str | None = Field(None, description="修改反馈")
 
 
+class ApplyThemeRequest(BaseModel):
+    """POST /api/workflow/{id}/theme 请求体。"""
+    theme_id: str = Field(..., description="主题 id，对应 assets/themes/<id>")
+
+
+class ApplyThemeResponse(BaseModel):
+    """主题切换响应。"""
+    thread_id: str | None = None
+    project_id: str | None = None
+    theme_id: str
+    selected_theme: str
+    presentation_url: str | None = None
+
+
 # ── Response models ──
 
 

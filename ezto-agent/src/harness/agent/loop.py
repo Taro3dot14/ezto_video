@@ -16,19 +16,24 @@ from configs import settings
 from harness.core.execution import push_event as push_trace_event
 from harness.core.token_usage import bind_workflow_thread, reset_workflow_thread
 from harness.workflow.chapter_brief import format_brief_for_prompt, get_chapter_brief
-from .observations import shape_tool_output
 from .stall import StallDetector
+from .tools import (
+    ChapterSessionState,
+    execute_tool,
+    format_result_for_llm,
+    make_build_agent_tools,
+    push_tool_audit,
+)
+from .tools.registry import AgentTool
+from .tools.legacy_parser import extract_all
 from harness.workflow.chapter_policies import auto_validate_chapter
-from harness.services.tools.narration_args import resolve_tool_arguments
 from harness.workflow.step_indexing import todo_index_tsx_label, todo_narrations_label
-from .tool_registry import AgentTool, make_build_agent_tools
 from .system_prompts import (
     BUILD_ONLY_SYSTEM,
     VERIFY_ONLY_SYSTEM,
     REPAIR_SYSTEM,
     REVIEW_AGENT_SYSTEM,
 )
-from .parser import extract_all
 
 _MAX_MESSAGE_TURNS = 8
 
@@ -212,29 +217,13 @@ def _execute_one(
     ppt: Path,
     chapter_id: str,
 ) -> tuple[str, bool]:
-    arguments = resolve_tool_arguments(tool_name, arguments)
-    if "_raw" in arguments:
-        raw = str(arguments.get("_raw", ""))[:200]
-        return (
-            f"parse error — could not extract {tool_name} arguments. "
-            f"Retry with valid JSON (escape quotes in strings). Fragment: {raw}…",
-            False,
-        )
-
-    tool = next((t for t in tools if t.name == tool_name), None)
-    if tool is None:
-        return f"Tool '{tool_name}' unknown.", False
-
-    try:
-        output = str(tool.fn(**arguments))
-        if tool_name == "done":
-            if output.startswith("[DONE]"):
-                return output.removeprefix("[DONE] ").strip(), True
-            return output, False
-        return output, False
-    except Exception as e:
-        logger.warning("Agent tool %s failed: %s", tool_name, e)
-        return f"Error: {e}", False
+    """Legacy wrapper — delegates to execute_tool."""
+    result, _rec = execute_tool(
+        tool_name, arguments, tools,
+        ppt=ppt, chapter_id=chapter_id,
+        post_validate=_maybe_auto_validate,
+    )
+    return format_result_for_llm(tool_name, result), result.done
 
 
 def _maybe_auto_validate(
@@ -265,12 +254,17 @@ def _run_loop(
     user_prompt: str,
     max_iterations: int,
     state: Any = None,
-    ctx: dict[str, Any] | None = None,
+    ctx: ChapterSessionState | dict[str, Any] | None = None,
     chapter_id: str = "chapter_1",
     trace_build_todo: bool = False,
     agent_role: str = "builder",
 ) -> AgentResult:
     use_native = settings.agent_use_native_tools
+    if not use_native:
+        logger.warning(
+            "agent_use_native_tools=False — legacy text parser path is deprecated; "
+            "set agent_use_native_tools=True for production.",
+        )
     ws = Path(state.get("workspace_root", ".")) if isinstance(state, dict) else Path(".")
     ppt = ws / "presentation"
 
@@ -311,13 +305,13 @@ def _run_loop(
             reasoning_content: str | None = None
 
             if use_native:
-                result: ChatResult = llm.chat_with_tools(
+                chat_result: ChatResult = llm.chat_with_tools(
                     messages=messages, tools=openai_tools, temperature=0.0,
                     role=MODEL_ROLE_WEB_BUILD,
                 )
-                assistant_content = result.content or ""
-                reasoning_content = result.reasoning_content
-                native_calls = result.tool_calls
+                assistant_content = chat_result.content or ""
+                reasoning_content = chat_result.reasoning_content
+                native_calls = chat_result.tool_calls
                 parsed_list = [(tc.name, tc.arguments) for tc in native_calls]
                 last_content = assistant_content or str(parsed_list)
             else:
@@ -333,17 +327,49 @@ def _run_loop(
 
             if not parsed_list:
                 logger.warning("Agent: no tool call in response")
+                nudge = "Call a tool to continue, or call done(summary=...) if task is complete."
+                if agent_role == "builder" and ctx is not None:
+                    session = ctx if isinstance(ctx, ChapterSessionState) else None
+                    chapter_context_read = (
+                        session.chapter_context_read if session
+                        else bool(ctx.get("chapter_context_read"))
+                    )
+                    narrations_written = (
+                        session.narrations_written if session
+                        else bool(ctx.get("narrations_written"))
+                    )
+                    index_tsx_written = (
+                        session.index_tsx_written if session
+                        else bool(ctx.get("index_tsx_written"))
+                    )
+                    preflight_done = (
+                        session.preflight_done if session
+                        else bool(ctx.get("preflight_done"))
+                    )
+                    if chapter_context_read and not narrations_written:
+                        nudge = (
+                            "Next required step: write_narrations(chapter_id, lines=[...]) "
+                            "— one string per code step 0..N-1."
+                        )
+                    elif narrations_written and not index_tsx_written:
+                        nudge = (
+                            f"Next required step: write_file index.tsx + index.css "
+                            f"under presentation/src/chapters/{chapter_id}/ "
+                            "(SceneChrome + lx-* + mot-* per step)."
+                        )
+                    elif index_tsx_written and not preflight_done:
+                        nudge = "Next: craft_auto_check — fix NO_AI_SLOP before update_registry."
                 _push("step", "⚠️ 调工具继续，或调 done() 结束")
                 if use_native:
                     messages.append(_assistant_message(
                         content=assistant_content or "(no tool call)",
-                        reasoning_content=result.reasoning_content,
+                        reasoning_content=reasoning_content,
                     ))
                 else:
                     messages.append({"role": "assistant", "content": assistant_content or "(no tool call)"})
                 messages.append({
                     "role": "user",
-                    "content": "Call a tool to continue, or call done(summary=...) if task is complete.",
+                    "content": nudge,
                 })
                 continue
 
@@ -353,26 +379,23 @@ def _run_loop(
             for tool_name, arguments in parsed_list:
                 stall.record(tool_name, arguments)
 
-                output, is_done = _execute_one(
-                    tool_name, arguments, tools, ppt=ppt, chapter_id=chapter_id,
+                tool_result, exec_rec = execute_tool(
+                    tool_name, arguments, tools,
+                    ppt=ppt, chapter_id=chapter_id,
+                    post_validate=_maybe_auto_validate,
+                    session=ctx if isinstance(ctx, ChapterSessionState) else None,
                 )
-                if is_done:
-                    done_summary = output
+                if tool_result.done:
+                    done_summary = tool_result.message
                     break
 
-                output = _maybe_auto_validate(tool_name, arguments, output, ppt=ppt, chapter_id=chapter_id)
-                shaped = shape_tool_output(tool_name, output)
-                log_args = {
-                    k: (f"<{len(v)} chars>" if k in ("content", "lines", "old_string", "new_string")
-                        and isinstance(v, (str, list)) else v)
-                    for k, v in arguments.items()
-                }
-                logger.info("Agent tool: %s(%s) → %d chars", tool_name, log_args, len(shaped))
+                shaped = format_result_for_llm(tool_name, tool_result)
+                log_args = exec_rec.args_summary
                 history_lines.append(f"{tool_name}: {shaped[:300]}")
                 if tool_name == "todolist_status" and trace_build_todo:
                     _push("todo", shaped)
-                elif tool_name != "todolist_check":
-                    _push("step", f"⚡ {tool_name} → {len(shaped)} chars")
+                if isinstance(state, dict):
+                    push_tool_audit(state, exec_rec, agent=agent_role)
                 outputs.append(shaped)
                 tool_calls_count += 1
 
@@ -388,7 +411,7 @@ def _run_loop(
                 messages.append(_assistant_message(
                     content=assistant_content,
                     tool_calls=native_calls,
-                    reasoning_content=result.reasoning_content,
+                    reasoning_content=reasoning_content,
                 ))
                 for tc, out in zip(native_calls, outputs):
                     messages.append({"role": "tool", "tool_call_id": tc.id, "content": out})
@@ -428,7 +451,7 @@ def _run_loop(
 
 class WebBuildAgent:
     TODO_BUILD: dict[str, str] = {
-        "SOURCE_READ": "read_chapter_context + read_reference(CHAPTER-CRAFT.md)",
+        "SOURCE_READ": "read_chapter_context (layout + MOTION-SYSTEM + presets) + read_reference(CHAPTER-CRAFT.md)",
         "NARRATIONS_TS": todo_narrations_label(),
         "INDEX_TSX": todo_index_tsx_label(),
         "PREFLIGHT": "craft_auto_check — fix NO_AI_SLOP (emoji/slop) in TSX+CSS before registry",
@@ -463,7 +486,7 @@ class WebBuildAgent:
         self._chapter_title = ""
 
         def mark(item: str | list[str], *, result: str = "pass", reason: str = "", fix: str = "") -> str:
-            from harness.services.tools.craft_review import resolve_todo_item_id
+            from harness.services.tools.craft.craft_review import resolve_todo_item_id
             _ = result, reason, fix
             items = [item] if isinstance(item, str) else item
             results = []
@@ -495,7 +518,7 @@ class WebBuildAgent:
         self._mark = mark
         self._verify = verify
         self._tools: list[AgentTool] = []
-        self._ctx: dict[str, Any] = {}
+        self._ctx: ChapterSessionState | dict[str, Any] = ChapterSessionState()
 
     def _bind_chapter(
         self,
@@ -570,11 +593,12 @@ class WebBuildAgent:
             f"- chapter TSX: presentation/src/chapters/{chapter_id}/index.tsx\n"
             f"- chapter CSS: presentation/src/chapters/{chapter_id}/index.css\n"
             f"- registry: presentation/src/registry/chapters.ts\n"
-            f"- article + 01-example pattern: call read_chapter_context() once\n"
+            f"- article + layout + motion templates: call read_chapter_context() once\n"
         )
         if phase == "build":
             user_prompt += (
                 "Call todolist_status() then read_chapter_context + read_reference(CHAPTER-CRAFT.md).\n"
+                "read_chapter_context includes MOTION-SYSTEM.md + mot-* presets — pick motion before index.tsx.\n"
                 "**Icons:** inline SVG or CSS shapes only — **never emoji** (NO_AI_SLOP hard-fail). "
                 "Run craft_auto_check after index.tsx+css; fix emoji before update_registry."
             )
@@ -584,7 +608,7 @@ class WebBuildAgent:
             user_prompt += (
                 "Execute the Reviewer failure report below. "
                 "Use ONLY theme tokens from the report — never invent `--bg`. "
-                "Call read_chapter_context once; edit index.tsx / index.css only.\n"
+                "Prefer **edit_file** for surgical fixes; avoid full rewrites.\n"
             )
             ws_root = Path(self._state.get("workspace_root", ".")) if isinstance(self._state, dict) else None
             if ws_root:
@@ -610,6 +634,16 @@ class WebBuildAgent:
                 "\n\n## Reviewer failure report (MUST fix all)\n"
                 f"{review_feedback}"
             )
+            if phase == "repair" and isinstance(self._state, dict):
+                ws_root = Path(self._state.get("workspace_root", "."))
+                ch_dir = ws_root / "presentation" / "src" / "chapters" / chapter_id
+                snippets: list[str] = ["\n\n## Current chapter files (for edit_file — do not re-read bundle)"]
+                for fname in ("index.tsx", "index.css", "narrations.ts"):
+                    fp = ch_dir / fname
+                    if fp.is_file():
+                        text = fp.read_text(encoding="utf-8", errors="replace")
+                        snippets.append(f"### {fname}\n```\n{text[:4500]}\n```")
+                user_prompt += "\n".join(snippets)
 
         system_prompt = self._PHASE_SYSTEM.get(phase, BUILD_ONLY_SYSTEM)
 
@@ -629,7 +663,7 @@ class WebBuildAgent:
 
 
 def _craft_label(item_id: str) -> str:
-    from harness.services.tools.craft_review import _ITEM_BY_ID
+    from harness.services.tools.craft.craft_review import _ITEM_BY_ID
     craft = _ITEM_BY_ID.get(item_id)
     return f"{item_id}: {craft.label}" if craft else item_id
 
@@ -637,7 +671,7 @@ def _craft_label(item_id: str) -> str:
 class ChapterReviewAgent:
     @classmethod
     def _build_todo_items(cls, *, recheck_ids: list[str] | None = None) -> dict[str, str]:
-        from harness.services.tools.craft_review import reviewer_todo_items
+        from harness.services.tools.craft.craft_review import reviewer_todo_items
         return reviewer_todo_items(recheck_ids=recheck_ids)
 
     def __init__(self, state: Any):
@@ -646,10 +680,10 @@ class ChapterReviewAgent:
         self._todo_done: set[str] = set()
         self._chapter_id = "chapter_1"
         self._tools: list[AgentTool] = []
-        self._ctx: dict[str, Any] = {}
+        self._ctx: ChapterSessionState | dict[str, Any] = ChapterSessionState()
 
         def mark(item: str | list[str], *, result: str = "pass", reason: str = "", fix: str = "") -> str:
-            from harness.services.tools.craft_review import (
+            from harness.services.tools.craft.craft_review import (
                 REVIEW_BUNDLE_TODO,
                 format_attest_ok_message,
                 resolve_todo_item_id,
@@ -699,16 +733,28 @@ class ChapterReviewAgent:
                     results.append(format_attest_ok_message(self._ctx, i))
             status = self._todo_status()
             if isinstance(self._state, dict):
-                from harness.services.tools.craft_review import push_craft_checklist_event
+                from harness.services.tools.craft.craft_review import push_craft_checklist_event
                 push_craft_checklist_event(self._state, self._ctx)
             return "\n".join(results) + "\n" + status
 
         def verify(summary: str) -> str:
-            remaining = [i for i in self.TODO_ITEMS if i not in self._todo_done]
+            store = self._ctx.get("craft_review", {}).get("items", {})
+
+            def _needs_attestation(item_id: str) -> bool:
+                if item_id in self._todo_done:
+                    return False
+                entry = store.get(item_id, {})
+                st = entry.get("state", "pending")
+                ev = str(entry.get("evidence", ""))
+                if st == "pass" and (ev.startswith("auto:") or ev.startswith("precheck:")):
+                    return False
+                return True
+
+            remaining = [i for i in self.TODO_ITEMS if _needs_attestation(i)]
             if remaining:
                 preview = ", ".join(remaining[:6])
                 extra = f" (+{len(remaining) - 6} more)" if len(remaining) > 6 else ""
-                return f"\u274c Cannot call done() - not all items reviewed: {preview}{extra}"
+                return f"\u274c Cannot call done() - review remaining manual items: {preview}{extra}"
 
             store = self._ctx.get("craft_review", {}).get("items", {})
             failed = [
@@ -762,7 +808,7 @@ class ChapterReviewAgent:
         return bool(self._ctx.get("review_ok"))
 
     def craft_checklist_text(self) -> str:
-        from harness.services.tools.craft_review import format_craft_checklist
+        from harness.services.tools.craft.craft_review import format_craft_checklist
         return format_craft_checklist(self._ctx)
 
     def run(
@@ -787,7 +833,7 @@ class ChapterReviewAgent:
             verify_all_done=self._verify,
         )
 
-        from harness.services.tools.craft_review import (
+        from harness.services.tools.craft.craft_review import (
             load_craft_review_into_ctx,
             passed_item_ids,
             prepare_recheck_round,
@@ -819,8 +865,9 @@ class ChapterReviewAgent:
                 f"Do NOT use `chapter_1`.\n"
                 "Call `todolist_status()` → `review_chapter_bundle()` → `todolist_check(REVIEW_BUNDLE)`.\n"
                 "Use **ITEM_ID** only (REVIEW_BUNDLE, VISUAL_DEMOS, …) — not Chinese labels.\n"
+                "Auto ✅ items are pre-marked — only `todolist_check` **manual** items (+ fail auto/precheck if disagree).\n"
                 "Optional: `craft_auto_check()` for machine hints.\n"
-                "Per item: `todolist_check(ITEM, result=\"pass\")` if OK;\n"
+                "Per manual item: `todolist_check(ITEM, result=\"pass\")` if OK;\n"
                 "  `todolist_check(ITEM, result=\"fail\", reason=\"问题\", fix=\"修复方案\")` if not.\n"
                 "done() when ALL items reviewed. All pass → verify; any fail → repair."
             )

@@ -69,28 +69,22 @@ import { GridSlot, ListGrid } from "../../components/GridSlot";
 
 States: `ghost` (dashed placeholder) · `active` (accent border + drop anim) · `past` (dimmed context)
 
-### Split shell (rule index + accent rule + panel)
-
-Header metadata: `EXAMPLE 01 · RULE 02 · …` — example index vs rule index stay separate.
+### Split shell (index + module)
 
 ```tsx
 <section className="lx-split-section">
-  <div className="lx-split-rail">
-    <span className="lx-split-index">02</span>
+  <div className="lx-split-rail"><span className="lx-split-index">02</span></div>
+  <div className="lx-split-module">
+    <div className="lx-split-rule" aria-hidden />
+    <article className="lx-split-panel">
+      <div className="lx-split-panel-main">…</div>
+      <footer className="lx-split-foot">…</footer>
+    </article>
   </div>
-  <div className="lx-split-rule" aria-hidden />
-  <article className="lx-split-panel">
-    <div className="lx-split-panel-main">
-      <div className="lx-kicker">…</div>
-      <h2 className="lx-title">…</h2>
-      <p className="lx-body">…</p>
-    </div>
-    <aside className="lx-split-meta">…</aside>
-  </article>
 </section>
 ```
 
-Rail + vertical rule + panel = **one module**. Panel max ~820px; internal meta column optional.
+`lx-split-module` keeps **rule height = panel height**. Meta goes in `lx-split-foot`, not a side column.
 
 ## Spacing (mandatory tokens)
 
@@ -114,11 +108,17 @@ Rail + vertical rule + panel = **one module**. Panel max ~820px; internal meta c
 
 Read `chapters/01-example/Example.tsx` — demonstrates cover → split → grid-3 → quote.
 
-## Outline tags (recommended)
+## Outline ↔ shell mapping
+
+Outline steps use **`[intent: …]`** visual intent tags (see `references/OUTLINE-FORMAT.md`).
+**Do not** put `[shell: lx-cover]` in outline — pick the shell here at build time:
 
 ```
-- step 1 (~15s) — hero [shell: cover]
-- step 2 (~20s) — three cases [shell: grid-3]
+outline:  step 1 (~15s) — hero headline [intent: hero opener]
+build:    SceneChrome + lx-cover-body
+
+outline:  step 2 (~20s) — three cases, one per click [intent: list-reveal]
+build:    SceneChrome + ListGrid + GridSlot (1 active / step)
 ```
 
 ## Quality checklist (ui-ux-pro-max adapted)

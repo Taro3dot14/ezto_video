@@ -149,6 +149,38 @@ class TestBuildChapter1:
         assert result.get("errors")
         assert "missing" in result["errors"][0]["error"].lower()
 
+    @patch("harness.workflow.nodes.web.run_chapter_revision_pipeline")
+    def test_checkpoint_rejection_uses_revision_not_full_build(self, mock_revision):
+        mock_revision.return_value = MagicMock(
+            success=True, iterations=3, tool_calls=2, content="revised",
+        )
+        state = _base_state(
+            user_confirmations={
+                "checkpoint_plan": {"selected_theme": "dune", "development_mode": "A"},
+                "checkpoint_chapter_1": {
+                    "approved": False,
+                    "feedback": "标题字号太小，请加大",
+                },
+            },
+        )
+        ws = state[_WS]
+        Path(ws, "outline.md").write_text("## Chapter 1 — Test Chapter\n")
+        Path(ws, "script.md").write_text("# Script\n")
+        ch_dir = Path(ws, _PPT, "src", "chapters", "chapter_1")
+        ch_dir.mkdir(parents=True, exist_ok=True)
+        (ch_dir / "index.tsx").write_text("export default () => <div>old</div>;")
+        (ch_dir / "narrations.ts").write_text("export const narrations = ['a'];")
+        (ch_dir / "index.css").write_text(".ch-old {}")
+
+        result = wv_build_chapter_1(state)
+
+        mock_revision.assert_called_once()
+        call_kw = mock_revision.call_args.kwargs
+        assert call_kw["user_feedback"] == "标题字号太小，请加大"
+        assert (ch_dir / "index.tsx").read_text() == "export default () => <div>old</div>;"
+        assert result["current_node"] == "wv_build_chapter_1"
+        assert not result.get("errors")
+
 
 # ═══════════════════════════════════════════════════════════════
 # wv_build_chapter_n

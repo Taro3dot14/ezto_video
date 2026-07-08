@@ -52,26 +52,28 @@ export default function ExampleChapter({ step }: ChapterStepProps) {
               02
             </span>
           </div>
-          <div className="lx-split-rule" aria-hidden />
-          <article className="lx-split-panel">
-            <div className="lx-split-panel-main">
-              <div className="lx-kicker">Shell · Split</div>
-              <h2 className="lx-title">
-                <MaskReveal show duration={900}>
-                  <span className="serif-cn">大数字 + 正文</span>
-                </MaskReveal>
-              </h2>
-              <p className="lx-body">
-                左侧 accent 数字轨，右侧 surface 面板 — 垂直居中，不再头重脚轻。
-              </p>
-            </div>
-            <aside className="lx-split-meta" aria-label="Layout metadata">
-              <span className="lx-split-meta-label">Layout rule</span>
-              <span className="lx-split-meta-value">
-                Rail · rule · panel — one unified section
-              </span>
-            </aside>
-          </article>
+          <div className="lx-split-module">
+            <div className="lx-split-rule" aria-hidden />
+            <article className="lx-split-panel">
+              <div className="lx-split-panel-main">
+                <div className="lx-kicker">Shell · Split</div>
+                <h2 className="lx-title">
+                  <MaskReveal show duration={900}>
+                    <span className="serif-cn">大数字 + 正文</span>
+                  </MaskReveal>
+                </h2>
+                <p className="lx-body">
+                  左侧 accent 数字轨，右侧 surface 面板 — 垂直居中，不再头重脚轻。
+                </p>
+              </div>
+              <footer className="lx-split-foot">
+                <span className="lx-split-foot-label">Layout rule</span>
+                <span className="lx-split-foot-value">
+                  Rail · rule · panel — one unified section
+                </span>
+              </footer>
+            </article>
+          </div>
         </section>
       </SceneChrome>
     );

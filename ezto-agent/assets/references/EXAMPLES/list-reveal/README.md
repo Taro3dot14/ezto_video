@@ -1,10 +1,10 @@
 # Anchor: list-reveal（列举型逐个揭示）
 
-> ⚠️ **这是结构示意，不是抄袭模板**。先走 [`../../CHAPTER-CRAFT.md`](../../CHAPTER-CRAFT.md)
-> Part 0 五问。本 anchor 给的是"列举型章节的结构骨架"（单网格 N 槽位 +
-> 每 step 只填一个槽位 + 位置不重排）——保留这个**结构**，**按本项目的
-> 主题 + 内容换动作选型**。倒过来照抄 = [`../../CHAPTER-CRAFT.md`](../../CHAPTER-CRAFT.md)
-> Part 5 第 8 条「整章只用一种入场动画」同质化反模式。
+> ⚠️ **这是结构示意，不是抄袭模板**。先读 [`../../CHAPTER-CRAFT.md`](../../CHAPTER-CRAFT.md)
+> 文档索引 + [#list-reveal-one-per-step](../../CHAPTER-CRAFT.md#list-reveal-one-per-step)。
+> 本 anchor 给的是"列举型章节的结构骨架"（单网格 N 槽位 +
+> 每 step 只填一个槽位 + 位置不重排）——**实现时用 `ListGrid` + `GridSlot`**。
+> 倒过来照抄 = [#no-ai-slop](../../CHAPTER-CRAFT.md#no-ai-slop) 同质化反模式。
 
 ## 定位
 
@@ -23,30 +23,28 @@
 ```markdown
 ## 4. <chapter-id> — <主题 N 件事>（N+1 steps）
 
-- **step 1** (~3s) — masthead 引子"<N 件事>"
-- **step 2** (~6s) — 第 1 件：<标题> + <article 抽来的细节>
-- **step 3** (~6s) — 第 2 件：<标题>
+- step 1 (~3s) — 引子"<N 件事>" [intent: intro / transition]
+- step 2 (~6s) — 第 1 件：<标题> + <article 抽来的细节> [intent: list-reveal]
+- step 3 (~6s) — 第 2 件：<标题> [intent: list-reveal]
 - ...
-- **step N+1** (~6s) — 第 N 件：<标题>
+- step N+1 (~6s) — 第 N 件：<标题> [intent: list-reveal]
 ```
 
 ## 关键节奏决策
 
 | step | 视觉布局 |
 |---|---|
-| 1 | 中心引子大字 + 序号 01/02/.../N 占位（**不显示内容**，纯占位） |
-| 2 | "01" 槽位填充：标题 + 简短说明 + accent 编号；其余仍是 ghost |
-| 3 | "02" 填充；01 已激活变次级；其余仍 ghost |
-| ... | 当前槽位填充；之前的激活降级；之后的 ghost |
+| 1 | `lx-stack-center` 引子大字 + ghost 序号占位 |
+| 2 | `GridSlot` "01" active；其余 ghost |
+| 3 | "02" active；01 past；其余 ghost |
+| ... | 当前 active；之前 past；之后 ghost |
 
-## CHAPTER-CRAFT.md Part 0 原则 8 的核心实现
+## [#list-reveal-one-per-step](../../CHAPTER-CRAFT.md#list-reveal-one-per-step) 的核心实现
 
 > "布局不重排，只是单元格内容变化"
 
-整个章节只有**一个网格布局**，N 个槽位的 React 节点位置完全不变。
-变的只是每个槽位的内容状态（ghost / active / past）。这样：
-- 单元格不会重排 → 视觉稳
-- 每点一次只有"一个槽位变化" → 观众视线明确锁定新揭示的项
+整个章节只有**一个 `ListGrid`**，N 个 `GridSlot` 节点位置完全不变。
+变的只是每个槽位的 `state`（ghost / active / past）。
 
 **反模式**：每点一次重新渲染整个布局 → 已揭示的项也跟着抖动 / 重新
 入场 → 观众不知道该看哪。
@@ -56,24 +54,20 @@
 ```
 list-reveal/
 ├── README.md
-├── chapter.tsx     ← 完整章节示例 —— 默认绑 newsroom 主题
-└── chapter.css
+├── chapter.tsx     ← SceneChrome + ListGrid + GridSlot
+└── chapter.css     ← ch-lr-* 动画 optional
 ```
 
 ## 关键手段（地板线）
 
 | 维度 | 这个 anchor 怎么实现 |
 |---|---|
-| 字号 | 标题 64px / 巨号 144px serif |
-| 槽位状态 | dashed → 巨号红色高亮 → 灰化数字（**位置不重排**） |
-| 序号 | hero-num 字体（衬线大数字） |
-| 主导动作 | mask reveal（标题）+ 数字砸下（accent 红） |
-| 伴随动作 | 副标 stagger 200ms + accent 横线 scaleX |
-| 持续微动 | active 槽位的数字 accent 光晕 `infinite` 呼吸 |
-| 引子 | masthead 双线规则 + serif 大字 |
+| 布局 | `SceneChrome` + `ListGrid` + `GridSlot state=…` |
+| 字号 | `lx-title` / `lx-subtitle` / `lx-body` 角色 |
+| 槽位状态 | ghost → active（accent + drop）→ past（dimmed） |
+| 动画 | `ch-lr-num-drop` 可选；主样式在 `layouts.css` |
 
-> **新写章节时**：抄结构（单网格 N 槽位、每 step 只填一个槽位、位置
-> 不重排），按本章内容 + 本主题气质自由设计主导动作的形式。
+> **新写章节时**：优先复制 `01-example/` grid-3 step，再参考本 anchor 节奏。
 
 ## 切到其它主题时
 

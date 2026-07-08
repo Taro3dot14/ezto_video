@@ -7,8 +7,9 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Literal
+from collections.abc import MutableMapping
 
-from harness.workflow.chapter_policies import auto_validate_chapter
+from harness.workflow.chapter_validation import auto_validate_chapter
 from harness.workflow.css_projection_checks import (
     collect_font_size_violations,
     find_invalid_css_var_refs,
@@ -18,6 +19,11 @@ from harness.workflow.css_projection_checks import (
     index_css_declares_font_size,
     load_theme_css_vars,
     strip_decorative_hex_for_theme_check,
+)
+from harness.services.tools.craft.craft_precheck import (
+    MANUAL_PRECHECK_IDS,
+    format_manual_precheck_report,
+    run_manual_prechecks,
 )
 
 # Minimum px from presentation base.css projection tokens (fallback if file missing)
@@ -168,7 +174,7 @@ def craft_checklist_snapshot(ctx: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def push_craft_checklist_event(state: Any, ctx: dict[str, Any]) -> None:
+def push_craft_checklist_event(state: Any, ctx: MutableMapping[str, Any]) -> None:
     """Push structured craft checklist to execution_trace (shared by review + repair)."""
     if not ctx.get(_CTX_KEY, {}).get("items"):
         return
@@ -384,10 +390,34 @@ def _check_visual_demos(tsx: str, css: str) -> tuple[bool, str]:
 
 
 
-def _check_no_muted_text(tsx: str) -> tuple[bool, str]:
-    if re.search(r"--text-mute|--text-faint", tsx):
-        return False, "index.tsx uses --text-mute or --text-faint on copy"
-    return True, "no muted text tokens in TSX"
+def _check_no_muted_text(tsx: str, css: str = "", **_k: Any) -> tuple[bool, str]:
+    """Flag muted tokens on primary copy — not SVG stroke/fill decorations."""
+    issues: list[str] = []
+
+    tsx_no_svg = re.sub(r"<svg[\s\S]*?</svg>", "", tsx, flags=re.I)
+    tsx_no_svg = re.sub(
+        r'\b(stroke|fill)\s*=\s*["\'][^"\']*(?:--text-mute|--text-faint)[^"\']*["\']',
+        "",
+        tsx_no_svg,
+        flags=re.I,
+    )
+    if re.search(r"--text-mute|--text-faint", tsx_no_svg):
+        issues.append("index.tsx uses --text-mute or --text-faint on copy")
+
+    for match in re.finditer(
+        r"([^{]+)\{[^}]*(?:color|fill)\s*:\s*[^;]*(?:--text-mute|--text-faint)[^}]*\}",
+        css,
+        flags=re.I,
+    ):
+        sel = match.group(1)
+        if re.search(r"svg|path|circle|line|rect|decor|icon|dot|rule|stroke|grid|slot-num", sel, re.I):
+            continue
+        issues.append(f"muted token on copy selector {sel.strip()[:60]}")
+        break
+
+    if issues:
+        return False, "; ".join(issues)
+    return True, "no muted text tokens on primary copy"
 
 
 # Supplementary-plane emoji only — exclude dingbats (▌ · ✓ ⚠) used in terminal/UI copy.
@@ -464,16 +494,35 @@ def _check_no_tiny_text(css: str, *, ppt: Path | None = None) -> tuple[bool, str
 
 
 def _check_no_header_footer(tsx: str) -> tuple[bool, str]:
-    if re.search(r"<footer\b|page-number|页眉|页脚", tsx, re.I):
-        return False, "footer or page-number markup found"
-    for tag in re.findall(r"<header\b[^>]*>", tsx, re.I):
-        if re.search(r"masthead|hk-masthead|scene-intro", tag, re.I):
+    issues: list[str] = []
+    if re.search(r"page-number|页眉|页脚", tsx):
+        issues.append("页眉/页脚/page-number copy on stage")
+
+    for tag in re.findall(r"<footer\b[^>]*>", tsx, re.I):
+        if re.search(r"split-foot|cover-foot|terminal-foot|lx-split-foot|lx-cover-foot", tag, re.I):
             continue
-        return False, (
-            "persistent header chrome found — "
-            "scene masthead only (className contains masthead, per 01-example)"
-        )
-    return True, "no persistent header/footer chrome"
+        issues.append("page-level <footer> — panel lx-split-foot inside content only")
+        break
+
+    if re.search(r"<header\b", tsx, re.I):
+        issues.append("no <header> — SceneChrome is content-only (masthead removed)")
+
+    if re.search(r"SceneChrome[^>]*(brand|issue)\s*=", tsx):
+        issues.append("SceneChrome brand/issue masthead props banned")
+
+    if re.search(
+        r"className=\"[^\"]*(?:topbar|navbar|page-header|chapter-header|site-header|page-title-bar|masthead)",
+        tsx,
+        re.I,
+    ):
+        issues.append("header-like top chrome class on stage")
+
+    if re.search(r"<nav\b", tsx, re.I):
+        issues.append("nav chrome not allowed on stage")
+
+    if issues:
+        return False, "; ".join(issues)
+    return True, "content-only stage — no page header/footer"
 
 
 def _check_code_isolation(tsx: str, css: str, chapter_id: str) -> tuple[bool, str]:
@@ -516,8 +565,8 @@ def _register_auto_checks() -> None:
     def visual(tsx: str, css: str, **_k: Any) -> tuple[bool, str]:
         return _check_visual_demos(tsx, css)
 
-    def no_muted(tsx: str, **_k: Any) -> tuple[bool, str]:
-        return _check_no_muted_text(tsx)
+    def no_muted(tsx: str, css: str = "", **_k: Any) -> tuple[bool, str]:
+        return _check_no_muted_text(tsx, css)
 
     def slop(tsx: str, css: str, **_k: Any) -> tuple[bool, str]:
         return _check_no_ai_slop(tsx, css)
@@ -552,8 +601,98 @@ def _register_auto_checks() -> None:
 _register_auto_checks()
 
 
+def _apply_auto_passes(ctx: dict[str, Any]) -> None:
+    """Pre-mark auto checklist items that passed programmatic checks."""
+    store = _get_store(ctx)
+    hints = store.get("auto_hints", {})
+    for item in CRAFT_REVIEW_ITEMS:
+        if item.mode != "auto":
+            continue
+        h = hints.get(item.id)
+        if not h or not h.get("pass"):
+            continue
+        cur = store.get("items", {}).get(item.id, {})
+        if cur.get("state") == "pass":
+            continue
+        _set_item(ctx, item.id, state="pass", evidence=f"auto: {h.get('evidence', '')}")
+    sync_review_ok(ctx)
+
+
+def format_reviewer_item_id_checklist(
+    ctx: dict[str, Any] | None = None,
+    *,
+    recheck_ids: list[str] | None = None,
+) -> str:
+    """ITEM_ID keys for reviewer todolist_check — injected after review_chapter_bundle."""
+    todos = reviewer_todo_items(recheck_ids=recheck_ids)
+    store = (ctx or {}).get(_CTX_KEY, {})
+    items = store.get("items", {})
+    hints = store.get("auto_hints", {})
+    lines = [
+        "--- Reviewer ITEM_ID checklist (todolist_check keys — not Chinese labels) ---",
+    ]
+    for tid, label in todos.items():
+        entry = items.get(tid, {})
+        state = entry.get("state", "pending")
+        craft = _ITEM_BY_ID.get(tid)
+        if tid == REVIEW_BUNDLE_TODO:
+            lines.append(f"- `{tid}` — {label}")
+            continue
+        if craft and craft.mode == "auto":
+            if state == "pass" and str(entry.get("evidence", "")).startswith("auto:"):
+                lines.append(f"- `{tid}` — {label} [auto ✅ pre-marked — fail only if disagree]")
+                continue
+            h = hints.get(tid)
+            if h:
+                mark = "✅" if h.get("pass") else "⚠️"
+                lines.append(f"- `{tid}` — {label} [auto {mark}: {h.get('evidence', '')}]")
+                continue
+        if craft and craft.mode == "manual":
+            manual_hints = store.get("manual_hints", {})
+            mh = manual_hints.get(tid)
+            if state == "pass" and str(entry.get("evidence", "")).startswith("precheck:"):
+                lines.append(f"- `{tid}` — {label} [precheck ✅ — confirm or fail]")
+                continue
+            if mh and mh.get("pass") is not None:
+                mark = "✅" if mh.get("pass") else "⚠️"
+                lines.append(f"- `{tid}` — {label} [precheck {mark}: {mh.get('evidence', '')}]")
+                continue
+            if mh and mh.get("pass") is None:
+                lines.append(f"- `{tid}` — {label} [hint: {mh.get('evidence', '')}]")
+                continue
+        mode_tag = f" [{craft.mode}]" if craft else ""
+        lines.append(f"- `{tid}` — {label}{mode_tag}")
+    lines.append(
+        "Auto/precheck ✅ items are pre-marked — only todolist_check **remaining manual** items "
+        "(VARIED_ANIMATIONS, ZOOM_READABLE, WHITESPACE_COLOR, RICHER_THAN_SCRIPT, …) "
+        "or fail if you disagree with a precheck."
+    )
+    return "\n".join(lines)
+
+
+def _apply_manual_passes(ctx: dict[str, Any]) -> None:
+    """Pre-mark high-confidence manual pre-check passes."""
+    store = _get_store(ctx)
+    hints = store.get("manual_hints", {})
+    for item_id in MANUAL_PRECHECK_IDS:
+        h = hints.get(item_id)
+        if not h or not h.get("pass"):
+            continue
+        conf = h.get("confidence", "")
+        if item_id == "ANIMATION_DURATION":
+            if conf not in ("high", "medium"):
+                continue
+        elif conf != "high":
+            continue
+        cur = store.get("items", {}).get(item_id, {})
+        if cur.get("state") == "pass":
+            continue
+        _set_item(ctx, item_id, state="pass", evidence=f"precheck: {h.get('evidence', '')}")
+    sync_review_ok(ctx)
+
+
 def init_craft_checklist(
-    ctx: dict[str, Any],
+    ctx: MutableMapping[str, Any],
     *,
     workspace_root: Path,
     chapter_id: str,
@@ -601,8 +740,9 @@ def run_craft_auto_checks(
     *,
     workspace_root: Path,
     chapter_id: str,
+    script_excerpt: str = "",
 ) -> dict[str, dict[str, Any]]:
-    """Run programmatic checks; store advisory results in auto_hints (non-blocking)."""
+    """Run programmatic auto + manual pre-checks; pre-mark high-confidence passes."""
     if not _get_store(ctx).get("items"):
         init_craft_checklist(ctx, workspace_root=workspace_root, chapter_id=chapter_id)
 
@@ -618,6 +758,11 @@ def run_craft_auto_checks(
         if ch.joinpath("index.css").exists()
         else ""
     )
+    narrations_text = (
+        ch.joinpath("narrations.ts").read_text(encoding="utf-8", errors="replace")
+        if ch.joinpath("narrations.ts").exists()
+        else ""
+    )
     hints: dict[str, dict[str, Any]] = {}
 
     for item in CRAFT_REVIEW_ITEMS:
@@ -630,7 +775,16 @@ def run_craft_auto_checks(
         ok, evidence = checker(tsx=tsx, css=css, ppt=ppt, chapter_id=chapter_id)
         hints[item.id] = {"pass": ok, "evidence": evidence}
 
-    _get_store(ctx)["auto_hints"] = hints
+    store = _get_store(ctx)
+    store["auto_hints"] = hints
+    store["manual_hints"] = run_manual_prechecks(
+        tsx=tsx,
+        css=css,
+        narrations_text=narrations_text,
+        script_excerpt=script_excerpt,
+    )
+    _apply_auto_passes(ctx)
+    _apply_manual_passes(ctx)
     return hints
 
 

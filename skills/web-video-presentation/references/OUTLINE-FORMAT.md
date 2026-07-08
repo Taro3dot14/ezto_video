@@ -19,7 +19,7 @@
 > [`AUDIO.md`](AUDIO.md)）。如果实现时章节 step 数和 outline 不一致，
 > 回过来同步 outline 即可，不需要纠结"对得严丝合缝"。
 
-> **写 outline 前必读**（双源原则，[CHAPTER-CRAFT.md Part 0 原则 10](CHAPTER-CRAFT.md#10-双源原则scriptmd-定节拍--articlemd-定画面密度)）：
+> **写 outline 前必读**（双源原则，[CHAPTER-CRAFT.md § 双源](CHAPTER-CRAFT.md#dual-source)）：
 >
 > - **`script.md`** —— 决定**节拍**：按 `---` 切节拍，每节拍 1~2 step、估时
 > - **`article.md`**（如有）—— 决定**画面信息密度**：每章首段抽**信息池**
@@ -45,7 +45,8 @@
 
 **开发计划**：
 
-- step 1 (~Ts) — <屏幕内容>
+- step 1 (~Ts) — <屏幕内容> [intent: hero opener]
+- step 2 (~Ts) — <屏幕内容> [intent: list-reveal]
 - ...
 
 口播节选：
@@ -58,7 +59,7 @@
 
 > **关于时长**：outline 里**只**写 step 的 `(~Ts)` 口播估时（音画对齐
 > 用），**绝对不写**动画时长 / 错峰量 / keyframe 数值。这些都在章节开发
-> 阶段决定（[`CHAPTER-CRAFT.md`](CHAPTER-CRAFT.md) Part 3 时长参考）。
+> 阶段决定（[`CHAPTER-CRAFT.md`](CHAPTER-CRAFT.md) 代码层最小约束 · 动画时长）。
 
 > **想看具象示例**：
 > - 钩子型开场结构 → [`EXAMPLES/hook-chapter/`](EXAMPLES/hook-chapter/)
@@ -111,7 +112,7 @@ pull-quote 引用 / 数据浮层。
 ### Step 列表：每步 **1 行**
 
 ```
-- step N (~Ts) — <屏幕内容>
+- step N (~Ts) — <屏幕内容> [intent: …]
 ```
 
 | 规则 | 原因 |
@@ -119,10 +120,25 @@ pull-quote 引用 / 数据浮层。
 | `step N` 1-indexed | agent 实现时 `if (step === N - 1) ...`（注意零基偏移） |
 | **`(~Ts)`** 必填 | 按 script.md 本步对应口播段字数 ÷ 4 估算（中文 ~ 4 字/秒）。范围 3~10s |
 | **屏幕内容** | 一句话讲清楚这一步舞台上有什么：hero / 标语 / 数据 / 装饰元素。**≤ 1 行**，再多就该拆 step |
+| **`[intent: …]` 可选** | **视觉意图标签**，描述这一步的节奏 / 信息结构，**不是** CSS class 或 shell 名。chapter agent 实现时按 [`LAYOUT-SYSTEM.md`](../templates/src/layouts/LAYOUT-SYSTEM.md) shell picker 选型 |
 | **不写动画** | 写死 = 翻译机化（详见本文件顶部框） |
 | **不写时长数值 / 错峰量** | 这些在章节开发阶段决定 |
-| **不写实现手段** | filter / SVG / Canvas 选型留给 chapter agent |
+| **不写实现手段** | filter / SVG / Canvas / shell 类名（`lx-cover` 等）留给 chapter agent |
 
+#### Visual intent 标签（推荐词表）
+
+| `[intent: …]` | 含义（给 planner） | chapter agent 常见映射 |
+|---|---|---|
+| `hero opener` | 开场大标语 | `lx-cover` |
+| `solo reveal` | 单一主视觉独占 | `lx-solo` |
+| `list-reveal` | 口播逐项列举 | `lx-grid-3` + `GridSlot` |
+| `compare A/B` | 两方案对照 | `lx-grid-2` |
+| `rule + detail` | 序号 + 说明卡 | `lx-split` |
+| `quote close` | 收束金句 | `lx-quote` |
+| `intro / transition` | 章节引言 | `lx-stack` |
+| `terminal / demo` | 代码 / 对话窗 | `lx-terminal` |
+
+> **禁止**在 outline 写 `[shell: lx-cover]` 这类实现标签 —— shell 是 build-time 决策，见 Layout Shell System。
 
 ### 口播节选（每章末尾，可选但推荐）
 
@@ -190,6 +206,7 @@ pull-quote 引用 / 数据浮层。
 
 - [ ] 每个 step 都是**单一句屏幕内容描述**，没有"动画"行 / "手段"行
 - [ ] 没有任何 step 写了具体毫秒 / 秒数（除 `(~Ts)` 口播估时）
+- [ ] 若有 `[intent: …]`，写的是**视觉意图**，不是 shell 类名 / CSS 实现
 - [ ] 每章首段都有「信息池」block，至少 3 条 article 抽取项，**每条
       必带来源标注**（`—— 来源 article §X / Lxx`）—— 没标注 chapter agent
       回不到原文

@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from harness.core.state import VideoWorkflowState
-from harness.services.tools.file_ops import write_file as svc_write_file
-from harness.services.tools.narration_args import normalize_narration_lines
+from harness.services.tools.fs.file_ops import write_file as svc_write_file
+from harness.services.tools.chapter.narration_args import normalize_narration_lines
 
 
 def build_narrations_content(lines: list[str]) -> str:

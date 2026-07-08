@@ -43,7 +43,7 @@ Do **not** invent layout, font-size, or gap from scratch. Pick a shell per step:
 | Shell | Root classes | Use when |
 |-------|--------------|----------|
 | Cover | `lx-cover-body` | Hero opener |
-| Split | `lx-split-section` + `lx-split-rail` + `lx-split-rule` + `lx-split-panel` | Rule index rail + unified content card |
+| Split | `lx-split-section` + `lx-split-rail` + `lx-split-module` | Index rail + rule/panel module |
 | Solo | `lx-solo` + `lx-solo-panel` | Single centered demo (78% width) |
 | Grid 3 | `<ListGrid>` + `<GridSlot state=…>` | List reveal — **one active slot per step** |
 | Grid 2 | `lx-grid-2` | Two-column comparison |
@@ -54,12 +54,35 @@ Do **not** invent layout, font-size, or gap from scratch. Pick a shell per step:
 **Typography roles** (never set raw `font-size` on primary copy):
 `.lx-hero` · `.lx-title` · `.lx-subtitle` · `.lx-body` · `.lx-caption` · `.lx-kicker`
 
-**Scene wrapper:** `SceneChrome` · **List reveal:** `GridSlot` + `ListGrid`
+**Scene wrapper:** `SceneChrome`（**无页眉** — 禁止 brand/issue/masthead）· **List reveal:** `GridSlot` + `ListGrid`
 
 **Chapter `index.css`:** only `ch-*` animation/demo classes.
 
 Golden reference: `01-example/Example.tsx` (cover → split → grid-3 → quote).
 Full catalog: `presentation/src/layouts/LAYOUT-SYSTEM.md`.
+"""
+
+MOTION_SYSTEM_BLOCK = """## Motion Template System (MANDATORY — read via read_chapter_context)
+
+**Before writing index.tsx / index.css:** `read_chapter_context` returns `MOTION-SYSTEM.md` + `presets.css`.
+Do **not** invent keyframes from scratch — pick presets first.
+
+| Per step | Rule |
+|----------|------|
+| Dominant | **One** motion preset (`mot-hero-mask`, `mot-stamp-drop`, `mot-slot-fill`, …) |
+| Accompaniment | **Optional one** (`mot-rule-grow`, `mot-caption-rise`) |
+| Custom | Only if preset insufficient → `ch-*` in index.css |
+
+**Picker (intent → motion):**
+- hero opener → `mot-hero-mask` or `mot-hero-blur` on `.lx-hero`
+- solo reveal → `mot-stamp-drop` + MaskReveal on image
+- list-reveal → `GridSlot` active (`mot-slot-fill` / `lx-slot-drop`)
+- quote close → `mot-hero-mask` + `mot-rule-grow`
+
+**Wire MaskReveal** for text wipes; use `.mot-*` classes from `presentation/src/motion/presets.css`.
+Full catalog: `presentation/src/motion/MOTION-SYSTEM.md`.
+
+**Anti-patterns:** same fade on every step; infinite motion on hero; >2 fighting animations per step.
 """
 
 PROJECTION_READABILITY_BLOCK = """## Projection readability (enforced by layout shells)
@@ -272,13 +295,32 @@ def extract_article_excerpts_for_chapter(
 
 def load_example_chapter_pattern(workspace_root: Path) -> str:
     """Bundle 01-example TSX/CSS/narrations for coding pattern reference."""
+    return _load_example_chapter(workspace_root, limits={"Example.tsx": 5000, "Example.css": 2500, "narrations.ts": 1500})
+
+
+def load_example_chapter_excerpt(workspace_root: Path) -> str:
+    """Shorter 01-example — enough for shell + list-reveal pattern."""
+    return _load_example_chapter(
+        workspace_root,
+        limits={"Example.tsx": 2800, "Example.css": 1200, "narrations.ts": 800},
+        note="Excerpt: cover + split + grid-3 + quote. Call read_layout_catalog() for full LAYOUT-SYSTEM.md.",
+    )
+
+
+def _load_example_chapter(
+    workspace_root: Path,
+    *,
+    limits: dict[str, int],
+    note: str = "",
+) -> str:
     example_dir = workspace_root / "presentation" / "src" / "chapters" / "01-example"
-    limits = {"Example.tsx": 5000, "Example.css": 2500, "narrations.ts": 1500}
     parts = [
         "## Template reference: presentation/src/chapters/01-example/",
         "Match this coding pattern, step structure, and projection scale.",
-        "",
     ]
+    if note:
+        parts.append(note)
+    parts.append("")
     found = False
     for fname, hint in example_file_hints():
         path = example_dir / fname
@@ -291,6 +333,59 @@ def load_example_chapter_pattern(workspace_root: Path) -> str:
         parts += [f"### {fname} — {hint}", "```", content[:limit], "```", ""]
     if not found:
         parts.append("ERROR: 01-example not found — run scaffold first.")
+    return "\n".join(parts).strip()
+
+
+def load_motion_system_bundle(workspace_root: Path) -> str:
+    """Full motion bundle — use read_motion_detail() when core context is not enough."""
+    return _load_motion_bundle(workspace_root, spec_limit=8000, presets_limit=4500, anim_limit=3500)
+
+
+def load_motion_system_summary(workspace_root: Path) -> str:
+    """Condensed motion rules for first read_chapter_context."""
+    return _load_motion_bundle(workspace_root, spec_limit=2400, presets_limit=1600, anim_limit=900)
+
+
+def _load_motion_bundle(
+    workspace_root: Path,
+    *,
+    spec_limit: int,
+    presets_limit: int,
+    anim_limit: int,
+) -> str:
+    motion_dir = workspace_root / "presentation" / "src" / "motion"
+    parts = ["## Motion Template System (presentation/src/motion/)"]
+    spec = motion_dir / "MOTION-SYSTEM.md"
+    presets = motion_dir / "presets.css"
+    if spec.is_file():
+        parts += [
+            "",
+            "### MOTION-SYSTEM.md",
+            spec.read_text(encoding="utf-8", errors="replace")[:spec_limit],
+        ]
+    else:
+        parts.append("MISSING: run scaffold — MOTION-SYSTEM.md not found.")
+    if presets.is_file():
+        parts += [
+            "",
+            "### presets.css (mot-* classes — global import in App.tsx)",
+            "```css",
+            presets.read_text(encoding="utf-8", errors="replace")[:presets_limit],
+            "```",
+        ]
+    else:
+        parts.append("MISSING: presets.css — run scaffold.")
+    anim = workspace_root / "presentation" / "src" / "styles" / "animations.css"
+    if anim.is_file():
+        parts += [
+            "",
+            "### animations.css primitives (excerpt — mask-reveal, rule-grow, keyframes)",
+            "```css",
+            anim.read_text(encoding="utf-8", errors="replace")[:anim_limit],
+            "```",
+        ]
+    if spec_limit < 5000:
+        parts.append("Full catalog: call read_motion_detail() before complex custom motion.")
     return "\n".join(parts).strip()
 
 
@@ -397,13 +492,13 @@ def format_brief_for_prompt(brief: dict[str, Any], title: str) -> str:
     if brief.get("script_excerpt"):
         parts += ["## Script beats (narration source — write narrations.ts from these)", brief["script_excerpt"], ""]
 
-    parts += [NO_AI_SLOP_BLOCK, "", LAYOUT_SYSTEM_BLOCK, "", PROJECTION_READABILITY_BLOCK, ""]
+    parts += [NO_AI_SLOP_BLOCK, "", LAYOUT_SYSTEM_BLOCK, "", MOTION_SYSTEM_BLOCK, "", PROJECTION_READABILITY_BLOCK, ""]
 
     parts += [
         "## Source reads (MANDATORY before writing code)",
-        "Call **read_chapter_context** once — it returns this chapter's article excerpts "
-        "(from outline 信息池 sources) + `01-example` coding pattern. "
-        "Do NOT read_file article.md or 01-example manually.",
+        "Call **read_chapter_context** once — it returns article excerpts + `01-example` + "
+        "**LAYOUT-SYSTEM.md + MOTION-SYSTEM.md + presets.css**. "
+        "Do NOT read_file article.md, 01-example, layouts/, or motion/ manually.",
         "",
     ]
 

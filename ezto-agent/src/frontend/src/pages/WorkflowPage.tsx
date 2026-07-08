@@ -21,6 +21,11 @@ import WorkflowSidebar from "../components/WorkflowSidebar";
 import LoadingState from "../components/LoadingState";
 import WorkflowPlan from "../components/WorkflowPlan";
 import PresentationPreviewFab from "../components/PresentationPreviewFab";
+import CheckpointReviewShell, {
+  chapterReviewCollapsedLabel,
+  isChapterReviewInterrupt,
+} from "../components/CheckpointReviewShell";
+import { canPreviewPresentation, resolvePresentationPreviewUrl } from "../utils/presentationPreview";
 
 import { displayNodeLabel, formatElapsed, PLAN_MILESTONES, PLAN_ORDER } from "../workflow/nodeCatalog";
 
@@ -36,6 +41,8 @@ export default function WorkflowPage() {
   const [pausing, setPausing] = useState(false);
   const [continuing, setContinuing] = useState(false);
   const [frozenElapsedMs, setFrozenElapsedMs] = useState<number | null>(null);
+  const [previewCacheKey, setPreviewCacheKey] = useState(() => Date.now());
+  const [chapterReviewOpen, setChapterReviewOpen] = useState(true);
   const revisionRef = useRef(0);
   const initialLoadDoneRef = useRef(false);
 
@@ -52,6 +59,13 @@ export default function WorkflowPage() {
       setExecutionTrace(s.execution_trace as ExecutionStep[]);
     }
     revisionRef.current = s.execution_revision ?? revisionRef.current;
+  }, []);
+
+  const handleThemeApplied = useCallback((themeId: string) => {
+    setState((prev) =>
+      prev ? { ...prev, selected_theme: themeId } : prev,
+    );
+    setPreviewCacheKey(Date.now());
   }, []);
 
   const fetchState = useCallback(async () => {
@@ -187,6 +201,22 @@ export default function WorkflowPage() {
 
   const interrupt = state?.pending_interrupt;
   const interruptType = (interrupt?.type as string) || undefined;
+  const chapterReviewPending = isChapterReviewInterrupt(interruptType);
+
+  const reviewInterruptKey = useMemo(() => {
+    if (!chapterReviewPending || !interrupt) return "";
+    return [
+      interrupt.type,
+      interrupt.chapter_index ?? "",
+      interrupt.chapter_id ?? "",
+    ].join(":");
+  }, [chapterReviewPending, interrupt]);
+
+  useEffect(() => {
+    if (reviewInterruptKey) {
+      setChapterReviewOpen(true);
+    }
+  }, [reviewInterruptKey]);
   const completedNodes = state?.completed_nodes ?? [];
   const artifacts: ArtifactInfo[] = state?.artifacts ?? [];
   const totalNodes = state?.total_nodes ?? 21;
@@ -252,15 +282,29 @@ export default function WorkflowPage() {
             </button>
           </div>
         </div>
-        {threadId && (
-          <PresentationPreviewFab state={state} threadId={threadId} />
+        {threadId && state && (
+          <PresentationPreviewFab
+            state={state}
+            threadId={threadId}
+            previewCacheKey={previewCacheKey}
+            onThemeApplied={handleThemeApplied}
+          />
         )}
       </div>
     );
   }
 
+  const previewHref =
+    threadId && state ? resolvePresentationPreviewUrl(state, threadId) : null;
+  const showErrorPreview = Boolean(
+    previewHref && (state.errors as unknown[])?.length > 0,
+  );
+
   const isRunning = !interruptType && !isPaused;
-  const topbarNodeLabel = displayNodeLabel(displayCurrentNode);
+  const awaitingChapterReview = chapterReviewPending && !chapterReviewOpen;
+  const topbarNodeLabel = awaitingChapterReview
+    ? "等待章节验收"
+    : displayNodeLabel(displayCurrentNode);
   const showTimer = workflowStartedAt !== null;
   const showTransport = isRunning || isPaused;
 
@@ -291,6 +335,9 @@ export default function WorkflowPage() {
           <div className="wf-topbar-stage-left">
             {isRunning && <span className="wf-topbar-dot" />}
             {isPaused && <span className="wf-topbar-dot wf-topbar-paused" />}
+            {awaitingChapterReview && (
+              <span className="wf-topbar-dot wf-topbar-waiting" />
+            )}
             <span className="wf-topbar-node">{topbarNodeLabel}</span>
           </div>
 
@@ -359,6 +406,21 @@ export default function WorkflowPage() {
           {state.errors && (state.errors as any[]).length > 0 && (
             <div className="wf-validation wf-validation-error">
               <div className="wf-section-title">Errors</div>
+              {showErrorPreview && previewHref && (
+                <div className="cr-preview" style={{ marginBottom: 12 }}>
+                  <p className="cr-preview-hint">
+                    审查未通过时仍可预览当前章节效果，对照自检清单修改后点「继续」重试。
+                  </p>
+                  <a
+                    className="btn btn-primary"
+                    href={previewHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    预览演示网页 →
+                  </a>
+                </div>
+              )}
               <div className="wf-validation-list">
                 {(state.errors as any[]).map((err: any, i: number) => (
                   <div key={i} className="wf-validation-item">
@@ -428,28 +490,23 @@ export default function WorkflowPage() {
         </div>
       )}
       {(interruptType === "checkpoint_chapter_1" ||
-        interruptType === "checkpoint_chapter_n") && (
-        <div className="modal-overlay">
-          <div className="modal-card">
+        interruptType === "checkpoint_chapter_n" ||
+        interruptType === "checkpoint_remaining_batch") &&
+        interrupt && (
+          <CheckpointReviewShell
+            open={chapterReviewOpen}
+            collapsedLabel={chapterReviewCollapsedLabel(interrupt)}
+            onClose={() => setChapterReviewOpen(false)}
+            onOpen={() => setChapterReviewOpen(true)}
+          >
             <ChapterReviewView
-              interrupt={interrupt!}
+              interrupt={interrupt}
               threadId={threadId!}
+              workflowState={state}
               onResume={handleResume}
             />
-          </div>
-        </div>
-      )}
-      {interruptType === "checkpoint_remaining_batch" && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <ChapterReviewView
-              interrupt={interrupt!}
-              threadId={threadId!}
-              onResume={handleResume}
-            />
-          </div>
-        </div>
-      )}
+          </CheckpointReviewShell>
+        )}
       {interruptType === "checkpoint_audio" && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -476,11 +533,13 @@ export default function WorkflowPage() {
         </div>
       )}
 
-      {threadId && (
+      {threadId && state && (
         <PresentationPreviewFab
           state={state}
           threadId={threadId}
           interruptType={interruptType}
+          previewCacheKey={previewCacheKey}
+          onThemeApplied={handleThemeApplied}
         />
       )}
     </div>

@@ -42,7 +42,9 @@ def derive_runtime(state: VideoWorkflowState) -> dict[str, Any]:
                 current_node = step.get("node_id", "")
                 break
         if not current_node and trace:
-            current_node = trace[-1].get("node_id", "")
+            last = trace[-1]
+            if last.get("status") == "running":
+                current_node = last.get("node_id", "")
 
     return {
         "current_node": current_node,

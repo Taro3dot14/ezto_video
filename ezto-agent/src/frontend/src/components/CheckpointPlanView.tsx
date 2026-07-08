@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { listThemes, readArtifact, type ThemeInfo } from "../api/client";
+import ThemePickerGrid from "./ThemePickerGrid";
 
 interface Props {
   interrupt: Record<string, unknown>;
@@ -87,52 +88,13 @@ export default function CheckpointPlanView({ interrupt, threadId, onResume }: Pr
       {/* 3. Theme */}
       <section className="cp-section">
         <h4>3. 选择主题</h4>
-        {loadingThemes ? (
-          <p>加载主题中…</p>
-        ) : (
-          <div className="theme-grid">
-            {(recommendations
-              ? themes.filter((t) =>
-                  recommendations.some((r) => r.id === t.id),
-                )
-              : themes
-            ).map((theme) => (
-              <button
-                key={theme.id}
-                className={`theme-card ${selectedTheme === theme.id ? "selected" : ""}`}
-                onClick={() => setSelectedTheme(theme.id)}
-              >
-                <div className="theme-preview">
-                  {theme.preview && (
-                    <div className="theme-swatches">
-                      <span
-                        className="swatch"
-                        style={{ background: theme.preview.shell }}
-                      />
-                      <span
-                        className="swatch"
-                        style={{ background: theme.preview.surface }}
-                      />
-                      <span
-                        className="swatch"
-                        style={{ background: theme.preview.accent }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="theme-name">{theme.nameZh}</div>
-                <div className="theme-desc">{theme.descriptionZh}</div>
-                <div className="theme-tags">
-                  {theme.bestFor.map((tag) => (
-                    <span key={tag} className="tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
+        <ThemePickerGrid
+          themes={themes}
+          selectedId={selectedTheme}
+          onSelect={setSelectedTheme}
+          filterIds={recommendations?.map((r) => r.id)}
+          loading={loadingThemes}
+        />
       </section>
 
       {/* 4. Materials */}

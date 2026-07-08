@@ -10,7 +10,9 @@ from pathlib import Path
 from typing import Any
 
 from backend.core.logger import logger
-from harness.core.state import ToolCallRecord, VideoWorkflowState
+from harness.core.state import VideoWorkflowState
+
+from .telemetry import record_tool_call
 
 _scaffold_logs: dict[str, list[str]] = {}
 _scaffold_logs_lock = threading.Lock()
@@ -30,26 +32,6 @@ def drain_scaffold_log(thread_id: str, seen: int = 0) -> tuple[list[str], int]:
 def _clear_scaffold_log(thread_id: str) -> None:
     with _scaffold_logs_lock:
         _scaffold_logs.pop(thread_id, None)
-
-
-def _record_tool_call(
-    state: VideoWorkflowState,
-    tool_name: str,
-    args: dict[str, Any],
-    allowed: bool,
-    reason: str,
-) -> ToolCallRecord:
-    record: ToolCallRecord = {
-        "node": state.get("current_node", "unknown"),
-        "tool": tool_name,
-        "args": args,
-        "allowed": allowed,
-        "reason": reason,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    }
-    calls = state.get("tool_calls", [])
-    calls.append(record)
-    return record
 
 
 def normalize_presentation_command(command: str) -> tuple[str, str | None]:
@@ -72,7 +54,7 @@ def run_shell(
     cwd: str | None = None,
     timeout: int = 120,
 ) -> subprocess.CompletedProcess:
-    _record_tool_call(
+    record_tool_call(
         state, "shell", {"command": command, "cwd": cwd, "timeout": timeout},
         allowed=True, reason="Shell command for workflow step",
     )

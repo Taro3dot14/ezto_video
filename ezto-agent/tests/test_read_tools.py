@@ -2,10 +2,10 @@
 
 from pathlib import Path
 
-from harness.services.tools.chapter_bundle import review_chapter_bundle, validate_chapter_bundle
-from harness.services.tools.craft_review import CRAFT_REVIEW_ITEMS, mark_craft_review_checks
-from harness.services.tools.missing_assets import report_missing_assets
-from harness.services.tools.source_docs import read_source_docs
+from harness.services.tools.chapter.chapter_bundle import review_chapter_bundle, validate_chapter_bundle
+from harness.services.tools.craft.craft_review import CRAFT_REVIEW_ITEMS, mark_craft_review_checks
+from harness.services.tools.chapter.missing_assets import report_missing_assets
+from harness.services.tools.chapter.source_docs import read_source_docs
 from harness.workflow.chapter_policies import check_tool_guard
 
 

@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from harness.services.tools.chapter_bundle import review_chapter_bundle
-from harness.services.tools.craft_review import (
+from harness.services.tools.chapter.chapter_bundle import review_chapter_bundle
+from harness.services.tools.craft.craft_review import (
     _check_no_header_footer,
     run_craft_auto_checks,
 )
@@ -26,9 +26,10 @@ def _write_hook_chapter(ws: Path) -> None:
         'export const narrations = ["a", "b"];\n', encoding="utf-8",
     )
     (ch / "index.tsx").write_text(
+        "import { SceneChrome } from '../../components/SceneChrome';\n"
         "export default function Ch({ step }) {\n"
-        '  if (step === 0) return <header className="hk-masthead">X</header>;\n'
-        '  if (step === 1) return <div className="hk-body">Y</div>;\n'
+        '  if (step === 0) return <SceneChrome><div className="hk-hero">X</div></SceneChrome>;\n'
+        '  if (step === 1) return <SceneChrome><div className="hk-body">Y</div></SceneChrome>;\n'
         "}\n",
         encoding="utf-8",
     )
@@ -63,8 +64,22 @@ def test_resolve_chapter_id_maps_chapter_1_to_hook(tmp_path):
     assert warn is not None
 
 
-def test_masthead_header_allowed():
+def test_masthead_header_forbidden():
     tsx = '<header className="hk-masthead"><span className="brand">X</span></header>'
+    ok, msg = _check_no_header_footer(tsx)
+    assert not ok
+    assert "header" in msg.lower()
+
+
+def test_scene_chrome_brand_prop_forbidden():
+    tsx = '<SceneChrome brand="X" issue="Y"><div className="lx-hero">Hi</div></SceneChrome>'
+    ok, msg = _check_no_header_footer(tsx)
+    assert not ok
+    assert "brand" in msg.lower()
+
+
+def test_scene_chrome_content_only_passes():
+    tsx = '<SceneChrome><div className="lx-cover-body"><h1 className="lx-hero">Hi</h1></div></SceneChrome>'
     ok, msg = _check_no_header_footer(tsx)
     assert ok, msg
 

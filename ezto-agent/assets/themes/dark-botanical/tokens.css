@@ -3,14 +3,14 @@
  *   Premium editorial dark. Near-black canvas with warm terracotta gold
  *   accent, Cormorant italic English vs Noto Serif SC Chinese, IBM Plex
  *   Sans body. Signature: soft blurred light pools (botanical glow) in
- *   the corners �?a single decoration, never grain, never grid.
+ *   the corners —a single decoration, never grain, never grid.
  *
  *   character knobs:
- *     �?hero numbers   �?italic Cormorant, weight 400 (editorial)
- *     �?rule           �?1px solid faint warm hairline
- *     �?card           �?refined small radius (paper-lift)
- *     �?surface        �?soft blurred light pool (gold/terra haze)
- *     �?motion         �?slow + cinematic (editorial pace)
+ *     —hero numbers   —italic Cormorant, weight 400 (editorial)
+ *     —rule           —1px solid faint warm hairline
+ *     —card           —refined small radius (paper-lift)
+ *     —surface        —soft blurred light pool (gold/terra haze)
+ *     —motion         —slow + cinematic (editorial pace)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -57,7 +57,7 @@
     0 60px 160px rgba(0, 0, 0, 0.65),
     0 0 0 1px rgba(212, 165, 116, 0.06);
 
-  /* ─── decoration: SIGNATURE �?soft blurred light pools (botanical glow) ─── */
+  /* ─── decoration: SIGNATURE —soft blurred light pools (botanical glow) ─── */
   --surface-pattern:
     radial-gradient(ellipse 60% 50% at 12% 22%, rgba(212, 165, 116, 0.18) 0%, transparent 60%),
     radial-gradient(ellipse 55% 45% at 88% 82%, rgba(232, 180, 184, 0.14) 0%, transparent 60%),

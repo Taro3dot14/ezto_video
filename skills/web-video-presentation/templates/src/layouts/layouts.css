@@ -22,7 +22,7 @@
 
 .lx-rule-gap {
   margin-top: var(--space-5);
-  margin-bottom: 0;
+  margin-bottom: var(--space-8);
   flex-shrink: 0;
 }
 
@@ -36,7 +36,7 @@
 /* ── Stage grid — header + main share one alignment system ── */
 .lx-stage-grid {
   width: 100%;
-  max-width: var(--lx-content-max, 1480px);
+  max-width: var(--lx-content-max, 1680px);
   margin-inline: auto;
 }
 
@@ -174,147 +174,164 @@
   gap: var(--space-5);
 }
 
-/* ── Shell: split — rule index rail · accent rule · content panel ── */
+/* ── Shell: split — index rail + module (rule ∥ panel) ── */
 .lx-split-section {
-  --lx-split-rail: 200px;
-  --lx-split-gap: var(--space-7);
-  --lx-split-panel-max: 820px;
-
-  display: grid;
-  grid-template-columns: var(--lx-split-rail) 2px minmax(0, var(--lx-split-panel-max));
-  column-gap: var(--lx-split-gap);
-  align-items: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-9);
   width: 100%;
-  max-width: calc(var(--lx-split-rail) + 2px + var(--lx-split-gap) + var(--lx-split-panel-max));
-  margin-inline: auto;
+  margin-top: var(--space-7);
 }
 
 .lx-split-rail {
+  flex: 0 0 240px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: var(--space-4);
+  padding-right: var(--space-6);
 }
 
 .lx-split-index {
   font-family: var(--hero-num-font, var(--font-display-en));
-  font-size: clamp(120px, 10vw, 160px);
+  font-size: clamp(128px, 10vw, 180px);
   font-weight: 800;
   font-style: normal;
-  line-height: 1;
+  line-height: 0.92;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
 }
 
+/* Rule + panel share one height — rule never floats alone */
+.lx-split-module {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--space-8);
+}
+
 .lx-split-rule {
-  align-self: stretch;
+  flex: 0 0 2px;
   width: 2px;
-  min-height: 100%;
   background: var(--accent);
   border-radius: 1px;
 }
 
 .lx-split-panel {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: var(--space-8);
-  padding: clamp(56px, 5vw, 72px) clamp(48px, 4vw, 64px);
+  flex: 1;
+  min-width: min(1056px, 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-9);
+  width: 100%;
+  min-height: 420px;
+  padding: var(--space-9);
   border-radius: var(--r-sm, var(--r-card));
-  background: color-mix(in srgb, var(--surface-2) 88%, var(--shell));
+  background: color-mix(in srgb, var(--surface-2) 92%, var(--shell));
   border: var(--rule-w) solid var(--rule);
-  min-height: 360px;
-  max-height: 480px;
 }
 
 .lx-split-panel-main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--space-6);
-  min-width: 0;
+  gap: var(--space-7);
+}
+
+.lx-split-panel-main .lx-kicker {
+  margin-bottom: var(--space-2);
 }
 
 .lx-split-panel-main .lx-title {
-  max-width: 16ch;
+  max-width: 22ch;
+  line-height: 1.12;
 }
 
 .lx-split-panel-main .lx-body {
-  max-width: 36ch;
+  max-width: 48ch;
   color: var(--text-2);
+  line-height: 1.62;
+  margin-top: var(--space-2);
 }
 
-.lx-split-meta {
+.lx-split-foot {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: var(--space-3);
-  padding-left: var(--space-6);
-  border-left: var(--rule-w) solid var(--rule);
-  min-width: 168px;
-  max-width: 200px;
+  padding-top: var(--space-8);
+  border-top: var(--rule-w) solid var(--rule);
 }
 
-.lx-split-meta-label {
+.lx-split-foot-label {
   font-family: var(--font-mono);
   font-size: var(--t-micro, 12px);
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-mute);
 }
 
-.lx-split-meta-value {
+.lx-split-foot-value {
   font-family: var(--font-mono);
   font-size: var(--t-projection-caption);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  line-height: 1.45;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
   color: var(--text-2);
+  max-width: 56ch;
 }
 
 @container lx-main (max-width: 1180px) {
   .lx-split-section {
-    --lx-split-rail: 160px;
-    --lx-split-gap: var(--space-5);
-    --lx-split-panel-max: 720px;
+    gap: var(--space-7);
+  }
+
+  .lx-split-rail {
+    flex-basis: 200px;
   }
 
   .lx-split-index {
-    font-size: clamp(96px, 8vw, 128px);
+    font-size: clamp(112px, 9vw, 148px);
+  }
+
+  .lx-split-panel {
+    min-width: 0;
+    min-height: 380px;
+    padding: var(--space-8) var(--space-7);
   }
 }
 
 @container lx-main (max-width: 960px) {
   .lx-split-section {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 2px auto;
-    row-gap: var(--space-5);
-    max-width: 640px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    max-width: 560px;
+    margin-inline: auto;
   }
 
   .lx-split-rail {
+    flex-basis: auto;
     justify-content: flex-start;
     padding-right: 0;
   }
 
+  .lx-split-module {
+    flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+  }
+
   .lx-split-rule {
     width: 100%;
-    min-height: 2px;
     height: 2px;
+    flex-basis: 2px;
   }
 
   .lx-split-panel {
-    grid-template-columns: 1fr;
-    max-height: none;
-  }
-
-  .lx-split-meta {
-    padding-left: 0;
-    padding-top: var(--space-5);
-    border-left: 0;
-    border-top: var(--rule-w) solid var(--rule);
     max-width: none;
   }
 }

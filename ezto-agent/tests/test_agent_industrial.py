@@ -1,6 +1,6 @@
 """Tests for agent industrial optimizations."""
 
-from harness.agent.observations import shape_tool_output
+from harness.agent.tools.observations import shape_tool_output
 from harness.agent.stall import StallDetector
 from harness.workflow.chapter_policies import check_tool_guard, auto_validate_chapter
 from pathlib import Path
@@ -67,7 +67,7 @@ def test_stall_detector_allows_batch_read_file():
 
 
 def test_normalize_presentation_command():
-    from harness.services.tools.shell import normalize_presentation_command
+    from harness.services.tools.core.shell import normalize_presentation_command
 
     cmd = "grep -n 'foo' presentation/src/styles/base.css"
     normalized, hint = normalize_presentation_command(cmd)

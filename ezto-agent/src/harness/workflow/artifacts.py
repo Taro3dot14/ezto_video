@@ -315,7 +315,7 @@ def refresh_preview_after_registry(state: VideoWorkflowState) -> None:
     rewrites (especially on WSL ``/mnt/d``), leaving the preview stuck on an old
     single-chapter ``CHAPTERS`` array.
     """
-    from harness.services.tools.npm import restart_dev_server
+    from harness.services.tools.build.npm import restart_dev_server
 
     ws = Path(state.get("workspace_root", "."))
     ppt = ws / _PPT_DIR

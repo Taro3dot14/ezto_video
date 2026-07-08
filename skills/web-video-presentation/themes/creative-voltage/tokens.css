@@ -7,11 +7,11 @@
  *   halftone dot pattern overlay.
  *
  *   character knobs:
- *     �?hero numbers   �?Syne, weight 800 (geometric chunk)
- *     �?rule           �?2px solid neon yellow (bold, decisive)
- *     �?card           �?refined-sm radius (mostly sharp)
- *     �?surface        �?halftone dot pattern (retro print signature)
- *     �?motion         �?punchy + slight overshoot (energy)
+ *     —hero numbers   —Syne, weight 800 (geometric chunk)
+ *     —rule           —2px solid neon yellow (bold, decisive)
+ *     —card           —refined-sm radius (mostly sharp)
+ *     —surface        —halftone dot pattern (retro print signature)
+ *     —motion         —punchy + slight overshoot (energy)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -44,7 +44,7 @@
   /* ─── design identity: punk studio ─── */
   --r-card:        var(--r-sm);
   --r-stage:       0;
-  --rule-w:        2px;             /* SIGNATURE �?bold dividers */
+  --rule-w:        2px;             /* SIGNATURE —bold dividers */
   --rule-style:    solid;
   --hero-num-font:    var(--font-display-en);
   --hero-num-style:   normal;
@@ -59,7 +59,7 @@
     0 60px 160px rgba(0, 20, 60, 0.65),
     0 0 0 1px rgba(212, 255, 0, 0.18);
 
-  /* ─── decoration: SIGNATURE �?halftone dot pattern overlay ─── */
+  /* ─── decoration: SIGNATURE —halftone dot pattern overlay ─── */
   --surface-pattern:
     radial-gradient(circle, rgba(212, 255, 0, 0.18) 1.5px, transparent 2px);
   --surface-pattern-size: 18px 18px;

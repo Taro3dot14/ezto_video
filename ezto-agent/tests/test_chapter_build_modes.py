@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from harness.agent.chapter_build import chapter_build_mode_label, run_chapter_pipeline
 from harness.agent.loop import AgentResult
-from harness.agent.tool_registry import make_build_agent_tools
+from harness.agent.tools import make_build_agent_tools
 
 
 def test_tool_profile_builder_blocks_craft_review_check(tmp_path):
@@ -61,7 +61,7 @@ def test_builder_cannot_todolist_check_craft_items(tmp_path):
 
 
 def test_reviewer_todolist_craft_items(tmp_path):
-    from harness.services.tools.craft_review import (
+    from harness.services.tools.craft.craft_review import (
         init_craft_checklist,
         run_craft_auto_checks,
         try_check_craft_todo_item,

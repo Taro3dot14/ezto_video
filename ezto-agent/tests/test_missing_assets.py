@@ -1,12 +1,12 @@
 """Tests for report_missing_assets tool and MISSING_ASSETS_NOTE gate."""
 
-from harness.services.tools.craft_review import (
+from harness.services.tools.craft.craft_review import (
     init_craft_checklist,
     mark_craft_review_check,
     run_craft_auto_checks,
     try_check_craft_todo_item,
 )
-from harness.services.tools.missing_assets import (
+from harness.services.tools.chapter.missing_assets import (
     format_missing_assets_for_user,
     get_missing_assets,
     report_missing_assets,

@@ -4,21 +4,14 @@ import { SceneChrome } from "../../components/SceneChrome";
 import type { ChapterStepProps } from "../../registry/types";
 import "./Example.css";
 
-const BRAND = "Layout Shell Lab";
-
-/**
- * Layout Shell Lab — reference chapter for all agents.
+/** * Layout Shell Lab — reference chapter for all agents.
  *
  * Steps: cover → split → grid-3 (list-reveal) → quote.
  */
 export default function ExampleChapter({ step }: ChapterStepProps) {
   if (step === 0) {
     return (
-      <SceneChrome
-        brand={BRAND}
-        issue="EXAMPLE 01 · RULE 01 · READ LAYOUT-SYSTEM.MD"
-      >
-        <div className="lx-cover-body">
+      <SceneChrome>        <div className="lx-cover-body">
           <div className="lx-kicker">Shell · Cover</div>
           <h1 className="lx-hero">
             <MaskReveal show duration={900}>
@@ -42,36 +35,34 @@ export default function ExampleChapter({ step }: ChapterStepProps) {
 
   if (step === 1) {
     return (
-      <SceneChrome
-        brand={BRAND}
-        issue="EXAMPLE 01 · RULE 02 · READ LAYOUT-SYSTEM.MD"
-      >
-        <section className="lx-split-section" aria-label="Split shell demo">
+      <SceneChrome>        <section className="lx-split-section" aria-label="Split shell demo">
           <div className="lx-split-rail">
             <span className="lx-split-index" aria-hidden>
               02
             </span>
           </div>
-          <div className="lx-split-rule" aria-hidden />
-          <article className="lx-split-panel">
-            <div className="lx-split-panel-main">
-              <div className="lx-kicker">Shell · Split</div>
-              <h2 className="lx-title">
-                <MaskReveal show duration={900}>
-                  <span className="serif-cn">大数字 + 正文</span>
-                </MaskReveal>
-              </h2>
-              <p className="lx-body">
-                左侧 accent 数字轨，右侧 surface 面板 — 垂直居中，不再头重脚轻。
-              </p>
-            </div>
-            <aside className="lx-split-meta" aria-label="Layout metadata">
-              <span className="lx-split-meta-label">Layout rule</span>
-              <span className="lx-split-meta-value">
-                Rail · rule · panel — one unified section
-              </span>
-            </aside>
-          </article>
+          <div className="lx-split-module">
+            <div className="lx-split-rule" aria-hidden />
+            <article className="lx-split-panel">
+              <div className="lx-split-panel-main">
+                <div className="lx-kicker">Shell · Split</div>
+                <h2 className="lx-title">
+                  <MaskReveal show duration={900}>
+                    <span className="serif-cn">大数字 + 正文</span>
+                  </MaskReveal>
+                </h2>
+                <p className="lx-body">
+                  左侧 accent 数字轨，右侧 surface 面板 — 垂直居中，不再头重脚轻。
+                </p>
+              </div>
+              <footer className="lx-split-foot">
+                <span className="lx-split-foot-label">Layout rule</span>
+                <span className="lx-split-foot-value">
+                  Rail · rule · panel — one unified section
+                </span>
+              </footer>
+            </article>
+          </div>
         </section>
       </SceneChrome>
     );
@@ -79,11 +70,7 @@ export default function ExampleChapter({ step }: ChapterStepProps) {
 
   if (step === 2) {
     return (
-      <SceneChrome
-        brand={BRAND}
-        issue="EXAMPLE 01 · RULE 03 · READ LAYOUT-SYSTEM.MD"
-      >
-        <div className="lx-kicker">Shell · Grid 3 — one item per step</div>
+      <SceneChrome>        <div className="lx-kicker">Shell · Grid 3 — one item per step</div>
         <h2 className="lx-subtitle">列举时：ghost → active → past</h2>
         <ListGrid>
           <GridSlot
@@ -110,11 +97,7 @@ export default function ExampleChapter({ step }: ChapterStepProps) {
   }
 
   return (
-    <SceneChrome
-      brand={BRAND}
-      issue="EXAMPLE 01 · RULE 04 · READ LAYOUT-SYSTEM.MD"
-    >
-      <div className="lx-quote-body">
+    <SceneChrome>      <div className="lx-quote-body">
         <div className="lx-kicker">Shell · Quote</div>
         <div className="pull-quote lx-quote-text">
           <MaskReveal show duration={1100}>
@@ -129,4 +112,4 @@ export default function ExampleChapter({ step }: ChapterStepProps) {
     </SceneChrome>
   );
 }
-
+

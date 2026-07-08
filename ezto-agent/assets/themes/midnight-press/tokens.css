@@ -5,11 +5,11 @@
  *   Chinese. Magazine-cover gravitas at night.
  *
  *   character knobs:
- *     �?hero numbers   �?italic editorial serif
- *     �?rule           �?1px solid warm hairline
- *     �?card radius    �?sharp (no radius on stage; small radius on cards)
- *     �?surface        �?warm vignette only, no grain
- *     �?motion         �?slow + cinematic (1100ms reveals)
+ *     —hero numbers   —italic editorial serif
+ *     —rule           —1px solid warm hairline
+ *     —card radius    —sharp (no radius on stage; small radius on cards)
+ *     —surface        —warm vignette only, no grain
+ *     —motion         —slow + cinematic (1100ms reveals)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */

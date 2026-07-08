@@ -1,35 +1,44 @@
 import {
-  buildPresentationPreviewUrl,
+  resolvePresentationPreviewUrl,
   resolvePreviewHighlightIndex,
   shouldShowPresentationPreviewFab,
 } from "../utils/presentationPreview";
+import ThemeSwitcherPopover from "./ThemeSwitcherPopover";
 import type { WorkflowState } from "../api/client";
 
 interface Props {
   state: WorkflowState;
   threadId: string;
   interruptType?: string;
+  previewCacheKey?: number;
+  onThemeApplied?: (themeId: string) => void;
 }
 
 export default function PresentationPreviewFab({
   state,
   threadId,
   interruptType,
+  previewCacheKey,
+  onThemeApplied,
 }: Props) {
   if (!shouldShowPresentationPreviewFab(state, interruptType)) {
     return null;
   }
 
-  const highlightIndex = resolvePreviewHighlightIndex(state);
+  const href =
+    resolvePresentationPreviewUrl(state, threadId, undefined, previewCacheKey) ?? "";
+  if (!href) return null;
 
-  const href = buildPresentationPreviewUrl(
-    state.presentation_url!,
-    threadId,
-    highlightIndex,
-  );
+  const highlightIndex = resolvePreviewHighlightIndex(state);
 
   return (
     <div className="wf-preview-fab-wrap" role="presentation">
+      <ThemeSwitcherPopover
+        threadId={threadId}
+        selectedTheme={state.selected_theme}
+        visible
+        onThemeApplied={onThemeApplied ?? (() => {})}
+      />
       <a
         className="wf-preview-fab"
         href={href}

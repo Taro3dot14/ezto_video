@@ -9,7 +9,7 @@ from typing import Any
 from backend.core.logger import logger
 from harness.core.state import VideoWorkflowState
 from harness.workflow.interruptions import checkpoint_audio, checkpoint_audio_segments
-from harness.services.tools.npm import run_npm
+from harness.services.tools.build.npm import run_npm
 
 
 def wv_checkpoint_audio_node(state: VideoWorkflowState) -> dict:

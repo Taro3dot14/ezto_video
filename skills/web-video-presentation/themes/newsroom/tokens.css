@@ -6,11 +6,11 @@
  *   italic figures.
  *
  *   character knobs:
- *     �?hero numbers   �?italic display serif, very tight tracking
- *     �?rule           �?1px hairline solid (broadsheet ink)
- *     �?card           �?flat (newspaper has no rounded corners)
- *     �?surface        �?subtle paper grain
- *     �?motion         �?quiet, longer durations (printed page pace)
+ *     —hero numbers   —italic display serif, very tight tracking
+ *     —rule           —1px hairline solid (broadsheet ink)
+ *     —card           —flat (newspaper has no rounded corners)
+ *     —surface        —subtle paper grain
+ *     —motion         —quiet, longer durations (printed page pace)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -40,7 +40,7 @@
   --dur-cinematic:  1500ms;
 
   /* ─── design identity: broadsheet ─── */
-  --r-card:        var(--r-flat);    /* SIGNATURE �?newsprint has no radius */
+  --r-card:        var(--r-flat);    /* SIGNATURE —newsprint has no radius */
   --r-stage:       0;
   --rule-w:        1px;
   --rule-style:    solid;

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from harness.core.state import VideoWorkflowState
-from harness.services.tools.shell import _record_tool_call
+from harness.services.tools.core.telemetry import _record_tool_call
 
 
 def report_missing_assets(

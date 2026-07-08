@@ -120,12 +120,55 @@ function AgentTag({ agent, content }: { agent?: string; content?: string }) {
 
 const EVENT_HINTS: Record<string, string> = {
   step: "步骤",
+  tool: "工具",
   validation: "核对",
   repair: "优化",
   file_write: "写入",
   error: "错误",
   agent: "页面",
 };
+
+interface ToolAuditPayload {
+  tool: string;
+  code: string;
+  blocked: boolean;
+  done: boolean;
+  ms: number;
+  chars: number;
+}
+
+function parseToolAudit(content: string): ToolAuditPayload | null {
+  try {
+    const data = JSON.parse(content) as ToolAuditPayload;
+    if (!data || typeof data.tool !== "string") return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function formatToolAuditLine(audit: ToolAuditPayload): { text: string; status: TimelineStatus } {
+  const ms = audit.ms >= 10 ? `${Math.round(audit.ms)}ms` : "<10ms";
+  const chars =
+    audit.chars >= 1000 ? `${(audit.chars / 1000).toFixed(1)}k chars` : `${audit.chars} chars`;
+
+  if (audit.done) {
+    return { text: `${audit.tool} · 完成`, status: "ok" };
+  }
+  if (audit.blocked || audit.code === "blocked") {
+    return { text: `${audit.tool} · 策略拦截`, status: "warn" };
+  }
+  if (audit.code === "parse") {
+    return { text: `${audit.tool} · 参数解析失败`, status: "fail" };
+  }
+  if (audit.code === "exec") {
+    return { text: `${audit.tool} · 执行错误`, status: "fail" };
+  }
+  if (audit.code === "not_found") {
+    return { text: `${audit.tool} · 不可用`, status: "fail" };
+  }
+  return { text: `${audit.tool} · ${ms} · ${chars}`, status: "neutral" };
+}
 
 function isHiddenThinkEvent(ev: TraceEvent): boolean {
   if (/调用\s*DeepSeek/i.test(ev.content)) return true;
@@ -305,6 +348,7 @@ function extractLatestTodo(events: TraceEvent[]): TodoSnapshot | null {
 
 function isTodoNoise(text: string): boolean {
   if (/^⚡ todolist_/.test(text)) return true;
+  if (/^⚡ \w+/.test(text)) return true;
   if (text.includes("Valid: NARRATIONS_TS")) return true;
   if (/^✅ [A-Z_]+:/.test(text)) return true;
   if (/✅\s*\[\d+\/\d+\]/.test(text) && text.includes("☐")) return true;
@@ -341,6 +385,24 @@ function buildTimeline(events: TraceEvent[]): TimelineItem[] {
         kind: "note",
         text: noteText,
         status: "neutral",
+        agent,
+      });
+      continue;
+    }
+
+    if (ev.type === "tool") {
+      const audit = parseToolAudit(raw);
+      if (!audit) continue;
+      const { text, status } = formatToolAuditLine(audit);
+      const dedupeKey = `tool:${audit.tool}:${audit.code}:${audit.ms}:${audit.chars}`;
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+      items.push({
+        id: `${ev.ts}:tool:${audit.tool}:${items.length}`,
+        kind: "step",
+        text,
+        status,
+        eventType: "tool",
         agent,
       });
       continue;
@@ -514,28 +576,16 @@ function ChecklistPanelsRow({
 }) {
   if (!build && !review) return null;
 
+  const showBuild = Boolean(build) && !review;
+
   return (
-    <div className="wf-exec-checklists" role="group" aria-label="章节构建与自检进度">
-      {build ? (
-        <TodoPanel todo={build} />
-      ) : (
-        <div className="wf-exec-checklist wf-exec-checklist--build is-placeholder" aria-hidden="true">
-          <div className="wf-exec-checklist-head">
-            <span className="wf-exec-checklist-title">构建清单</span>
-          </div>
-          <p className="wf-exec-checklist-placeholder">等待 Builder 开始…</p>
-        </div>
-      )}
-      {review ? (
-        <CraftChecklistPanel craft={review} />
-      ) : (
-        <div className="wf-exec-checklist wf-exec-checklist--review is-placeholder" aria-hidden="true">
-          <div className="wf-exec-checklist-head">
-            <span className="wf-exec-checklist-title">完工自检</span>
-          </div>
-          <p className="wf-exec-checklist-placeholder">等待 Reviewer 开始…</p>
-        </div>
-      )}
+    <div
+      className={`wf-exec-checklists${review ? " is-review-only" : ""}`}
+      role="group"
+      aria-label={review ? "完工自检进度" : "章节构建进度"}
+    >
+      {showBuild && <TodoPanel todo={build!} />}
+      {review && <CraftChecklistPanel craft={review} />}
     </div>
   );
 }
@@ -604,7 +654,14 @@ function ThinkTimeline({
         }
 
         return (
-          <div key={item.id} className={`wf-think-step${typing ? " is-live" : ""}`}>
+          <div
+            key={item.id}
+            className={`wf-think-step${typing ? " is-live" : ""}${
+              item.eventType === "tool" ? " is-tool" : ""
+            }${item.status === "warn" ? " is-blocked" : ""}${
+              item.status === "fail" ? " is-fail" : ""
+            }${item.status === "ok" ? " is-ok" : ""}`}
+          >
             <AgentTag agent={item.agent} content={item.text} />
             {item.eventType && item.eventType !== "step" && item.eventType !== "llm" && (
               <span className="wf-think-tag">{EVENT_HINTS[item.eventType] ?? item.eventType}</span>

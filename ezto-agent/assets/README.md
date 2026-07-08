@@ -24,20 +24,21 @@ Chapters **must not invent typography or spacing**. Use:
 1. `<SceneChrome>` — masthead + stage padding
 2. One shell per step — `lx-cover`, `lx-split`, `lx-solo`, `lx-grid-3`, `lx-grid-2`, `lx-quote`, …
 3. Typography roles — `.lx-hero`, `.lx-body`, `.lx-caption`
-4. Chapter CSS — **`ch-*` animations only**
+4. Chapter CSS — **`ch-*` animation overrides**; motion presets — **`mot-*`** in `motion/presets.css`
 
 Full spec: `templates/src/layouts/LAYOUT-SYSTEM.md`
 
 ## Theme swap
 
 Scaffold copies one theme → `presentation/src/styles/tokens.css`.  
-Chapters use semantic tokens only — **zero hex in chapter CSS**.
+Chapters use semantic tokens only — **zero hex in chapter CSS**.  
+During workflow **preview** (after scaffold), the UI can swap any built-in theme by overwriting `tokens.css` — no rebuild required.
 
 ## Agent reading order
 
 1. `references/CHAPTER-CRAFT.md` (via read_reference)
-2. `read_chapter_context` → article + 01-example + LAYOUT-SYSTEM.md
-3. Pick shell per outline step → implement with `ch-*` motion
+2. `read_chapter_context` → article + 01-example + LAYOUT-SYSTEM.md + **MOTION-SYSTEM.md + presets.css**
+3. Pick shell per outline step → pick **mot-*** dominant motion → `ch-*` overrides if needed
 
 ## ui-ux-pro-max alignment (adapted for fixed canvas)
 
@@ -62,6 +63,7 @@ assets/
 ├── templates/                → scaffold.sh copies into presentation/
 │   └── src/
 │       ├── layouts/          Layout Shell System
+│       ├── motion/           Motion Template System (MOTION-SYSTEM.md, presets.css)
 │       ├── components/       Stage, SceneChrome, GridSlot, MaskReveal
 │       ├── styles/           base.css, animations.css, fonts.css
 │       └── chapters/01-example/

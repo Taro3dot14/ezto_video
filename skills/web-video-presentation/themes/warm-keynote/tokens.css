@@ -5,11 +5,11 @@
  *   font-black for hero numbers (chunky modernist).
  *
  *   character knobs:
- *     �?hero numbers   �?chunky black sans (font-weight 900)
- *     �?rule           �?1px solid neutral hairline + 4px accent rule
- *     �?card           �?large radius (24-32px), soft warm shadow
- *     �?surface        �?warm 40px paper grid
- *     �?motion         �?springy with slight overshoot
+ *     —hero numbers   —chunky black sans (font-weight 900)
+ *     —rule           —1px solid neutral hairline + 4px accent rule
+ *     —card           —large radius (24-32px), soft warm shadow
+ *     —surface        —warm 40px paper grid
+ *     —motion         —springy with slight overshoot
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */

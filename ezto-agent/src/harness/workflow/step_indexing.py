@@ -128,13 +128,15 @@ def brief_build_order_block() -> str:
     """Strict build sequence — same wording in brief and read_chapter_context."""
     return "\n".join([
         "## Build order (strict)",
-        "1. `write_narrations` — one string per **code step** (`narrations.length` = screen count)",
-        "2. `write_file` index.tsx — SceneChrome + one layout shell per code step (`lx-cover`, `lx-split`, …)",
+        "1. **`read_chapter_context`** — article + 01-example + LAYOUT-SYSTEM + **MOTION-SYSTEM + presets.css**",
+        "2. `write_narrations` — one string per **code step** (`narrations.length` = screen count)",
+        "3. `write_file` index.tsx — SceneChrome + one shell per step + **one mot-* dominant motion**",
         "   - Typography: `.lx-hero` / `.lx-title` / `.lx-body` — never raw font-size on copy",
+        "   - Motion: MaskReveal + `.mot-*` from presets.css; do not invent keyframes before reading motion bundle",
         "   - Icons: inline SVG or CSS only — never emoji",
-        "3. `write_file` index.css — `ch-*` animation classes only (layout is global)",
-        "4. `craft_auto_check` — fix emoji/slop before registry if flagged",
-        "5. `update_registry` → `done` (reviewer runs craft checks)",
+        "4. `write_file` index.css — `ch-*` animation overrides only (layout + mot-* are global)",
+        "5. `craft_auto_check` — fix emoji/slop before registry if flagged",
+        "6. `update_registry` → `done` (reviewer runs craft checks)",
         "",
     ])
 

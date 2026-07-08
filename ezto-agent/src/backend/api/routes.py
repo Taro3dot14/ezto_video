@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
@@ -11,6 +12,8 @@ from backend.core.logger import logger, log_api_request
 from backend.services.event_service import event_generator
 
 from .models import (
+    ApplyThemeRequest,
+    ApplyThemeResponse,
     ArtifactInfo,
     ErrorResponse,
     ProjectDetail,
@@ -275,6 +278,51 @@ async def list_themes():
     return [ThemeInfo(**t) for t in themes]
 
 
+@router.post(
+    "/workflow/{thread_id}/theme",
+    response_model=ApplyThemeResponse,
+    responses={
+        404: {"model": ErrorResponse},
+        400: {"model": ErrorResponse},
+    },
+)
+async def apply_workflow_theme(thread_id: str, req: ApplyThemeRequest):
+    """Swap presentation theme (tokens.css) without re-running the builder."""
+    from backend.services.theme_service import apply_theme, refresh_preview_after_theme_apply
+    from configs import settings
+
+    t0 = time.perf_counter()
+    mgr = get_manager()
+    svc = get_project_service()
+
+    state = mgr.get_state(thread_id)
+    if state is not None:
+        try:
+            state = mgr.apply_workflow_theme(thread_id, req.theme_id)
+        except ValueError as e:
+            raise HTTPException(400, detail=str(e))
+    elif svc.get_project(thread_id) is not None:
+        workspace = svc.project_dir(thread_id)
+        try:
+            apply_theme(workspace, req.theme_id)
+            refresh_preview_after_theme_apply(workspace)
+        except ValueError as e:
+            raise HTTPException(400, detail=str(e))
+        state = mgr.get_state(thread_id)
+    else:
+        raise HTTPException(404, detail=f"Workflow {thread_id} not found")
+
+    elapsed = (time.perf_counter() - t0) * 1000
+    log_api_request("POST", f"/workflow/{thread_id}/theme", 200, elapsed)
+    port = state.get("presentation_url") if state else None
+    return ApplyThemeResponse(
+        thread_id=thread_id,
+        theme_id=req.theme_id,
+        selected_theme=(state or {}).get("selected_theme") or req.theme_id,
+        presentation_url=port if state else f"http://localhost:{settings.presentation_port}",
+    )
+
+
 # ── Project management ──
 
 
@@ -390,6 +438,51 @@ async def read_project_artifact(project_id: str, path: str):
     except PermissionError:
         raise HTTPException(403, detail="Path traversal denied")
     return {"content": content, "path": resolved}
+
+
+@router.post(
+    "/projects/{project_id}/theme",
+    response_model=ApplyThemeResponse,
+    responses={
+        404: {"model": ErrorResponse},
+        400: {"model": ErrorResponse},
+    },
+)
+async def apply_project_theme(project_id: str, req: ApplyThemeRequest):
+    """Swap theme for a project on disk (no active workflow required)."""
+    from backend.services.theme_service import apply_theme, refresh_preview_after_theme_apply
+    from configs import settings
+
+    t0 = time.perf_counter()
+    svc = get_project_service()
+    if svc.get_project(project_id) is None:
+        raise HTTPException(404, detail=f"Project {project_id} not found")
+
+    mgr = get_manager()
+    state = mgr.get_state(project_id)
+    if state is not None:
+        try:
+            state = mgr.apply_workflow_theme(project_id, req.theme_id)
+        except ValueError as e:
+            raise HTTPException(400, detail=str(e))
+        presentation_url = state.get("presentation_url")
+    else:
+        workspace = svc.project_dir(project_id)
+        try:
+            apply_theme(workspace, req.theme_id)
+            refresh_preview_after_theme_apply(workspace)
+        except ValueError as e:
+            raise HTTPException(400, detail=str(e))
+        presentation_url = f"http://localhost:{settings.presentation_port}"
+
+    elapsed = (time.perf_counter() - t0) * 1000
+    log_api_request("POST", f"/projects/{project_id}/theme", 200, elapsed)
+    return ApplyThemeResponse(
+        project_id=project_id,
+        theme_id=req.theme_id,
+        selected_theme=req.theme_id,
+        presentation_url=presentation_url,
+    )
 
 
 # ── Internal ──

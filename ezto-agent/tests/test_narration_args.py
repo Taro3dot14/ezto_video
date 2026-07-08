@@ -1,11 +1,11 @@
 """Tests for narration argument recovery and quote normalization."""
 
-from harness.services.tools.narration_args import (
+from harness.services.tools.chapter.narration_args import (
     normalize_narration_line,
     parse_write_narrations_arguments,
     parse_write_narrations_raw,
 )
-from harness.services.tools.narrations import build_narrations_content
+from harness.services.tools.chapter.narrations import build_narrations_content
 
 
 def test_normalize_narration_line_corner_quotes():

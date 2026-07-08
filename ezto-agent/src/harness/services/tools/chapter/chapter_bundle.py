@@ -14,23 +14,23 @@ from pathlib import Path
 
 from harness.core.state import VideoWorkflowState
 
-from harness.services.tools.craft_review import (
+from harness.services.tools.craft.craft_review import (
     format_craft_checklist,
+    format_reviewer_item_id_checklist,
     init_craft_checklist,
     run_craft_auto_checks,
 )
-from harness.services.tools.file_ops import read_file_with_header
-from harness.services.tools.shell import _record_tool_call
+from harness.services.tools.craft.craft_precheck import format_manual_precheck_report
+from harness.services.tools.fs.file_ops import read_file_with_header
+from harness.services.tools.core.telemetry import _record_tool_call
+from harness.workflow.chapter_brief import get_chapter_brief
 from harness.workflow.chapter_ids import resolve_chapter_id
 
-from harness.workflow.chapter_policies import (
-
+from harness.workflow.chapter_validation import (
     auto_validate_chapter,
-
+    classify_tsx_css_classes,
     validate_theme_contrast,
-
     validate_tsx_css_classes,
-
 )
 
 
@@ -148,6 +148,20 @@ def validate_chapter_bundle(
         if mismatch := validate_tsx_css_classes(ppt, chapter_id):
 
             errors.append(f"❌ {mismatch}")
+
+        _chapter_missing, global_skipped = classify_tsx_css_classes(ppt, chapter_id)
+
+        if global_skipped:
+
+            preview = ", ".join(f".{n}" for n in global_skipped[:6])
+
+            extra = f" (+{len(global_skipped) - 6} more)" if len(global_skipped) > 6 else ""
+
+            warnings.append(
+
+                f"ℹ️ TSX uses global template classes not in index.css (OK): {preview}{extra}"
+
+            )
 
         css_text = ch_dir.joinpath("index.css").read_text(encoding="utf-8")
 
@@ -282,9 +296,19 @@ def review_chapter_bundle(
     if struct_ok:
 
         init_craft_checklist(review_ctx, workspace_root=workspace_root, chapter_id=chapter_id)
-        run_craft_auto_checks(review_ctx, workspace_root=workspace_root, chapter_id=chapter_id)
+        brief = get_chapter_brief(state, chapter_id, chapter_index=1)
+        run_craft_auto_checks(
+            review_ctx,
+            workspace_root=workspace_root,
+            chapter_id=chapter_id,
+            script_excerpt=brief.get("script_excerpt", ""),
+        )
 
+        parts.append(format_manual_precheck_report(
+            review_ctx.get("craft_review", {}).get("manual_hints", {}),
+        ))
         parts.append(format_craft_checklist(review_ctx))
+        parts.append(format_reviewer_item_id_checklist(review_ctx))
 
         return "\n\n".join(parts), bool(review_ctx.get("review_ok"))
 

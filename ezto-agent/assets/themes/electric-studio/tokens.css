@@ -8,11 +8,11 @@
  *   without a navbar / footer.
  *
  *   character knobs:
- *     �?hero numbers   �?Manrope, weight 800
- *     �?rule           �?1px solid mid-gray
- *     �?card           �?refined-md radius (12px)
- *     �?surface        �?clean white + bottom electric-blue accent bar
- *     �?motion         �?punchy ease-out (corporate snap)
+ *     —hero numbers   —Manrope, weight 800
+ *     —rule           —1px solid mid-gray
+ *     —card           —refined-md radius (12px)
+ *     —surface        —clean white + bottom electric-blue accent bar
+ *     —motion         —punchy ease-out (corporate snap)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -59,7 +59,7 @@
     0 60px 160px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(0, 0, 0, 0.06);
 
-  /* ─── decoration: SIGNATURE �?bottom electric-blue accent bar ─── */
+  /* ─── decoration: SIGNATURE —bottom electric-blue accent bar ─── */
   --surface-pattern:
     linear-gradient(0deg, #4361ee 0%, #4361ee 4px, transparent 4px, transparent 100%);
   --surface-pattern-size: 100% 100%;

@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from harness.services.tools.chapter_bundle import review_chapter_bundle
-from harness.services.tools.craft_review import (
+from harness.services.tools.chapter.chapter_bundle import review_chapter_bundle
+from harness.services.tools.craft.craft_review import (
     CRAFT_REVIEW_ITEMS,
     attest_craft_review_item,
     craft_auto_check,
@@ -22,7 +22,7 @@ from harness.services.tools.craft_review import (
     sync_review_ok,
     try_check_craft_todo_item,
 )
-from harness.services.tools.missing_assets import report_missing_assets
+from harness.services.tools.chapter.missing_assets import report_missing_assets
 
 
 def _write_minimal_chapter(ws: Path, chapter_id: str = "chapter_1") -> None:
@@ -81,7 +81,7 @@ def test_craft_auto_checks_store_hints_not_block(tmp_path):
     ctx: dict = {}
     hints = run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
     assert hints["VISUAL_DEMOS"]["pass"] is True
-    assert ctx["craft_review"]["items"]["VISUAL_DEMOS"]["state"] == "pending"
+    assert ctx["craft_review"]["items"]["VISUAL_DEMOS"]["state"] == "pass"
     assert ctx["craft_review"]["items"]["VARIED_ANIMATIONS"]["state"] == "pending"
     assert ctx.get("review_ok") is False
 
@@ -94,8 +94,15 @@ def test_craft_review_complete_after_manual_checks(tmp_path):
     init_craft_checklist(ctx, workspace_root=ws, chapter_id="chapter_1")
     run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
     for item_id in [i.id for i in CRAFT_REVIEW_ITEMS if i.mode == "auto"]:
+        if ctx["craft_review"]["items"][item_id]["state"] != "pass":
+            mark_craft_review_check(ctx, item_id)
+    ctx.setdefault("workflow_state", state)
+    ctx.setdefault("chapter_id", "chapter_1")
+    _report_no_missing(state, "chapter_1")
+    for item_id in [i.id for i in CRAFT_REVIEW_ITEMS if i.mode == "manual"]:
+        if ctx["craft_review"]["items"][item_id]["state"] == "pass":
+            continue
         mark_craft_review_check(ctx, item_id)
-    _complete_manual_checks(ctx, state)
     sync_review_ok(ctx)
     assert ctx["review_ok"] is True
 
@@ -208,7 +215,7 @@ def test_review_failure_report_lists_reviewer_fails(tmp_path):
     ctx: dict = {}
     init_craft_checklist(ctx, workspace_root=ws, chapter_id="chapter_1")
     attest_craft_review_item(ctx, "THEME_TOKENS", result="fail", reason="hardcoded hex in terminal", fix="use tokens")
-    from harness.services.tools.craft_review import format_review_failure_report
+    from harness.services.tools.craft.craft_review import format_review_failure_report
 
     report = format_review_failure_report(ctx, chapter_id="chapter_1")
     assert "Reviewer failures" in report
@@ -263,7 +270,7 @@ def test_reconcile_auto_failures_flips_bypass_pass(tmp_path):
     init_craft_checklist(ctx, workspace_root=ws, chapter_id="chapter_1")
     run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
     # Simulate legacy Reviewer bypass (plain pass while auto-check failed)
-    from harness.services.tools.craft_review import _set_item, sync_review_ok
+    from harness.services.tools.craft.craft_review import _set_item, sync_review_ok
     _set_item(ctx, "NO_AI_SLOP", state="pass", evidence="reviewer pass")
     sync_review_ok(ctx)
     assert ctx["craft_review"]["items"]["NO_AI_SLOP"]["state"] == "pass"
@@ -276,7 +283,7 @@ def test_reconcile_auto_failures_flips_bypass_pass(tmp_path):
 def test_reviewer_done_accepts_fail_items(tmp_path):
     """done() must succeed when all items reviewed including failures → Repair path."""
     from harness.agent.loop import ChapterReviewAgent
-    from harness.services.tools.craft_review import reviewer_todo_items
+    from harness.services.tools.craft.craft_review import reviewer_todo_items
 
     ws = tmp_path
     _write_minimal_chapter(ws)
@@ -315,8 +322,8 @@ def test_review_chapter_bundle_includes_craft_checklist(tmp_path):
     state: dict = {"workspace_root": str(ws)}
     content, ok = review_chapter_bundle(state, workspace_root=ws, chapter_id="chapter_1", ctx=ctx)
     assert "CHAPTER-CRAFT 完工自检" in content
-    assert "VISUAL_DEMOS" not in content  # labels are Chinese, not ids
     assert "视觉演示" in content
+    assert "ITEM_ID checklist" in content
     assert ok is False
     init_craft_checklist(ctx, workspace_root=ws, chapter_id="chapter_1")
     run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
@@ -466,3 +473,41 @@ def test_no_tiny_text_skips_code_and_svg_labels(tmp_path):
     ctx: dict = {}
     hints = run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
     assert hints["NO_TINY_TEXT_WALL"]["pass"] is True
+
+
+def test_no_muted_text_allows_svg_stroke(tmp_path):
+    ws = tmp_path
+    _write_minimal_chapter(ws)
+    ch = ws / "presentation" / "src" / "chapters" / "chapter_1"
+    (ch / "index.tsx").write_text(
+        (ch / "index.tsx").read_text(encoding="utf-8")
+        + '\n  if (step === 9) return <svg><path stroke="var(--text-mute)" /></svg>;\n',
+        encoding="utf-8",
+    )
+    ctx: dict = {}
+    hints = run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
+    assert hints["NO_MUTED_TEXT"]["pass"] is True
+
+
+def test_no_muted_text_fails_muted_on_copy(tmp_path):
+    ws = tmp_path
+    _write_minimal_chapter(ws)
+    ch = ws / "presentation" / "src" / "chapters" / "chapter_1"
+    (ch / "index.tsx").write_text(
+        (ch / "index.tsx").read_text(encoding="utf-8")
+        + '\n  if (step === 9) return <p style={{ color: "var(--text-mute)" }}>muted</p>;\n',
+        encoding="utf-8",
+    )
+    ctx: dict = {}
+    hints = run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
+    assert hints["NO_MUTED_TEXT"]["pass"] is False
+
+
+def test_review_chapter_bundle_includes_item_id_checklist(tmp_path):
+    ws = tmp_path
+    _write_minimal_chapter(ws)
+    ctx: dict = {}
+    state: dict = {"workspace_root": str(ws)}
+    content, _ok = review_chapter_bundle(state, workspace_root=ws, chapter_id="chapter_1", ctx=ctx)
+    assert "ITEM_ID checklist" in content
+    assert "`VISUAL_DEMOS`" in content

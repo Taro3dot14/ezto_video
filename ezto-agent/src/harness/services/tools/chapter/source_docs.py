@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from harness.core.state import VideoWorkflowState
-from harness.services.tools.file_ops import read_file_with_header
-from harness.services.tools.shell import _record_tool_call
+from harness.services.tools.fs.file_ops import read_file_with_header
+from harness.services.tools.core.telemetry import _record_tool_call
 
 _SOURCE_FILES = ("script.md", "outline.md")
 

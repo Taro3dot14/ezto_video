@@ -344,6 +344,40 @@ export async function listThemes(): Promise<ThemeInfo[]> {
 
 
 
+export interface ApplyThemeResponse {
+  thread_id?: string | null;
+  project_id?: string | null;
+  theme_id: string;
+  selected_theme: string;
+  presentation_url?: string | null;
+}
+
+
+
+export async function applyWorkflowTheme(
+  threadId: string,
+  themeId: string,
+): Promise<ApplyThemeResponse> {
+  return request(`/workflow/${threadId}/theme`, {
+    method: "POST",
+    body: JSON.stringify({ theme_id: themeId }),
+  });
+}
+
+
+
+export async function applyProjectTheme(
+  projectId: string,
+  themeId: string,
+): Promise<ApplyThemeResponse> {
+  return request(`/projects/${projectId}/theme`, {
+    method: "POST",
+    body: JSON.stringify({ theme_id: themeId }),
+  });
+}
+
+
+
 export async function listProjects(): Promise<ProjectSummary[]> {
   return request("/projects");
 }

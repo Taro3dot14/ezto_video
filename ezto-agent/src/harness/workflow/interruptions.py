@@ -62,7 +62,7 @@ from .artifacts import (
     count_built_steps,
     parse_outline_chapters,
 )
-from harness.services.tools.missing_assets import get_missing_assets
+from harness.services.tools.chapter.missing_assets import get_missing_assets
 
 # ── Payload type discriminators ──
 

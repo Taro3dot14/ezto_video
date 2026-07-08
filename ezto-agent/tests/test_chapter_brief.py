@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from harness.services.tools.chapter_context import read_chapter_context
+from harness.services.tools.chapter.chapter_context import read_chapter_context
 from harness.workflow.chapter_brief import (
     extract_article_excerpts_for_chapter,
     format_brief_for_prompt,
@@ -87,6 +87,8 @@ def test_format_brief():
     assert "NO_AI_SLOP" in prompt
     assert "Layout Shell" in prompt
     assert "lx-cover" in prompt
+    assert "Motion Template" in prompt
+    assert "mot-hero-mask" in prompt
     assert "SceneChrome" in prompt
 
 
@@ -123,6 +125,10 @@ def test_read_chapter_context_tool(tmp_path):
     ex_dir = ws / "presentation" / "src" / "chapters" / "01-example"
     ex_dir.mkdir(parents=True)
     (ex_dir / "Example.tsx").write_text("export default function X() {}", encoding="utf-8")
+    motion_dir = ws / "presentation" / "src" / "motion"
+    motion_dir.mkdir(parents=True)
+    (motion_dir / "MOTION-SYSTEM.md").write_text("# Motion\n\nmot-hero-mask", encoding="utf-8")
+    (motion_dir / "presets.css").write_text(".mot-stamp-drop {}", encoding="utf-8")
     state = {
         "workspace_root": str(ws),
         "artifact_paths": {
@@ -144,3 +150,6 @@ def test_read_chapter_context_tool(tmp_path):
     assert "Example.tsx" in out
     assert "export default function X" in out
     assert "Hook intro" in out or "article §1" in out
+    assert "MOTION-SYSTEM" in out
+    assert "mot-hero-mask" in out
+    assert "mot-stamp-drop" in out

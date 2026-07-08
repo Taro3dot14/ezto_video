@@ -7,6 +7,7 @@ import {
   type ProjectDetail,
 } from "../api/client";
 import LoadingState from "../components/LoadingState";
+import ThemeSwitcherPopover from "../components/ThemeSwitcherPopover";
 
 function fmtSize(bytes: number | null | undefined): string {
   if (!bytes) return "";
@@ -39,6 +40,7 @@ export default function ProjectPage() {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [renameError, setRenameError] = useState<string | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
 
   const fetchProject = useCallback(async () => {
     if (!id) return;
@@ -88,6 +90,7 @@ export default function ProjectPage() {
 
   const generated = project.artifacts.filter((a) => a.exists);
   const pending = project.artifacts.filter((a) => !a.exists);
+  const hasPresentation = generated.some((a) => a.logical_name === "presentation");
 
   return (
     <div className="page project-page">
@@ -185,6 +188,15 @@ export default function ProjectPage() {
           >
             新建项目
           </button>
+          {hasPresentation && id && (
+            <ThemeSwitcherPopover
+              projectId={id}
+              selectedTheme={selectedTheme}
+              visible
+              inline
+              onThemeApplied={setSelectedTheme}
+            />
+          )}
         </div>
       </header>
 

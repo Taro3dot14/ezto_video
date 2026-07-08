@@ -6,11 +6,11 @@
  *   stage reads "designed magazine" rather than blank cream.
  *
  *   character knobs:
- *     �?hero numbers   �?italic Fraunces, weight 700 (chunky editorial)
- *     �?rule           �?1px solid warm hairline
- *     �?card           �?refined small radius
- *     �?surface        �?faint geometric dot + ring overlay
- *     �?motion         �?medium pace with subtle overshoot (witty)
+ *     —hero numbers   —italic Fraunces, weight 700 (chunky editorial)
+ *     —rule           —1px solid warm hairline
+ *     —card           —refined small radius
+ *     —surface        —faint geometric dot + ring overlay
+ *     —motion         —medium pace with subtle overshoot (witty)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -57,7 +57,7 @@
     0 60px 160px rgba(60, 40, 20, 0.28),
     0 0 0 1px rgba(0, 0, 0, 0.05);
 
-  /* ─── decoration: SIGNATURE �?faint geometric dot + ring overlay ─── */
+  /* ─── decoration: SIGNATURE —faint geometric dot + ring overlay ─── */
   --surface-pattern:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><g fill='none' stroke='%23a89878' stroke-width='1' opacity='0.16'><circle cx='80' cy='90' r='52'/><circle cx='340' cy='250' r='78'/><circle cx='180' cy='320' r='2.5' fill='%23a89878' stroke='none'/><circle cx='280' cy='110' r='2.5' fill='%23a89878' stroke='none'/><line x1='40' y1='200' x2='110' y2='200'/><line x1='300' y1='370' x2='370' y2='370'/></g></svg>");
   --surface-pattern-size: 400px 400px;

@@ -8,7 +8,7 @@ from typing import Any, Callable
 from backend.core.logger import logger
 from configs import settings
 from harness.agent.loop import AgentResult, ChapterReviewAgent, WebBuildAgent
-from harness.services.tools.craft_review import (
+from harness.services.tools.craft.craft_review import (
     failed_item_ids,
     format_review_failure_report,
     persist_craft_review,

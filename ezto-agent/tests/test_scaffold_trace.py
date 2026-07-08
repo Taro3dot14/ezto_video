@@ -1,6 +1,6 @@
 """Scaffold stdout lines pushed to execution trace."""
 
-from harness.services.tools.scaffold import _scaffold_line_for_trace
+from harness.services.tools.build.scaffold import _scaffold_line_for_trace
 
 
 def test_scaffold_trace_includes_progress():

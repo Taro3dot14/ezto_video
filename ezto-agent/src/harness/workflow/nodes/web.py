@@ -21,9 +21,14 @@ from harness.workflow.interruptions import (
     checkpoint_chapter_n,
     checkpoint_remaining_batch,
 )
-from harness.services.tools.scaffold import run_scaffold
-from harness.services.tools.npm import run_npm, run_dev_server
-from harness.agent.chapter_build import chapter_build_mode_label, run_chapter_pipeline
+from harness.services.tools.build.scaffold import run_scaffold
+from harness.services.tools.build.npm import run_npm, run_dev_server
+from harness.agent.chapter_build import (
+    chapter_build_mode_label,
+    chapter_has_artifacts,
+    run_chapter_pipeline,
+    run_chapter_revision_pipeline,
+)
 from harness.agent.loop import AgentResult
 from harness.workflow.artifacts import (
     think,
@@ -112,24 +117,40 @@ def wv_build_chapter_1(state: VideoWorkflowState) -> dict:
     ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch1["id"]
     ch_dir.mkdir(parents=True, exist_ok=True)
 
-    # 清理旧文件，确保 agent 不会以为自己已经做完了
-    for old in ch_dir.glob("*"):
-        old.unlink()
-
-    tlog = think(None, "step", f"构建第 1 章 {ch1['title']}（{chapter_build_mode_label()}）…")
     feedback = _chapter_revision_feedback(state, "checkpoint_chapter_1")
-    if feedback:
-        think(tlog, "step", f"根据验收反馈返工：{feedback[:120]}")
-    logger.info("Building chapter 1: %s — %s (mode=%s)", ch1["id"], ch1["title"], settings.chapter_build_mode)
+    is_revision = bool(feedback and chapter_has_artifacts(ch_dir))
 
-    result = run_chapter_pipeline(
-        state,
-        chapter_id=ch1["id"],
-        title=ch1["title"],
-        chapter_index=1,
-        total_chapters=len(chapters),
-        revision_feedback=feedback,
-    )
+    if is_revision:
+        tlog = think(None, "step", f"根据验收反馈修订第 1 章（保留现有文件）…")
+        think(tlog, "step", feedback[:120])
+        logger.info(
+            "Revising chapter 1 from checkpoint feedback: %s — %s",
+            ch1["id"],
+            ch1["title"],
+        )
+        result = run_chapter_revision_pipeline(
+            state,
+            chapter_id=ch1["id"],
+            title=ch1["title"],
+            chapter_index=1,
+            user_feedback=feedback,
+        )
+    else:
+        # 首次构建：清理旧文件，确保 agent 不会以为自己已经做完了
+        for old in ch_dir.glob("*"):
+            old.unlink()
+        tlog = think(None, "step", f"构建第 1 章 {ch1['title']}（{chapter_build_mode_label()}）…")
+        if feedback:
+            think(tlog, "step", f"根据验收反馈返工（无现有文件，完整构建）：{feedback[:120]}")
+        logger.info("Building chapter 1: %s — %s (mode=%s)", ch1["id"], ch1["title"], settings.chapter_build_mode)
+        result = run_chapter_pipeline(
+            state,
+            chapter_id=ch1["id"],
+            title=ch1["title"],
+            chapter_index=1,
+            total_chapters=len(chapters),
+            revision_feedback=feedback,
+        )
 
     if not result.success:
         phase = result.phase or "?"
@@ -193,36 +214,64 @@ def wv_build_chapter_n(state: VideoWorkflowState) -> dict:
     ch = chapters[chapter_index - 1]
     ch_dir = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / ch["id"]
     ch_dir.mkdir(parents=True, exist_ok=True)
-    # 清理旧文件
-    for old in ch_dir.glob("*"):
-        old.unlink()
 
-    tlog = think(None, "step", f"构建第 {chapter_index} 章 {ch['title']}（{chapter_build_mode_label()}）…")
     feedback = (
         _chapter_revision_feedback(state, "checkpoint_chapter_n")
         or _chapter_revision_feedback(state, "checkpoint_remaining_batch")
     )
-    if feedback:
-        think(tlog, "step", f"根据验收反馈返工第 {chapter_index} 章：{feedback[:120]}")
-    logger.info("Building chapter %d/%d: %s — %s (mode=%s)",
-                chapter_index, len(chapters), ch["id"], ch["title"], settings.chapter_build_mode)
+    is_revision = bool(feedback and chapter_has_artifacts(ch_dir))
 
-    # Read previous chapters for style reference
-    prev = []
-    for i in range(1, chapter_index):
-        p = Path(state.get("workspace_root", ".")) / _PPT_DIR / "src" / "chapters" / chapters[i - 1]["id"] / "index.tsx"
-        if p.exists():
-            prev.append(f"Chapter {i}:\n{p.read_text(encoding='utf-8')[:2000]}")
-
-    result = run_chapter_pipeline(
-        state,
-        chapter_id=ch["id"],
-        title=ch["title"],
-        chapter_index=chapter_index,
-        total_chapters=len(chapters),
-        previous_chapters="\n---\n".join(prev),
-        revision_feedback=feedback,
-    )
+    if is_revision:
+        tlog = think(None, "step", f"根据验收反馈修订第 {chapter_index} 章（保留现有文件）…")
+        think(tlog, "step", feedback[:120])
+        logger.info(
+            "Revising chapter %d from checkpoint feedback: %s — %s",
+            chapter_index,
+            ch["id"],
+            ch["title"],
+        )
+        result = run_chapter_revision_pipeline(
+            state,
+            chapter_id=ch["id"],
+            title=ch["title"],
+            chapter_index=chapter_index,
+            user_feedback=feedback,
+        )
+    else:
+        for old in ch_dir.glob("*"):
+            old.unlink()
+        tlog = think(None, "step", f"构建第 {chapter_index} 章 {ch['title']}（{chapter_build_mode_label()}）…")
+        if feedback:
+            think(tlog, "step", f"根据验收反馈返工第 {chapter_index} 章（无现有文件，完整构建）：{feedback[:120]}")
+        logger.info(
+            "Building chapter %d/%d: %s — %s (mode=%s)",
+            chapter_index,
+            len(chapters),
+            ch["id"],
+            ch["title"],
+            settings.chapter_build_mode,
+        )
+        prev = []
+        for i in range(1, chapter_index):
+            p = (
+                Path(state.get("workspace_root", "."))
+                / _PPT_DIR
+                / "src"
+                / "chapters"
+                / chapters[i - 1]["id"]
+                / "index.tsx"
+            )
+            if p.exists():
+                prev.append(f"Chapter {i}:\n{p.read_text(encoding='utf-8')[:2000]}")
+        result = run_chapter_pipeline(
+            state,
+            chapter_id=ch["id"],
+            title=ch["title"],
+            chapter_index=chapter_index,
+            total_chapters=len(chapters),
+            previous_chapters="\n---\n".join(prev),
+            revision_feedback=feedback,
+        )
 
     if not result.success:
         phase = result.phase or "?"

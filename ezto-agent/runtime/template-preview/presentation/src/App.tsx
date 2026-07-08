@@ -4,7 +4,7 @@ import "./styles/base.css";
 import "./layouts/layouts.css"; // layout shell system — typography + spacing locked
 import "./styles/animations.css";
 
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { AutoStartGate } from "./components/AutoStartGate";
 import { AutoToggle } from "./components/AutoToggle";
 import { ProgressBar } from "./components/ProgressBar";
@@ -13,7 +13,6 @@ import { useAudioPlayer } from "./hooks/useAudioPlayer";
 import { useAutoMode } from "./hooks/useAutoMode";
 import { useStepper } from "./hooks/useStepper";
 import { CHAPTERS } from "./registry/chapters";
-import { NEW_CHAPTER_IDS } from "./registry/chapter-meta";
 
 /**
  * Estimate spoken duration of a Chinese narration string. Native pace
@@ -53,28 +52,8 @@ export default function App() {
     autoStarted,
   });
 
-  const isReview = useMemo(() => {
-    if (typeof window === "undefined") return NEW_CHAPTER_IDS.length > 0;
-    return (
-      NEW_CHAPTER_IDS.length > 0 ||
-      new URLSearchParams(window.location.search).has("highlight")
-    );
-  }, []);
-
   return (
     <>
-      {NEW_CHAPTER_IDS.length > 0 && (
-        <div className="review-hint" data-no-advance>
-          本次更新 {NEW_CHAPTER_IDS.length} 个章节 — 鼠标移到底部查看高亮导航，点击可跳转
-        </div>
-      )}
-      {isReview && (
-        <div className="review-position" data-no-advance>
-          全局第 {stepper.globalIndex + 1}/{stepper.totalGlobal} 页 · 第{" "}
-          {stepper.cursor.chapter + 1}/{CHAPTERS.length} 章 · 本章第{" "}
-          {stepper.cursor.step + 1}/{ch.narrations.length} 步
-        </div>
-      )}
       <Stage onAdvance={stepper.next}>
         <div key={ch.id} className="scene">
           <Cmp step={stepper.cursor.step} />

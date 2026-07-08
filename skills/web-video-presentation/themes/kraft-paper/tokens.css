@@ -7,11 +7,11 @@
  *   paper grain (warmer than newsroom, heavier than sunset-zine).
  *
  *   character knobs:
- *     �?hero numbers   �?italic Fraunces, weight 600
- *     �?rule           �?1px solid kraft hairline
- *     �?card           �?refined small radius
- *     �?surface        �?coarse kraft paper grain (warm multiply)
- *     �?motion         �?slow + tactile (turning a real page)
+ *     —hero numbers   —italic Fraunces, weight 600
+ *     —rule           —1px solid kraft hairline
+ *     —card           —refined small radius
+ *     —surface        —coarse kraft paper grain (warm multiply)
+ *     —motion         —slow + tactile (turning a real page)
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -19,7 +19,7 @@
   --surface:      #eedfc7;
   --surface-2:    #f3e9d6;
   --surface-3:    #e0d0b6;
-  --text:         #2a1e13;             /* SIGNATURE �?deep kraft brown ink */
+  --text:         #2a1e13;             /* SIGNATURE —deep kraft brown ink */
   --text-2:       #3a2a1d;
   --text-mute:    #6e5a40;
   --text-faint:   #a08c70;
@@ -58,7 +58,7 @@
     0 60px 160px rgba(60, 40, 20, 0.40),
     0 0 0 1px rgba(0, 0, 0, 0.05);
 
-  /* ─── decoration: SIGNATURE �?coarse warm kraft grain ─── */
+  /* ─── decoration: SIGNATURE —coarse warm kraft grain ─── */
   --surface-pattern:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' seed='7'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.32 0 0 0 0 0.18 0 0 0 0.28 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   --surface-pattern-size: 260px 260px;

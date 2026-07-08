@@ -1,6 +1,6 @@
 """Tests for agent parser."""
 
-from harness.agent.parser import extract_all, has_tool_call
+from harness.agent.tools.legacy_parser import extract_all, has_tool_call
 
 
 def test_write_file_nested_json():

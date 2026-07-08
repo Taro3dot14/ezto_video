@@ -14,21 +14,85 @@ from harness.agent.loop import AgentResult, ChapterReviewAgent, WebBuildAgent
 from harness.agent.system_prompts import TEAM_ACTION_PLAN_SYSTEM, TEAM_MEETING_ROLES
 from harness.core.execution import push_event as push_trace_event
 from harness.agent.review_repair_loop import run_review_repair_loop
-from harness.services.tools.craft_review import (
+from harness.services.tools.craft.craft_review import (
     failed_item_ids,
     format_review_failure_report,
     persist_craft_review,
     reconcile_auto_failures,
     run_craft_auto_checks,
 )
-from harness.services.tools.typescript import run_typecheck
-from harness.services.tools.vite import check_vite
+from harness.services.tools.build.typescript import run_typecheck
+from harness.services.tools.build.vite import check_vite
 from harness.workflow.chapter_brief import format_brief_for_prompt, get_chapter_brief
 
 
 def chapter_build_mode_label(mode: str | None = None) -> str:
     key = mode or settings.chapter_build_mode
     return CHAPTER_BUILD_MODE_LABELS.get(key, key)
+
+
+def chapter_has_artifacts(ch_dir: Path) -> bool:
+    """True when a prior build left the minimum chapter files on disk."""
+    return (ch_dir / "index.tsx").is_file() and (ch_dir / "narrations.ts").is_file()
+
+
+def format_user_revision_report(
+    feedback: str,
+    *,
+    chapter_id: str,
+    title: str,
+) -> str:
+    """Format checkpoint rejection feedback like a repair failure report."""
+    return (
+        f"# User checkpoint rejection — {chapter_id} ({title})\n\n"
+        "The chapter was reviewed by the user and **rejected**. "
+        "Make **targeted edits** to the existing files (prefer `edit_file`). "
+        "Do NOT rebuild from scratch.\n\n"
+        f"## Required changes\n{feedback.strip()}\n"
+    )
+
+
+def run_chapter_revision_pipeline(
+    state: dict[str, Any],
+    *,
+    chapter_id: str,
+    title: str,
+    chapter_index: int,
+    user_feedback: str,
+) -> AgentResult:
+    """Apply user checkpoint rejection via repair on existing chapter files."""
+    if isinstance(state, dict):
+        push_trace_event(
+            state,
+            "step",
+            "验收反馈修订：保留现有文件，执行 Repair…",
+            agent="orchestrator",
+        )
+    report = format_user_revision_report(
+        user_feedback,
+        chapter_id=chapter_id,
+        title=title,
+    )
+    repair = WebBuildAgent(state).run(
+        phase="repair",
+        chapter_id=chapter_id,
+        title=title,
+        chapter_index=chapter_index,
+        review_feedback=report,
+    )
+    if not repair.success:
+        return repair
+
+    if isinstance(state, dict):
+        _trace(state, "step", "验收修订后 Verify: typecheck + vite…", agent="verify")
+    verify = _run_programmatic_verify(state)
+    return AgentResult(
+        content=verify.content,
+        tool_calls=repair.tool_calls + verify.tool_calls,
+        iterations=repair.iterations + verify.iterations,
+        success=verify.success,
+        phase=verify.phase if not verify.success else None,
+    )
 
 
 def _trace(state: dict[str, Any], type_: str, content: str, *, agent: str) -> None:

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from harness.agent.loop import AgentResult
 from harness.agent.review_repair_loop import run_review_repair_loop
-from harness.services.tools.craft_review import (
+from harness.services.tools.craft.craft_review import (
     REVIEW_BUNDLE_TODO,
     resolve_todo_item_id,
     reviewer_todo_items,
@@ -29,7 +29,7 @@ def test_resolve_repair_todo_alias():
 
 
 def test_theme_tokens_flags_unknown_var(tmp_path):
-    from harness.services.tools.craft_review import run_craft_auto_checks
+    from harness.services.tools.craft.craft_review import run_craft_auto_checks
 
     ws = tmp_path
     ppt = ws / "presentation"

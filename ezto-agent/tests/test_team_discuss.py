@@ -66,6 +66,7 @@ def test_team_discuss_meeting_then_repair_then_pass(
     mock_settings, mock_meeting, mock_review_cls, mock_build_cls, mock_failed, mock_verify,
 ):
     mock_settings.chapter_review_max_rounds = 2
+    mock_settings.chapter_repair_max_rounds = 2
     mock_meeting.return_value = "## Team Action Plan\nfix hero font"
     mock_failed.side_effect = [["NO_AI_SLOP"], []]
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from backend.core.logger import logger
 from harness.core.state import VideoWorkflowState
-from harness.services.tools.shell import _record_tool_call
+from harness.services.tools.core.telemetry import _record_tool_call
 
 
 def read_file(

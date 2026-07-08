@@ -611,6 +611,29 @@ class WorkflowManager:
             })
         return artifacts
 
+    def apply_workflow_theme(self, thread_id: str, theme_id: str) -> VideoWorkflowState:
+        """Swap presentation tokens.css for an active or hydrated workflow."""
+        from backend.services.theme_service import apply_theme, refresh_preview_after_theme_apply
+
+        state = self.get_state(thread_id)
+        if state is None:
+            raise ValueError(f"Workflow not found: {thread_id}")
+
+        ws = state.get("workspace_root")
+        if not ws:
+            raise ValueError("Workflow has no workspace")
+
+        apply_theme(Path(ws), theme_id)
+        refresh_preview_after_theme_apply(ws)
+        state = dict(state)
+        state["selected_theme"] = theme_id
+        thread = self._threads.get(thread_id)
+        if thread is not None:
+            thread["state"] = state
+        self._persist_state(thread_id, state)
+        logger.info("Applied theme %s to workflow %s", theme_id, thread_id)
+        return state
+
 
 # ── Internal helpers ──
 

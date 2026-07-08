@@ -28,7 +28,9 @@ class StallDetector:
                 f"with identical arguments. Try a different approach — use `edit_file` "
                 f"for targeted fixes instead of re-running the same command."
             )
-        if len(set(names)) == 1 and names[0] in ("run_shell", "read_file", "typecheck"):
+        if len(set(names)) == 1 and names[0] in (
+            "run_shell", "read_file", "typecheck", "todolist_status",
+        ):
             # Distinct arguments in the same tool = batch exploration, not a stall.
             if len(set(sigs)) >= self._repeat_threshold:
                 return None

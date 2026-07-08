@@ -10,8 +10,8 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
-from harness.services.tools.typescript import run_typecheck
-from harness.services.tools.vite import check_vite
+from harness.services.tools.build.typescript import run_typecheck
+from harness.services.tools.build.vite import check_vite
 from harness.workflow.artifacts import sync_built_chapter_registry
 from harness.workflow.chapter_brief import parse_outline_text
 

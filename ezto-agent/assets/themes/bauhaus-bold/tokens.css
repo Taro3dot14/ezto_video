@@ -3,14 +3,14 @@
  *   Modernist / brutalist manifesto. Off-white canvas, pure ink black,
  *   primary-blue accent. Archivo Black display, Inter body. SHARP
  *   corners (0 radius), THICK borders (4-8px), no decoration. Motion
- *   is sharp & quick �?no overshoot, no easing tricks.
+ *   is sharp & quick —no overshoot, no easing tricks.
  *
  *   character knobs:
- *     �?hero numbers   �?Archivo Black, near-zero tracking, MASSIVE
- *     �?rule           �?4px solid black (geometric heavy)
- *     �?card           �?0 radius, 4px black border
- *     �?surface        �?clean (no pattern)
- *     �?motion         �?quick, sharp ease-out only
+ *     —hero numbers   —Archivo Black, near-zero tracking, MASSIVE
+ *     —rule           —4px solid black (geometric heavy)
+ *     —card           —0 radius, 4px black border
+ *     —surface        —clean (no pattern)
+ *     —motion         —quick, sharp ease-out only
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ─── palette ─── */
@@ -42,9 +42,9 @@
   --dur-cinematic: 1000ms;
 
   /* ─── design identity: heavy geometry ─── */
-  --r-card:        var(--r-flat);     /* SIGNATURE �?pure rectangles */
+  --r-card:        var(--r-flat);     /* SIGNATURE —pure rectangles */
   --r-stage:       0;
-  --rule-w:        4px;                /* SIGNATURE �?heavy lines */
+  --rule-w:        4px;                /* SIGNATURE —heavy lines */
   --rule-style:    solid;
   --hero-num-font:    var(--font-display-en);
   --hero-num-style:   normal;
@@ -52,7 +52,7 @@
   --hero-num-track:   -0.05em;
   --stage-pad-x:   80px;
   --stage-pad-y:   60px;
-  --card-shadow:   8px 8px 0 var(--text);   /* SIGNATURE �?offset solid shadow */
+  --card-shadow:   8px 8px 0 var(--text);   /* SIGNATURE —offset solid shadow */
   --shadow-stage:
     0 60px 160px rgba(0, 0, 0, 0.55),
     0 0 0 4px var(--text);                  /* thick black frame around stage */
