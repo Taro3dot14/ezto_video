@@ -82,7 +82,7 @@ ezto_video/
 │   │
 │   ├── runtime/                      # 运行时数据目录
 │   │   ├── logs/                     # 应用日志 (ezto-agent.log, llm.log)
-│   │   ├── cache/                    # LLM 响应缓存
+│   │   ├── cache/                    # 网站构建的缓存（用于网站构建的可复用的包，省的每次都要重新下载一遍）
 │   │   └── workspace/                # 项目工作区
 │   │
 │   ├── tests/
@@ -156,6 +156,8 @@ ezto_video/
 ## 后端部署（WSL）
 
 ```bash
+wsl
+
 # 1. 确保 Miniconda 已安装，创建环境
 conda create -n ezto python=3.12 -y
 
@@ -169,6 +171,7 @@ cp .env.example .env
 # 编辑 .env，填入 DEEPSEEK_API_KEY 等
 
 # 4. 启动服务
+cd src
 uvicorn backend.api.server:app --reload --port 8001
 
 # 5. 验证
@@ -183,8 +186,10 @@ curl http://localhost:8001/health
 ```bash
 cd ezto-agent/src/frontend
 npm install
-npm run dev          # Vite dev server，默认 :5173
-npm run build        # 生产构建
+# Vite dev server，默认 :5173
+npm run dev       
+# 生产构建  
+npm run build       
 ```
 
 ## 在 scaffold 项目内

@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     # Per-role routing (falls back to deepseek_model when empty)
     deepseek_model_content: str = "deepseek-v4-flash"
     deepseek_model_web_build: str = "deepseek-v4-pro"
-    deepseek_max_tokens: int = 8192
+    deepseek_max_tokens: int = 1000000
     deepseek_temperature: float = 0.7
 
     # ── TTS ──
