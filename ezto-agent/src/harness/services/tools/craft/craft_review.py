@@ -28,9 +28,9 @@ from harness.services.tools.craft.craft_precheck import (
 
 # Minimum px from presentation base.css projection tokens (fallback if file missing)
 _DEFAULT_TOKEN_MIN_PX: dict[str, int] = {
-    "--t-projection-hero": 84,
-    "--t-projection-title": 64,
-    "--t-projection-body": 32,
+    "--t-projection-hero": 75,
+    "--t-projection-title": 58,
+    "--t-projection-body": 28,
     "--t-display-1": 84,
     "--t-display-2": 64,
     "--t-h1": 72,
@@ -58,7 +58,7 @@ CRAFT_REVIEW_ITEMS: tuple[CraftReviewItem, ...] = (
     CraftReviewItem("VARIED_ANIMATIONS", "不同 step 的主导动作不一样", "manual"),
     CraftReviewItem(
         "PROJECTION_TYPE",
-        "index.css 投影可读性：hero ≥84px/800；正文 ≥32px/500；辅助 ≥24px（projection token 或显式 px）",
+        "index.css 投影可读性：hero ≥75px/800；正文 ≥28px/500；辅助 ≥22px（projection token 或显式 px）",
         "manual",
     ),
     CraftReviewItem("PANEL_WIDTH", "主卡片/面板宽 ≥ 舞台 55%（~1056px）或全宽留边", "manual"),
@@ -71,7 +71,7 @@ CRAFT_REVIEW_ITEMS: tuple[CraftReviewItem, ...] = (
     CraftReviewItem("PLACEHOLDER_NOT_FAKE", "缺的素材用 placeholder，不是 fake", "manual"),
     CraftReviewItem("THEME_TOKENS", "颜色与字体走 token；primitive class 接入主题", "auto"),
     CraftReviewItem("MISSING_ASSETS_NOTE", "交付时主动说明本章还缺哪些素材", "manual"),
-    CraftReviewItem("NO_TINY_TEXT_WALL", "禁止小号字体、大量纯文字（正文 < 32px）", "auto"),
+    CraftReviewItem("NO_TINY_TEXT_WALL", "禁止小号字体、大量纯文字（正文 < 28px）", "auto"),
     CraftReviewItem("NO_HEADER_FOOTER", "禁止页眉页脚，仅展示关键内容", "auto"),
     CraftReviewItem("TSC_PASS", "npx tsc --noEmit 通过", "deferred"),
     CraftReviewItem("CODE_ISOLATION", "独立 CSS 类前缀；未跨章 import；未改共享文件", "auto"),
@@ -318,7 +318,7 @@ def failed_item_ids(ctx: dict[str, Any]) -> list[str]:
 
 _AUTO_FAIL_DEFAULT_FIX: dict[str, str] = {
     "NO_AI_SLOP": "Remove emoji / italic / purple-gradient / thin-border slop from index.tsx and index.css",
-    "NO_TINY_TEXT_WALL": "Raise primary body copy to ≥32px or move small text to auxiliary classes only",
+    "NO_TINY_TEXT_WALL": "Raise primary body copy to ≥28px or move small text to auxiliary classes only",
     "THEME_TOKENS": "Replace hardcoded colors with theme CSS variables in index.css",
     "NARRATIONS_SYNC": "Align narrations.ts length with screen count (code steps 0..N-1)",
     "NO_HEADER_FOOTER": "Remove header/footer chrome; keep stage content only",
@@ -490,7 +490,7 @@ def _check_no_tiny_text(css: str, *, ppt: Path | None = None) -> tuple[bool, str
         return False, f"font-size below floor: {'; '.join(violations[:4])}"
     if not _index_css_declares_font_size(css):
         return True, "no font-size in index.css — base.css primitives"
-    return True, "body ≥32px / auxiliary ≥24px (SVG/code/window exempt)"
+    return True, "body ≥28px / auxiliary ≥22px (SVG/code/window exempt)"
 
 
 def _check_no_header_footer(tsx: str) -> tuple[bool, str]:

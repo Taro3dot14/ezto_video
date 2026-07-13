@@ -121,9 +121,9 @@ Use **craft_review_status** for checklist progress (not repeated read_file).
 ## PROJECTION_TYPE (index.css only — base.css is template, do not read)
 If index.css 无 font-size（base.css primitives），`todolist_check("PROJECTION_TYPE", result="pass")`。
 Otherwise read `presentation/src/chapters/<chapter_id>/index.css` and judge only the rules present:
-- hero: ≥84px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`)
-- body: ≥32px / font-weight ≥500, or `--t-projection-body` / `--t-body`
-- caption: ≥24px, or `--t-cue` / `--t-projection-caption`
+- hero: ≥75px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`)
+- body: ≥28px / font-weight ≥500, or `--t-projection-body` / `--t-body`
+- caption: ≥22px, or `--t-cue` / `--t-projection-caption`
 Fail only on sub-floor px or wrong tokens (e.g. `--t-micro`) on primary copy.
 """
 

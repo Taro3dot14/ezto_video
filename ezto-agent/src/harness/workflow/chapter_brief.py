@@ -112,15 +112,15 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Element | Minimum |
 |---------|---------|
-| Hero headline | ≥ 84px, `font-weight` ≥ 800 |
-| Section title / hero numbers | ≥ 64px |
-| Body / list primary copy | ≥ 32px, `font-weight` ≥ 500 |
-| Auxiliary labels (kicker, caption) | ≥ 24px |
+| Hero headline | ≥ 75px, `font-weight` ≥ 800 |
+| Section title / hero numbers | ≥ 58px |
+| Body / list primary copy | ≥ 28px, `font-weight` ≥ 500 |
+| Auxiliary labels (kicker, caption) | ≥ 22px |
 | Main content panel / card | width ≥ 55% of stage (~1056px), or full-width with stage padding |
 | Type hierarchy | hero : title : body ≈ 3 : 2 : 1 |
 
 - Primary copy: `--text` or `--text-2` only — never `--text-mute` / `--text-faint`.
-- Do not default to `var(--t-body)` for primary text; use `--t-projection-body` (32px) or larger.
+- Do not default to `var(--t-body)` for primary text; use `--t-projection-body` (28px) or larger.
 - Large keynote panels encouraged; avoid small decorative border cards.
 - **Theme contrast**: scene bg = `--shell` / `--surface` / `--surface-2` only (no `--bg`).
   Never black-out a scene then use theme `--text` (light themes = dark ink → invisible on black).
