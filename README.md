@@ -13,7 +13,7 @@
 <br/>
 
 <p align="center">
-  <img src="docs/figures/teaser.svg" alt="流程总览" width="92%"/>
+  <a href="docs/figures/teaser.svg?raw=true"><img src="docs/figures/teaser.svg" alt="流程总览" width="92%"/></a>
 </p>
 
 ---
@@ -30,27 +30,24 @@
 
 ### 上传文章
 
-从控制台新建项目，上传或粘贴文章。
+从控制台新建项目，粘贴文章。
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <img src="docs/figures/ui-home.png" alt="首页" width="100%"/>
-      <br/><sub>首页</sub>
-    </td>
-    <td width="50%" align="center">
-      <img src="docs/figures/ui-new-project.png" alt="新建项目" width="100%"/>
-      <br/><sub>新建项目</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="docs/figures/ui-home.png?raw=true"><img src="docs/figures/ui-home.png" alt="首页" width="90%"/></a>
+</p>
+<p align="center"><sub>首页</sub></p>
+
+<p align="center">
+  <a href="docs/figures/ui-new-project.png?raw=true"><img src="docs/figures/ui-new-project.png" alt="新建项目" width="90%"/></a>
+</p>
+<p align="center"><sub>新建项目</sub></p>
 
 ### 第一阶段：脚本和大纲
 
 根据上传的文章拆分章节，生成逐章节的脚本和大纲。大模型会按规范要求不断检测、修改，直到达标，再交给用户审核。
 
 <p align="center">
-  <img src="docs/figures/ui-checkpoint-plan.svg" alt="审核脚本大纲" width="88%"/>
+  <a href="docs/figures/ui-checkpoint-plan.svg?raw=true"><img src="docs/figures/ui-checkpoint-plan.svg" alt="审核脚本大纲" width="90%"/></a>
 </p>
 <p align="center"><sub>用户审核脚本 / 大纲</sub></p>
 
@@ -58,44 +55,39 @@
 
 多个 sub-agent 根据第一章大纲搭建对应的演示网页（React）。开发和自检清单是提前规定好的：改代码、跑通网页、再检查，循环到清单里的要求都完成，再交给用户确认。
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <img src="docs/figures/ui-chapter-build.png" alt="搭建网页" width="100%"/>
-      <br/><sub>搭建过程</sub>
-    </td>
-    <td width="50%" align="center">
-      <img src="docs/figures/ui-chapter-review.png" alt="确认章节" width="100%"/>
-      <br/><sub>确认第一章</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="docs/figures/ui-chapter-build.png?raw=true"><img src="docs/figures/ui-chapter-build.png" alt="搭建网页" width="90%"/></a>
+</p>
+<p align="center"><sub>搭建过程</sub></p>
+
+<p align="center">
+  <a href="docs/figures/ui-chapter-review.png?raw=true"><img src="docs/figures/ui-chapter-review.png" alt="确认章节" width="90%"/></a>
+</p>
+<p align="center"><sub>确认第一章</sub></p>
 
 ### 第三阶段：完成剩余章节
 
 后面的章节参照第一章进行开发，直到整份 slide 网页做完。
 
-<table>
-  <tr>
-    <td width="33%" align="center">
-      <img src="docs/figures/result-presentation.svg" alt="演示页" width="100%"/>
-      <br/><sub>演示页</sub>
-    </td>
-    <td width="33%" align="center">
-      <img src="docs/figures/result-steps.svg" alt="逐步点击" width="100%"/>
-      <br/><sub>逐步点击</sub>
-    </td>
-    <td width="33%" align="center">
-      <img src="docs/figures/result-themes.svg" alt="主题" width="100%"/>
-      <br/><sub>主题</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="docs/figures/result-presentation.svg?raw=true"><img src="docs/figures/result-presentation.svg" alt="演示页" width="90%"/></a>
+</p>
+<p align="center"><sub>演示页</sub></p>
+
+<p align="center">
+  <a href="docs/figures/result-steps.svg?raw=true"><img src="docs/figures/result-steps.svg" alt="逐步点击" width="90%"/></a>
+</p>
+<p align="center"><sub>逐步点击</sub></p>
+
+<p align="center">
+  <a href="docs/figures/result-themes.svg?raw=true"><img src="docs/figures/result-themes.svg" alt="主题" width="90%"/></a>
+</p>
+<p align="center"><sub>主题</sub></p>
 
 之后还可以选做音频合成（TTS）和录屏指引，不是主流程的必经步骤。
 
 <p align="center">
-  <img src="docs/figures/ui-audio.svg" alt="音频" width="70%"/>
+  <a href="docs/figures/ui-audio.svg?raw=true"><img src="docs/figures/ui-audio.svg" alt="音频" width="90%"/></a>
 </p>
 <p align="center"><sub>音频（可选）</sub></p>
 
@@ -104,7 +96,7 @@
 ## 架构
 
 <p align="center">
-  <img src="docs/figures/architecture.svg" alt="架构图" width="88%"/>
+  <a href="docs/figures/architecture.svg?raw=true"><img src="docs/figures/architecture.svg" alt="架构图" width="90%"/></a>
 </p>
 
 ```text

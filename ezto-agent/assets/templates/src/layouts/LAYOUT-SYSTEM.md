@@ -40,7 +40,7 @@ Stage (1920×1080, scale to viewport)
 | `.lx-kicker` | `--t-projection-caption` | Uppercase accent label |
 | `.lx-hero-num` | `--t-display-1` | Large step numbers |
 
-**Do not** set raw `font-size: 32px` on primary copy. Use roles above.
+**Do not** set raw `font-size: 28px` on primary copy. Use roles above.
 
 ## Layout shells (pick one per step)
 

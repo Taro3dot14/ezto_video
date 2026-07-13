@@ -132,9 +132,9 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Reference | Hero | Title | Body | Panel width |
 |-----------|------|-------|------|-------------|
-| hook-chapter | `--t-display-1` (124–176px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
+| hook-chapter | `--t-display-1` (110–158px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
 | list-reveal | intro `--t-display-2` | slot title `--t-h2` | slot body `--t-body` | 3-col grid, `min-height: 360px` |
-| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (32px) | split panel **≥ 1056px** |
+| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (28px) | split panel **≥ 1056px** |
 """
 
 def _split_title_and_steps(rest: str) -> tuple[str, int | None]:

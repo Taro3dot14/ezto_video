@@ -413,13 +413,13 @@ def test_no_tiny_text_allows_auxiliary_28px(tmp_path):
     assert hints["NO_TINY_TEXT_WALL"]["pass"] is True
 
 
-def test_no_tiny_text_fails_body_below_36px(tmp_path):
+def test_no_tiny_text_fails_body_below_28px(tmp_path):
     ws = tmp_path
     _write_minimal_chapter(ws)
     ch = ws / "presentation" / "src" / "chapters" / "chapter_1"
     (ch / "index.css").write_text(
         ".hk-hero { font-size: 120px; }\n"
-        ".hk-body { font-size: 30px; }\n",
+        ".hk-body { font-size: 26px; }\n",
         encoding="utf-8",
     )
     ctx: dict = {}

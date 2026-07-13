@@ -18,7 +18,7 @@ _DECORATIVE_HEX_SELECTOR_RE = re.compile(
     re.I,
 )
 
-# Auxiliary copy (captions, kickers) — floor 24px
+# Auxiliary copy (captions, kickers) — floor 22px
 _AUX_SELECTOR_RE = re.compile(
     r"(?:kicker|caption|tagline|cue|eyebrow|meta|subtitle|badge-sep|badge-tagline|"
     r"step-\d+-caption|terminal-caption|foot|label)",
