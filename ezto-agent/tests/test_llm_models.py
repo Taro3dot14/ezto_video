@@ -27,3 +27,7 @@ def test_resolve_model_default():
 def test_role_defaults_match_requirements():
     assert "flash" in settings.deepseek_model_content
     assert "pro" in settings.deepseek_model_web_build
+
+
+def test_deepseek_max_tokens_within_api_limit():
+    assert 1 <= settings.deepseek_max_tokens <= 393_216

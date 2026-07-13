@@ -278,7 +278,24 @@ def chat(
                 continue
             last_err = TimeoutError(f"LLM call timed out after {timeout:.0f}s total")
 
-        except (httpx.HTTPStatusError, httpx.RequestError, KeyError, json.JSONDecodeError,
+        except httpx.HTTPStatusError as e:
+            last_err = e
+            elapsed = (time.perf_counter() - t0) * 1000
+            if e.response.status_code == 400:
+                logger.warning(
+                    "LLM chat 400: %s",
+                    e.response.text[:2000],
+                )
+            logger.warning("LLM attempt %d/%d failed after %.0fms: %s",
+                           attempt + 1, retries + 1, elapsed, e)
+            if attempt < retries:
+                if time.perf_counter() - t0 >= timeout:
+                    last_err = TimeoutError(f"LLM call timed out after {timeout:.0f}s total")
+                    break
+                time.sleep(min(1.5 ** attempt, remaining - 5.0))
+                continue
+
+        except (httpx.RequestError, KeyError, json.JSONDecodeError,
                 concurrent.futures.CancelledError) as e:
             last_err = e
             elapsed = (time.perf_counter() - t0) * 1000

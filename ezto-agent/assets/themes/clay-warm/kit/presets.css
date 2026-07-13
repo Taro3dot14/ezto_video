@@ -1,0 +1,38 @@
+/* clay-warm · Theme Kit motion presets (mot-tk-*) */
+
+.mot-tk-pop {
+  animation: tk-pop var(--dur-base) var(--ease-tk) both;
+}
+
+.mot-tk-rise {
+  animation: tk-rise var(--dur-slow) var(--ease-quart) both;
+}
+
+.mot-tk-press {
+  animation: tk-press var(--dur-tk-press) var(--ease-tk) both;
+}
+
+@keyframes tk-pop {
+  0%   { transform: scale(0.92); opacity: 0; }
+  70%  { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes tk-rise {
+  0%   { transform: translateY(24px); opacity: 0; box-shadow: none; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes tk-press {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(var(--tk-lift)); box-shadow: var(--tk-shadow-pressed); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mot-tk-pop,
+  .mot-tk-rise,
+  .mot-tk-press {
+    animation: fade-in var(--dur-quick) var(--ease-soft) both;
+  }
+}

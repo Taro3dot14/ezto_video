@@ -85,13 +85,24 @@
 | 部分 | 规则 |
 |---|---|
 | `N` | 1-indexed 顺序，对齐 `chapters.ts` 的注册顺序 |
-| `<id>` | **小写 + 连字符**。会成为 React `key` / 文件夹名 (`src/chapters/0N-<id>/`) / 音频子目录 (`public/audio/<id>/`) |
+| `<id>` | **小写 + 连字符**，**概括本章具体内容**（主题 / 对象 / 论点），2~4 个英文词。会成为 React `key` / 文件夹名 / 音频子目录。**仅工程标识，禁止出现在画面上** |
 | `<title>` | 给人看的中文标题。**不会**进 React 代码 |
 | `<S> steps` | 该章 step 总数 |
 | `~<T>s` | 该章口播总估时（中文 ~ 4 字/秒） |
 
-合法 id：`coldopen`、`hook`、`why-good`、`why-good-text-render`。
-不合法：`why_good`（用连字符）、`Hook`（小写）、`第一章`（拉丁字符）。
+#### `<id>` 按**内容**概括，不按**角色**
+
+| ✅ 好的 id（本章在讲什么） | ❌ 坏的 id（结构角色 / 无内容） |
+|---|---|
+| `human-agent-teams` — 人机协作团队 | `coldopen` / `hook` / `intro` — 开场角色 |
+| `slack-dataset-demo` — Slack 里分析数据 | `opener` / `setup` / `transition` — 过渡角色 |
+| `memory-and-credentials` — Agent 能力与凭证 | `closing` / `outro` / `recap` — 收尾角色 |
+| `why-multiplayer` — 为什么需要联机协作 | `chapter-1` / `part-2` — 纯序号 |
+
+规则：
+- id **必须**能从 slug 看出本章核心内容（读 `口播节选` 应能反推 id 合理）
+- id **禁止**用影视 / 叙事结构术语（cold open、hook、beat 等）
+- 仅拉丁字母 + 连字符；`why-good` ✓，`why_good` / `第一章` ✗
 
 ### 章节首段「信息池」（**双源原则核心落地**）
 
@@ -155,12 +166,12 @@ pull-quote 引用 / 数据浮层。
 
 | 对象 | 规则 | 示例 |
 |---|---|---|
-| 章节 id | 小写 + 连字符 | `coldopen`, `why-good` |
-| 章节文件夹 | `0N-<id>` | `src/chapters/01-coldopen/` |
-| 章节组件 | PascalCase | `Coldopen.tsx`, `WhyGood.tsx` |
-| 章节 CSS 类前缀 | 章节缩写（避免跨章冲突） | `.cd-` / `.wg-` / `.mg-` |
-| 音频子目录 | `<id>/` | `public/audio/coldopen/` |
-| 音频文件 | `<step-N>.mp3` (1-indexed) | `public/audio/coldopen/1.mp3` |
+| 章节 id | 小写 + 连字符；**内容主题** slug | `human-agent-teams`, `slack-dataset-demo` |
+| 章节文件夹 | `0N-<id>`（运行时多为 `src/chapters/<id>/`） | `src/chapters/human-agent-teams/` |
+| 章节组件 | PascalCase | `HumanAgentTeams.tsx` |
+| 章节 CSS 类前缀 | 章节缩写（避免跨章冲突） | `.hat-` / `.sdd-` / `.mg-` |
+| 音频子目录 | `<id>/` | `public/audio/human-agent-teams/` |
+| 音频文件 | `<step-N>.mp3` (1-indexed) | `public/audio/human-agent-teams/1.mp3` |
 
 ---
 
@@ -181,7 +192,7 @@ pull-quote 引用 / 数据浮层。
 ```markdown
 ## 素材清单
 
-### 1. coldopen
+### 1. human-agent-teams
 - ✓ <资源 1 描述> （<已就位路径>）
 - ⚠️ <资源 2 描述>（待提供）
 - ⚠️ <资源 3 描述>（待提供）

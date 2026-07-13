@@ -97,6 +97,9 @@ def wv_prepare_source_files(state: VideoWorkflowState) -> dict:
         f"Reference — outline format:\n{ref_outline}\n\n"
         f"Input text:\n{text}\n\n"
         f"Write script.md (narration script) and outline.md (chapter outline).\n"
+        f"Chapter ids in outline MUST summarize each chapter's **content topic** "
+        f"(e.g. human-agent-teams, slack-dataset-demo) — NEVER role labels "
+        f"(coldopen, hook, intro, opener, closing, outro).\n"
         f"Separate them with: ===OUTLINE==="
     )}], role=MODEL_ROLE_CONTENT)
 
@@ -335,6 +338,8 @@ def wv_repair_outline(state: VideoWorkflowState) -> dict:
         f"Format spec:\n{ref}\n\nIssues:\n{issues}\n\n"
         f"Current outline:\n{content}\n\n"
         "Rewrite the FULL outline fixing all issues.\n"
+        "Chapter ids must summarize each chapter's content topic — never role labels "
+        "(coldopen, hook, intro, opener, closing, outro).\n"
         "OUTPUT RULES: output ONLY the outline text — no JSON, no commentary, no questions."
     )
     repaired = ""

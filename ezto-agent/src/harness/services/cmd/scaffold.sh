@@ -166,7 +166,7 @@ rmdir src/assets 2>/dev/null || true
 # 把脚手架文件拷到项目根
 mkdir -p \
   src/styles src/hooks src/components src/registry src/layouts src/motion \
-  src/chapters/01-example \
+  src/chapters/01-example src/theme \
   public scripts
 
 cp "$TEMPLATES/vite.config.ts" .
@@ -180,11 +180,14 @@ cp "$THEME_TOKENS"                          src/styles/tokens.css
 cp "$TEMPLATES/src/styles/base.css"         src/styles/base.css
 cp "$TEMPLATES/src/styles/animations.css"   src/styles/animations.css
 cp "$TEMPLATES/src/styles/fonts.css"        src/styles/fonts.css
+cp "$TEMPLATES/src/styles/theme-fonts.css"  src/styles/theme-fonts.css
+cp "$TEMPLATES/src/styles/theme-kit.css"    src/styles/theme-kit.css
 
 cp "$TEMPLATES/src/layouts/layouts.css"        src/layouts/layouts.css
 cp "$TEMPLATES/src/layouts/LAYOUT-SYSTEM.md"   src/layouts/LAYOUT-SYSTEM.md
 
 cp "$TEMPLATES/src/motion/presets.css"       src/motion/presets.css
+cp "$TEMPLATES/src/motion/theme-presets.css" src/motion/theme-presets.css
 cp "$TEMPLATES/src/motion/MOTION-SYSTEM.md"  src/motion/MOTION-SYSTEM.md
 
 cp "$TEMPLATES/src/hooks/useStageScale.ts"   src/hooks/useStageScale.ts
@@ -236,10 +239,40 @@ fs.writeFileSync("package.json", JSON.stringify(p, null, 2) + "\n");
 
 ok "骨架与主题已就位"
 
-# 留个标记，以后能查这个项目从哪个主题起步的
-{
-  echo "$THEME"
-} > .theme
+# v2 theme kit（schema=v2 时安装 kit/ 资产）
+THEME_SCHEMA="v1"
+if grep -qE '"schema"[[:space:]]*:[[:space:]]*"v2"' "$THEME_DIR/theme.json" 2>/dev/null; then
+  THEME_SCHEMA="v2"
+fi
+
+if [[ "$THEME_SCHEMA" == "v2" && -d "$THEME_DIR/kit" ]]; then
+  detail "安装 Theme v2 kit (${THEME})"
+  [[ -f "$THEME_DIR/kit/components.css" ]] && cp "$THEME_DIR/kit/components.css" src/styles/theme-kit.css
+  [[ -f "$THEME_DIR/kit/presets.css" ]]    && cp "$THEME_DIR/kit/presets.css"    src/motion/theme-presets.css
+  [[ -f "$THEME_DIR/kit/fonts.css" ]]      && cp "$THEME_DIR/kit/fonts.css"      src/styles/theme-fonts.css
+  if [[ -f "$THEME_DIR/kit/COMPONENT-KIT.md" ]]; then
+    mkdir -p src/theme
+    cp "$THEME_DIR/kit/COMPONENT-KIT.md" src/theme/COMPONENT-KIT.md
+  fi
+  ok "Theme v2 kit 已安装"
+fi
+
+# .theme manifest（v2 JSON / v1 纯 id）
+if [[ "$THEME_SCHEMA" == "v2" ]]; then
+  node -e "
+const fs = require('fs');
+const meta = JSON.parse(fs.readFileSync('$THEME_DIR/theme.json', 'utf8'));
+const payload = {
+  id: meta.id || '$THEME',
+  schema: 'v2',
+};
+if (meta.family) payload.family = meta.family;
+if (meta.capabilities) payload.capabilities = meta.capabilities;
+fs.writeFileSync('.theme', JSON.stringify(payload, null, 2) + '\n');
+"
+else
+  echo "$THEME" > .theme
+fi
 
 # 跑一次 typecheck 确认接线 OK
 progress "TypeScript 检查"

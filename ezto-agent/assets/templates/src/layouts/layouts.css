@@ -194,7 +194,7 @@
 
 .lx-split-index {
   font-family: var(--hero-num-font, var(--font-display-en));
-  font-size: clamp(128px, 10vw, 180px);
+  font-size: clamp(108px, 8.5vw, 152px);
   font-weight: 800;
   font-style: normal;
   line-height: 0.92;
@@ -294,7 +294,7 @@
   }
 
   .lx-split-index {
-    font-size: clamp(112px, 9vw, 148px);
+    font-size: clamp(96px, 7.5vw, 124px);
   }
 
   .lx-split-panel {

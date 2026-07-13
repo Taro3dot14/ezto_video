@@ -1,6 +1,0 @@
-/* 01-example — chapter-specific overrides only.
- * Layout + typography: ../layouts/layouts.css (global) */
-
-.ex-em {
-  color: var(--accent);
-}

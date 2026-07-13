@@ -28,7 +28,7 @@ def resolve_chapter_id(
 ) -> tuple[str, str | None]:
     """Return (resolved_id, warning_message).
 
-    Maps mistaken ``chapter_1`` → outline slug (e.g. ``hook``) when that folder exists.
+    Maps mistaken ``chapter_1`` → outline slug (e.g. ``human-agent-teams``) when that folder exists.
     """
     raw = (requested or default).strip() or default
     ws = Path(state.get("workspace_root", "."))

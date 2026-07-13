@@ -1,15 +1,19 @@
-"""Apply presentation themes by swapping tokens.css."""
+"""Apply presentation themes — v1 tokens-only or v2 kit bundle."""
 
 from __future__ import annotations
 
-import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
-from configs import settings
+from harness.services.theme_kit import (
+    install_theme_kit,
+    load_theme_meta,
+    theme_dir,
+    validate_theme_id,
+    write_theme_manifest,
+)
 
-_THEME_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 _PPT_DIR = "presentation"
 
 
@@ -18,19 +22,14 @@ class ThemeApplyResult:
     theme_id: str
     tokens_path: str
     theme_marker_path: str
-
-
-def validate_theme_id(theme_id: str) -> None:
-    tid = (theme_id or "").strip()
-    if not tid or not _THEME_ID_RE.match(tid):
-        raise ValueError(f"Invalid theme id: {theme_id!r}")
+    schema: str = "v1"
+    kit_files: tuple[str, ...] = ()
 
 
 def resolve_theme_tokens(theme_id: str) -> Path:
     """Return path to tokens.css for a built-in theme."""
     validate_theme_id(theme_id)
-    theme_dir = Path(settings.themes_dir) / theme_id
-    tokens = theme_dir / "tokens.css"
+    tokens = theme_dir(theme_id) / "tokens.css"
     if not tokens.is_file():
         raise ValueError(f"Unknown theme: {theme_id}")
     return tokens
@@ -46,7 +45,9 @@ def presentation_ready(workspace_root: Path) -> Path:
 
 
 def apply_theme(workspace_root: Path, theme_id: str) -> ThemeApplyResult:
-    """Copy theme tokens into the workspace presentation project."""
+    """Copy theme tokens (+ v2 kit when applicable) into the workspace presentation."""
+    validate_theme_id(theme_id)
+    meta = load_theme_meta(theme_id)
     tokens_src = resolve_theme_tokens(theme_id)
     ws = workspace_root.resolve()
     ppt = presentation_ready(ws)
@@ -55,18 +56,20 @@ def apply_theme(workspace_root: Path, theme_id: str) -> ThemeApplyResult:
     tokens_dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(tokens_src, tokens_dst)
 
-    marker = ppt / ".theme"
-    marker.write_text(f"{theme_id}\n", encoding="utf-8")
+    kit_files = tuple(install_theme_kit(ppt, theme_id))
+    marker = write_theme_manifest(ppt, theme_id, meta)
 
     return ThemeApplyResult(
         theme_id=theme_id,
         tokens_path=str(tokens_dst),
         theme_marker_path=str(marker),
+        schema=str(meta.get("schema") or "v1"),
+        kit_files=kit_files,
     )
 
 
 def refresh_preview_after_theme_apply(workspace_root: str | Path) -> None:
-    """Restart Vite so tokens.css edits are picked up (WSL /mnt/d watchers often miss copies)."""
+    """Restart Vite so theme file edits are picked up."""
     from configs import settings
     from harness.services.tools.build.npm import restart_dev_server
 

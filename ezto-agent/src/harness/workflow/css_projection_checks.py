@@ -18,7 +18,7 @@ _DECORATIVE_HEX_SELECTOR_RE = re.compile(
     re.I,
 )
 
-# Auxiliary copy (captions, kickers) — floor 28px
+# Auxiliary copy (captions, kickers) — floor 24px
 _AUX_SELECTOR_RE = re.compile(
     r"(?:kicker|caption|tagline|cue|eyebrow|meta|subtitle|badge-sep|badge-tagline|"
     r"step-\d+-caption|terminal-caption|foot|label)",
@@ -35,16 +35,16 @@ _DECORATIVE_FONT_SELECTOR_RE = re.compile(
 )
 
 _DEFAULT_TOKEN_MIN_PX: dict[str, int] = {
-    "--t-projection-hero": 96,
-    "--t-projection-title": 72,
-    "--t-projection-body": 36,
-    "--t-display-1": 96,
-    "--t-display-2": 72,
-    "--t-h1": 72,
-    "--t-h2": 48,
-    "--t-h3": 36,
-    "--t-body": 28,
-    "--t-cue": 28,
+    "--t-projection-hero": 84,
+    "--t-projection-title": 64,
+    "--t-projection-body": 32,
+    "--t-display-1": 84,
+    "--t-display-2": 64,
+    "--t-h1": 64,
+    "--t-h2": 42,
+    "--t-h3": 32,
+    "--t-body": 24,
+    "--t-cue": 24,
 }
 
 
@@ -106,8 +106,8 @@ def _font_floor_for_selector(selector: str) -> int | None:
     if _DECORATIVE_FONT_SELECTOR_RE.search(selector):
         return None
     if _AUX_SELECTOR_RE.search(selector):
-        return 28
-    return 36
+        return 24
+    return 32
 
 
 def collect_font_size_violations(css: str, *, ppt: Path | None = None) -> list[str]:
@@ -127,7 +127,7 @@ def collect_font_size_violations(css: str, *, ppt: Path | None = None) -> list[s
             if size < floor:
                 violations.append(f"{size}px ({selector.strip()[:40]})")
         for var in re.findall(r"font-size:\s*var\(\s*(--[\w-]+)", body):
-            size = token_mins.get(var, 36)
+            size = token_mins.get(var, 32)
             if size < floor:
                 violations.append(f"{var}→{size}px ({selector.strip()[:40]})")
     return violations
@@ -139,7 +139,7 @@ def format_auto_validate_font_hint(violations: list[str]) -> str | None:
     return (
         "⚠️ auto_validate: body/auxiliary copy uses font-size below floor "
         f"({'; '.join(violations[:4])}). "
-        "Use projection tokens (≥36px body, ≥28px auxiliary). "
+        "Use projection tokens (≥32px body, ≥24px auxiliary). "
         "SVG / code-block / window-card labels are exempt."
     )
 

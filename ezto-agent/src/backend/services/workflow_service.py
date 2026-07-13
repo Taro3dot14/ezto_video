@@ -564,6 +564,8 @@ class WorkflowManager:
 
     def list_themes(self) -> list[dict]:
         """List all available themes from the themes directory."""
+        from harness.services.theme_kit import theme_list_entry
+
         themes_dir = Path(_THEMES_DIR)
         if not themes_dir.exists():
             return []
@@ -572,24 +574,9 @@ class WorkflowManager:
         for theme_dir in sorted(themes_dir.iterdir()):
             if not theme_dir.is_dir():
                 continue
-            meta_file = theme_dir / "theme.json"
-            if not meta_file.exists():
-                continue
-            try:
-                import json
-                meta = json.loads(meta_file.read_text(encoding="utf-8"))
-                themes.append({
-                    "id": meta.get("id", theme_dir.name),
-                    "name": meta.get("name", ""),
-                    "nameZh": meta.get("nameZh", ""),
-                    "description": meta.get("description", ""),
-                    "descriptionZh": meta.get("descriptionZh", ""),
-                    "mood": meta.get("mood", []),
-                    "bestFor": meta.get("bestFor", []),
-                    "preview": meta.get("preview"),
-                })
-            except (json.JSONDecodeError, KeyError):
-                continue
+            entry = theme_list_entry(theme_dir)
+            if entry:
+                themes.append(entry)
         return themes
 
     def get_artifacts(self, thread_id: str) -> list[dict]:

@@ -49,6 +49,7 @@ ALL_TOOL_SPECS: tuple[ToolSpec, ...] = (
         description=(
             "Read THIS chapter's Tier-A build context: article excerpts, script beats, "
             "01-example excerpt, motion summary (MOTION-SYSTEM + mot-* excerpt). "
+            "v2 themes also return COMPONENT-KIT.md (`tk-*` components + `mot-tk-*` motion). "
             "**Call once at build start before write_narrations/write_file.** "
             "Use read_motion_detail / read_layout_catalog only if you need the full catalogs."
         ),
@@ -96,7 +97,7 @@ ALL_TOOL_SPECS: tuple[ToolSpec, ...] = (
             "Read all files for one chapter (narrations.ts, index.tsx, index.css) "
             "plus registry files. Initializes CHAPTER-CRAFT checklist (pending). "
             "Use craft_auto_check separately for programmatic hints. "
-            "Omit chapter_id to use the current chapter folder (e.g. hook, coldopen) — "
+            "Omit chapter_id to use the current chapter folder (e.g. human-agent-teams, slack-dataset-demo) — "
             "never pass chapter_1 unless that is the real folder name."
         ),
         input_schema={
@@ -104,7 +105,7 @@ ALL_TOOL_SPECS: tuple[ToolSpec, ...] = (
             "properties": {
                 "chapter_id": {
                     "type": "string",
-                    "description": "Chapter folder id from outline (e.g. hook). Defaults to current chapter.",
+                    "description": "Chapter folder id from outline — content-topic slug (e.g. human-agent-teams). Defaults to current chapter.",
                 },
             },
         },

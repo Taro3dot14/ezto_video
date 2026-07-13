@@ -20,7 +20,7 @@
 ## 假设的 outline.md 章节段（抽象）
 
 ```markdown
-## 2. hook — <章节标题>（6 steps）
+## 2. suspicious-screenshots — <章节标题>（6 steps）
 
 - step 1 (~4s) — N 张可疑图片占位（虚线 ghost 卡片） [intent: intro / transition]
 - step 2 (~5s) — 第 1 张露出：<反例 1 描述>（独占视觉） [intent: solo reveal]

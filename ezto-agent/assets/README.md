@@ -6,16 +6,24 @@
 ## Three layers
 
 ```
-references/     Methodology specs (CHAPTER-CRAFT, OUTLINE, EXAMPLES anchors)
+references/     Methodology specs (CHAPTER-CRAFT, OUTLINE, THEME-KIT-SPEC, EXAMPLES)
 templates/      Runtime scaffold — Stage, layouts, components, 01-example
-themes/         23 visual identities — colors, fonts, motion mood (tokens.css)
+themes/         Visual identities — v1 tokens-only or v2 kit bundles
 ```
 
 | Layer | Owns | Does NOT own |
 |-------|------|--------------|
-| **themes/** | Palette, font families, `--stage-pad-*`, motion `--dur-*`, card personality | Layout structure, step content |
-| **templates/** | 16:9 stage, layout shells (`lx-*`), typography roles, primitives | Chapter copy, demos |
-| **references/** | Workflow rules, outline format, example anchors | Generated chapter code |
+| **themes/** v1 | Palette, fonts, motion mood (`tokens.css`) | Layout, components |
+| **themes/** v2 | Above + `kit/` (`tk-*` CSS, COMPONENT-KIT.md, mot-tk-*) | Chapter copy |
+| **templates/** | 16:9 stage, layout shells (`lx-*`), typography roles | Theme material |
+| **references/** | Workflow rules, outline format | Generated chapter code |
+
+### Theme v2 (kit bundle)
+
+- `schema: "v2"` in `theme.json`
+- First kit theme: **`clay-warm`** (claymorphism)
+- Spec: `references/THEME-KIT-SPEC.md`
+- Agent reads `presentation/src/theme/COMPONENT-KIT.md` via `read_chapter_context` (not CHAPTER-CRAFT)
 
 ## Layout Shell System (templates)
 

@@ -6,10 +6,12 @@ from pathlib import Path
 
 from harness.core.state import VideoWorkflowState
 from harness.services.tools.core.telemetry import _record_tool_call
+from harness.services.theme_kit import load_component_kit_guide
 from harness.workflow.chapter_brief import (
     LAYOUT_SYSTEM_BLOCK,
     NO_AI_SLOP_BLOCK,
     PROJECTION_READABILITY_BLOCK,
+    THEME_KIT_BLOCK,
     get_chapter_brief,
     load_example_chapter_excerpt,
     load_motion_system_bundle,
@@ -105,12 +107,23 @@ def read_chapter_context(
         "",
         LAYOUT_SYSTEM_BLOCK,
         "",
+    ]
+
+    kit_guide = load_component_kit_guide(workspace_root)
+    if kit_guide:
+        parts += [
+            THEME_KIT_BLOCK,
+            "",
+            kit_guide,
+            "",
+        ]
+
+    parts += [
         PROJECTION_READABILITY_BLOCK,
         "",
         "## Global template classes (layouts.css / motion/ / animations.css — do NOT duplicate in index.css)",
-        "lx-* typography & shells · mot-* motion presets · mask-reveal · in · rule-grow · "
-        "scene-pad, masthead, kicker, hero-num, label-mono, rule, card, pull-quote, "
-        "serif-cn, display-en, display-en-soft, dot-accent — use theme tokens `--t-*`, `--text`, `--accent`.",
+        "lx-* typography & shells · mot-* / mot-tk-* motion · tk-* theme kit (if v2) · mask-reveal · in · "
+        "rule-grow · scene-pad, kicker, hero-num, label-mono, rule, card — use theme tokens `--t-*`, `--text`, `--accent`.",
         "",
         "## Optional detail tools (only if needed)",
         "- read_motion_detail() — full MOTION-SYSTEM.md + presets.css + animations.css",

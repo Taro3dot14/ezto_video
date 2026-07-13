@@ -17,7 +17,7 @@ OUTLINE_SAMPLE = """# Video Outline
 
 ---
 
-## 1. coldopen — 痛点与钩子（3 steps · ~45s）
+## 1. slow-response — 痛点与钩子（3 steps · ~45s）
 
 **信息池**：
 - 数字：3.8s —— article §1
@@ -32,7 +32,7 @@ OUTLINE_SAMPLE = """# Video Outline
 
 ---
 
-## 2. why-good — 原理解释（4 steps · ~60s）
+## 2. four-strengths — 原理解释（4 steps · ~60s）
 
 **开发计划**：
 - step 1 (~15s) — intro
@@ -42,11 +42,11 @@ OUTLINE_SAMPLE = """# Video Outline
 def test_parse_outline_spec_format():
     chapters = parse_outline_text(OUTLINE_SAMPLE)
     assert len(chapters) == 2
-    assert chapters[0]["id"] == "coldopen"
+    assert chapters[0]["id"] == "slow_response"
     assert chapters[0]["title"] == "痛点与钩子"
     assert chapters[0]["steps"] == 3
     assert "hero number" in chapters[0]["section"]
-    assert chapters[1]["id"] == "why_good"
+    assert chapters[1]["id"] == "four_strengths"
 
 
 def test_parse_outline_legacy_format():
@@ -58,10 +58,10 @@ def test_parse_outline_legacy_format():
 
 def test_format_brief():
     brief = {
-        "chapter_id": "coldopen",
+        "chapter_id": "slow_response",
         "expected_steps": 3,
         "outline_section": (
-            "## 1. coldopen\n"
+            "## 1. slow-response\n"
             "**开发计划**：\n"
             "- step 1 (~15s) — hero number\n"
             "- step 2 (~15s) — strike-through\n"
@@ -79,7 +79,7 @@ def test_format_brief():
     assert "beat one" in prompt
     assert "read_chapter_context" in prompt
     assert "Projection readability" in prompt
-    assert "96px" in prompt
+    assert "84px" in prompt
     assert "hook-chapter" in prompt
     assert "Steps: outline labels vs code" in prompt
     assert "ZERO emoji" in prompt or "never emoji" in prompt.lower()
@@ -140,7 +140,7 @@ def test_read_chapter_context_tool(tmp_path):
     out = read_chapter_context(
         state,
         workspace_root=ws,
-        chapter_id="coldopen",
+        chapter_id="slow_response",
         chapter_index=1,
         chapter_title="痛点与钩子",
     )

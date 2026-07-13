@@ -23,7 +23,9 @@ export interface ThemeInfo {
   bestFor: string[];
 
   preview: Record<string, string> | null;
-
+  schema?: string;
+  family?: string | null;
+  capabilities?: string[];
 }
 
 

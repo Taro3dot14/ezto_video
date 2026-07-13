@@ -44,21 +44,42 @@ body {
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Type scale (defaults for layouts.css lx-* roles + primitive classes) ── */
-  --t-display-1:   clamp(140px, 11vw, 200px);
-  --t-display-2:   clamp(96px, 8vw, 140px);
-  --t-h1:          clamp(72px, 6vw, 96px);
-  --t-h2:          clamp(48px, 4vw, 72px);
-  --t-h3:          clamp(36px, 3.2vw, 48px);
-  --t-body:        36px;
-  --t-cue:         28px;
+  --t-display-1:   clamp(124px, 10vw, 176px);
+  --t-display-2:   clamp(84px, 7vw, 124px);
+  --t-h1:          clamp(64px, 5.3vw, 84px);
+  --t-h2:          clamp(42px, 3.5vw, 64px);
+  --t-h3:          clamp(32px, 2.8vw, 42px);
+  --t-body:        32px;
+  --t-cue:         24px;
   --t-micro:       12px;
 
   /* ── Projection readability tokens (chapters SHOULD use for primary copy) ── */
-  --t-projection-hero:    clamp(96px, 8vw, 140px);
-  --t-projection-title:   clamp(72px, 6vw, 96px);
-  --t-projection-body:    36px;
-  --t-projection-caption: 28px;
+  --t-projection-hero:    clamp(84px, 7vw, 124px);
+  --t-projection-title:   clamp(64px, 5.3vw, 84px);
+  --t-projection-body:    32px;
+  --t-projection-caption: 24px;
   --card-min-width:       min(1056px, 100%);
+
+  /* ── Theme kit material defaults (v2 themes override in tokens.css) ── */
+  --tk-border-w:     3px;
+  --tk-r-sm:         16px;
+  --tk-r-md:         24px;
+  --tk-r-lg:         32px;
+  --tk-r-pill:       999px;
+  --tk-lift:         4px;
+  --tk-border:       var(--rule);
+  --tk-shadow:       rgba(0, 0, 0, 0.12);
+  --tk-shadow-raised:
+    0 var(--tk-lift) 0 var(--tk-border),
+    0 12px 28px var(--tk-shadow);
+  --tk-shadow-pressed:
+    inset 0 2px 6px var(--tk-shadow),
+    inset 0 -1px 4px rgba(255, 255, 255, 0.35);
+  --tk-shadow-inset:
+    inset 0 -3px 10px rgba(0, 0, 0, 0.05),
+    inset 0 3px 8px rgba(255, 255, 255, 0.4);
+  --dur-tk-press:    200ms;
+  --ease-tk:         cubic-bezier(0.34, 1.15, 0.64, 1);
 
   /* ── Tracking presets (used by primitive classes) ── */
   --track-tight:   -0.025em;   /* large serif display */

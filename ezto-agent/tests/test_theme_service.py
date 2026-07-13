@@ -52,19 +52,24 @@ def test_resolve_theme_tokens_unknown():
 
 def test_apply_theme_copies_tokens_and_marker(workspace: Path):
     themes_dir = Path(settings.themes_dir)
-    theme_dirs = [d for d in themes_dir.iterdir() if (d / "tokens.css").is_file()]
-    if not theme_dirs:
-        pytest.skip("no built-in themes on disk")
+    theme_id = "midnight-press"
+    if not (themes_dir / theme_id / "tokens.css").is_file():
+        pytest.skip("midnight-press theme missing")
 
-    theme_id = theme_dirs[0].name
     ppt = workspace / "presentation" / "src" / "styles"
     ppt.mkdir(parents=True)
 
     result = apply_theme(workspace, theme_id)
 
     assert result.theme_id == theme_id
+    assert result.schema == "v1"
     assert (workspace / "presentation" / "src" / "styles" / "tokens.css").is_file()
-    assert (workspace / "presentation" / ".theme").read_text(encoding="utf-8").strip() == theme_id
+    marker_raw = (workspace / "presentation" / ".theme").read_text(encoding="utf-8").strip()
+    if marker_raw.startswith("{"):
+        import json
+        assert json.loads(marker_raw)["id"] == theme_id
+    else:
+        assert marker_raw == theme_id
     src_head = (themes_dir / theme_id / "tokens.css").read_text(encoding="utf-8")[:80]
     dst_head = (workspace / "presentation" / "src" / "styles" / "tokens.css").read_text(
         encoding="utf-8",

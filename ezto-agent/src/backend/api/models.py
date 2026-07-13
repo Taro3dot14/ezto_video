@@ -77,6 +77,9 @@ class ThemeInfo(BaseModel):
     mood: list[str]
     bestFor: list[str]
     preview: dict[str, str] | None = None
+    schema: str = "v1"
+    family: str | None = None
+    capabilities: list[str] = Field(default_factory=list)
 
 
 class ArtifactInfo(BaseModel):

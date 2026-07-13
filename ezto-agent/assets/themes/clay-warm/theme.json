@@ -1,0 +1,40 @@
+{
+  "id": "clay-warm",
+  "schema": "v2",
+  "name": "Clay Warm",
+  "nameZh": "暖陶塑",
+  "family": "claymorphism",
+  "description": "Soft 3D clay surfaces with thick borders and double shadows. Rounded, tactile, friendly — ideal for education and onboarding videos.",
+  "descriptionZh": "厚边框 + 双阴影 + 软按压的陶土质感。圆润友好，适合教学 / onboarding / 知识科普录屏。",
+  "mood": ["light", "soft", "playful", "rounded", "tactile", "warm"],
+  "bestFor": [
+    "教学 / onboarding 讲解",
+    "知识科普 / 产品入门",
+    "友好品牌片 / 生活方式",
+    "儿童向 / 亲子内容（非低幼）"
+  ],
+  "kit": {
+    "components": "kit/components.css",
+    "presets": "kit/presets.css",
+    "fonts": "kit/fonts.css",
+    "guide": "kit/COMPONENT-KIT.md"
+  },
+  "capabilities": [
+    "tk-card",
+    "tk-badge",
+    "tk-button",
+    "tk-stat",
+    "tk-icon-tile",
+    "tk-chip",
+    "tk-callout",
+    "tk-window",
+    "tk-progress",
+    "grid-slot-skin"
+  ],
+  "preview": {
+    "shell": "#E8DFD4",
+    "surface": "#F7F2EC",
+    "text": "#2D2A26",
+    "accent": "#E07A5F"
+  }
+}

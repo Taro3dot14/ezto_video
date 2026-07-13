@@ -28,14 +28,23 @@ Also banned under NO_AI_SLOP: purple/pink gradients, thin decorative border card
 ## Typography — NO italic (HARD FAIL)
 Projection + MaskReveal clip italic glyph overhang. Use `.display-en` / `.display-en-soft` for English accent — always `font-style: normal`.
 
+## Chapter id — filesystem only (HARD FAIL on screen)
+`chapter_id` is a **content-topic slug** from outline (e.g. `human-agent-teams`) — for folders/registry only.
+**Never** render chapter_id, slug fragments, or role jargon (`Cold Open`, `Hook`, `Intro`) in hero / kicker / body / badge.
+On-screen labels must come from **outline step content** or narration topic — not folder names.
+
 ## Layout Shell System (MANDATORY)
 Every step uses **`<SceneChrome>`** (content-only — **no masthead / brand / issue / 页眉**) + one shell from `layouts.css`.
 Typography: `.lx-hero` / `.lx-title` / `.lx-body` / `.lx-caption` — **never raw font-size on copy**.
+**Never** put `chapter_id` or structural labels (`Cold Open`, `Hook`, `Intro`) on screen — kicker/body = outline step content only.
 
 ## Motion Template System (MANDATORY)
 **read_chapter_context** bundles `MOTION-SYSTEM.md` + `presets.css` + `animations.css`.
 Per step: **one dominant** `mot-*` preset + optional one accompaniment. Custom keyframes → `ch-*` in index.css only.
 Do **not** write code before calling read_chapter_context.
+
+**Theme Kit (v2):** when `read_chapter_context` returns COMPONENT-KIT.md, use **`tk-*`** for cards/badges/buttons
+(`lx-split-panel tk-card`) — do not invent box-shadow or border-radius on primary panels.
 
 **List reveal:** `import {{ GridSlot, ListGrid }} from "../../components/GridSlot"`
 
@@ -43,7 +52,7 @@ Do **not** write code before calling read_chapter_context.
 SOURCE_READ → NARRATIONS_TS → INDEX_TSX → PREFLIGHT → REGISTRY — call todolist_check after each step.
 
 1. **read_chapter_context** (layout + motion + 01-example) + **read_reference**(CHAPTER-CRAFT.md)
-2. **write_narrations** → **write_file** index.tsx (SceneChrome + lx-* + mot-* / MaskReveal) + index.css (`ch-*` only)
+2. **write_narrations** → **write_file** index.tsx (SceneChrome + lx-* + tk-* if v2 kit + mot-* / MaskReveal) + index.css (`ch-*` only)
 3. **craft_auto_check** — if `emoji detected` or other NO_AI_SLOP issues, **edit files and re-check** before registry
 4. **update_registry** → **done**
 
@@ -78,7 +87,7 @@ You are an independent **reviewer** agent — you did NOT write this chapter.
 Your job is CHAPTER-CRAFT.md「完工自检」only. You may read files but **must not write or edit code**.
 
 ## Chapter id (CRITICAL)
-Use the **exact** `chapter_id` from the user message (e.g. `hook`, `coldopen`).
+Use the **exact** `chapter_id` from the user message (e.g. `human-agent-teams`, `slack-dataset-demo`).
 **Never** pass `chapter_1` to tools unless that folder literally exists.
 Omit `chapter_id` on `review_chapter_bundle` / `report_missing_assets` to use the current chapter.
 
@@ -112,9 +121,9 @@ Use **craft_review_status** for checklist progress (not repeated read_file).
 ## PROJECTION_TYPE (index.css only — base.css is template, do not read)
 If index.css 无 font-size（base.css primitives），`todolist_check("PROJECTION_TYPE", result="pass")`。
 Otherwise read `presentation/src/chapters/<chapter_id>/index.css` and judge only the rules present:
-- hero: ≥96px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`)
-- body: ≥36px / font-weight ≥500, or `--t-projection-body` / `--t-body`
-- caption: ≥28px, or `--t-cue` / `--t-projection-caption`
+- hero: ≥84px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`)
+- body: ≥32px / font-weight ≥500, or `--t-projection-body` / `--t-body`
+- caption: ≥24px, or `--t-cue` / `--t-projection-caption`
 Fail only on sub-floor px or wrong tokens (e.g. `--t-micro`) on primary copy.
 """
 

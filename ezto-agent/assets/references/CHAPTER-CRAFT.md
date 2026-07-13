@@ -35,6 +35,7 @@
 | 禁止 | 说明 |
 |------|------|
 | 任何 `<header>` / 页眉 / brand 条 / 章节标题栏 | 舞台**只有内容**，没有顶栏 metadata |
+| `chapter_id` / 文件夹名（如 `human-agent-teams`）作为 hero / kicker / 正文 | id 仅工程路径用；画面文案来自 outline step / 口播主题 |
 | `SceneChrome brand=` / `issue=` | 模板已移除 masthead — **禁止**传这两个 prop |
 | 页码、页脚版权、导航条 | 进度条仅在 hover 时出现（App 内置） |
 | className 含 `masthead` / `topbar` / `navbar` / `page-header` | 一律视为页眉 chrome |

@@ -15,6 +15,12 @@ from harness.workflow.step_indexing import (
     format_brief_step_plan,
 )
 
+
+def _has_v2_kit(workspace_root: Path) -> bool:
+    from harness.services.theme_kit import theme_kit_brief_block
+
+    return theme_kit_brief_block(workspace_root) is not None
+
 NO_AI_SLOP_BLOCK = """## Icons & anti-AI-slop (HARD FAIL — do not use emoji)
 
 Reviewer **NO_AI_SLOP** auto-check **regex-scans** index.tsx + index.css. Emoji → instant fail → Repair round.
@@ -56,10 +62,25 @@ Do **not** invent layout, font-size, or gap from scratch. Pick a shell per step:
 
 **Scene wrapper:** `SceneChrome`（**无页眉** — 禁止 brand/issue/masthead）· **List reveal:** `GridSlot` + `ListGrid`
 
+**Chapter id on screen:** `chapter_id` 是工程路径 slug（概括本章**内容主题**），**禁止**写在 hero/kicker/正文上（不要 `Cold Open` / `Hook` / slug 大写）。画面文案只用 outline step 内容。
+
+**Chapter id:** folder slug only — **never** show `chapter_id` or role jargon (`Cold Open`, `Hook`, `Intro`) in hero/kicker/body. Use outline step content.
+
 **Chapter `index.css`:** only `ch-*` animation/demo classes.
 
 Golden reference: `01-example/Example.tsx` (cover → split → grid-3 → quote).
 Full catalog: `presentation/src/layouts/LAYOUT-SYSTEM.md`.
+"""
+
+THEME_KIT_BLOCK = """## Theme Kit (v2 — when `src/theme/COMPONENT-KIT.md` exists)
+
+Prefer **`tk-*`** components from COMPONENT-KIT.md over hand-rolled card styles.
+
+- Layout: still `lx-*` shells
+- Material: `tk-card`, `tk-badge`, `tk-chip`, `tk-stat`, `tk-icon-tile`, …
+- Combine: `className="lx-split-panel tk-card"`
+- Motion: `mot-tk-*` + one dominant `mot-*` per step
+- Do **not** invent border-radius / box-shadow on primary panels — use `tk-*`.
 """
 
 MOTION_SYSTEM_BLOCK = """## Motion Template System (MANDATORY — read via read_chapter_context)
@@ -91,15 +112,15 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Element | Minimum |
 |---------|---------|
-| Hero headline | ≥ 96px, `font-weight` ≥ 800 |
-| Section title / hero numbers | ≥ 72px |
-| Body / list primary copy | ≥ 36px, `font-weight` ≥ 500 |
-| Auxiliary labels (kicker, caption) | ≥ 28px |
+| Hero headline | ≥ 84px, `font-weight` ≥ 800 |
+| Section title / hero numbers | ≥ 64px |
+| Body / list primary copy | ≥ 32px, `font-weight` ≥ 500 |
+| Auxiliary labels (kicker, caption) | ≥ 24px |
 | Main content panel / card | width ≥ 55% of stage (~1056px), or full-width with stage padding |
 | Type hierarchy | hero : title : body ≈ 3 : 2 : 1 |
 
 - Primary copy: `--text` or `--text-2` only — never `--text-mute` / `--text-faint`.
-- Do not default to `var(--t-body)` for primary text; use `--t-projection-body` (36px) or larger.
+- Do not default to `var(--t-body)` for primary text; use `--t-projection-body` (32px) or larger.
 - Large keynote panels encouraged; avoid small decorative border cards.
 - **Theme contrast**: scene bg = `--shell` / `--surface` / `--surface-2` only (no `--bg`).
   Never black-out a scene then use theme `--text` (light themes = dark ink → invisible on black).
@@ -111,9 +132,9 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Reference | Hero | Title | Body | Panel width |
 |-----------|------|-------|------|-------------|
-| hook-chapter | `--t-display-1` (140–200px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
+| hook-chapter | `--t-display-1` (124–176px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
 | list-reveal | intro `--t-display-2` | slot title `--t-h2` | slot body `--t-body` | 3-col grid, `min-height: 360px` |
-| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (36px) | split panel **≥ 1056px** |
+| 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (32px) | split panel **≥ 1056px** |
 """
 
 def _split_title_and_steps(rest: str) -> tuple[str, int | None]:
@@ -468,7 +489,12 @@ def get_chapter_brief(
     }
 
 
-def format_brief_for_prompt(brief: dict[str, Any], title: str) -> str:
+def format_brief_for_prompt(
+    brief: dict[str, Any],
+    title: str,
+    *,
+    workspace_root: Path | None = None,
+) -> str:
     """Render brief as markdown for the agent user prompt."""
     parts = [
         f"# Chapter Brief: {title} (`{brief['chapter_id']}`)",
@@ -492,13 +518,22 @@ def format_brief_for_prompt(brief: dict[str, Any], title: str) -> str:
     if brief.get("script_excerpt"):
         parts += ["## Script beats (narration source — write narrations.ts from these)", brief["script_excerpt"], ""]
 
+    if workspace_root is not None:
+        from harness.services.theme_kit import theme_kit_brief_block
+
+        kit_brief = theme_kit_brief_block(workspace_root)
+        if kit_brief:
+            parts += [kit_brief, ""]
+
     parts += [NO_AI_SLOP_BLOCK, "", LAYOUT_SYSTEM_BLOCK, "", MOTION_SYSTEM_BLOCK, "", PROJECTION_READABILITY_BLOCK, ""]
 
     parts += [
         "## Source reads (MANDATORY before writing code)",
         "Call **read_chapter_context** once — it returns article excerpts + `01-example` + "
-        "**LAYOUT-SYSTEM.md + MOTION-SYSTEM.md + presets.css**. "
-        "Do NOT read_file article.md, 01-example, layouts/, or motion/ manually.",
+        "**LAYOUT-SYSTEM.md + MOTION-SYSTEM.md + presets.css**"
+        + (" + **COMPONENT-KIT.md** (`tk-*` components)" if workspace_root and _has_v2_kit(workspace_root) else "")
+        + ". "
+        "Do NOT read_file article.md, 01-example, layouts/, motion/, or theme/ manually.",
         "",
     ]
 

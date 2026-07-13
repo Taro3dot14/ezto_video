@@ -451,7 +451,7 @@ def _run_loop(
 
 class WebBuildAgent:
     TODO_BUILD: dict[str, str] = {
-        "SOURCE_READ": "read_chapter_context (layout + MOTION-SYSTEM + presets) + read_reference(CHAPTER-CRAFT.md)",
+        "SOURCE_READ": "read_chapter_context (layout + motion + theme kit if v2) + read_reference(CHAPTER-CRAFT.md)",
         "NARRATIONS_TS": todo_narrations_label(),
         "INDEX_TSX": todo_index_tsx_label(),
         "PREFLIGHT": "craft_auto_check — fix NO_AI_SLOP (emoji/slop) in TSX+CSS before registry",
@@ -585,7 +585,11 @@ class WebBuildAgent:
         )
 
         brief = get_chapter_brief(self._state, chapter_id, chapter_index)
-        user_prompt = format_brief_for_prompt(brief, title)
+        ws_root = Path(self._state.get("workspace_root", ".")) if isinstance(self._state, dict) else None
+        user_prompt = format_brief_for_prompt(
+            brief, title,
+            workspace_root=ws_root,
+        )
         user_prompt += (
             f"\n\nChapter {chapter_index}/{total_chapters}.\n"
             f"## Paths (fixed — do not explore)\n"
@@ -599,6 +603,15 @@ class WebBuildAgent:
             user_prompt += (
                 "Call todolist_status() then read_chapter_context + read_reference(CHAPTER-CRAFT.md).\n"
                 "read_chapter_context includes MOTION-SYSTEM.md + mot-* presets — pick motion before index.tsx.\n"
+            )
+            if ws_root:
+                from harness.services.theme_kit import theme_kit_brief_block
+                if theme_kit_brief_block(ws_root):
+                    user_prompt += (
+                        "This project uses a **v2 theme kit** — read_chapter_context includes COMPONENT-KIT.md. "
+                        "Use `tk-*` on panels (e.g. `lx-split-panel tk-card`); avoid hand-rolled card shadows.\n"
+                    )
+            user_prompt += (
                 "**Icons:** inline SVG or CSS shapes only — **never emoji** (NO_AI_SLOP hard-fail). "
                 "Run craft_auto_check after index.tsx+css; fix emoji before update_registry."
             )
