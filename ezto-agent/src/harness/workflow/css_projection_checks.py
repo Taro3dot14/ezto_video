@@ -35,14 +35,14 @@ _DECORATIVE_FONT_SELECTOR_RE = re.compile(
 )
 
 _DEFAULT_TOKEN_MIN_PX: dict[str, int] = {
-    "--t-projection-hero": 75,
-    "--t-projection-title": 58,
+    "--t-projection-hero": 68,
+    "--t-projection-title": 52,
     "--t-projection-body": 28,
-    "--t-display-1": 75,
-    "--t-display-2": 58,
-    "--t-h1": 58,
-    "--t-h2": 38,
-    "--t-h3": 28,
+    "--t-display-1": 68,
+    "--t-display-2": 52,
+    "--t-h1": 52,
+    "--t-h2": 34,
+    "--t-h3": 26,
     "--t-body": 28,
     "--t-cue": 22,
 }

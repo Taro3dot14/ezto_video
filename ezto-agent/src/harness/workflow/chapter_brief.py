@@ -112,15 +112,17 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Element | Minimum |
 |---------|---------|
-| Hero headline | ≥ 75px, `font-weight` ≥ 800 |
-| Section title / hero numbers | ≥ 58px |
+| Hero headline | ≥ 68px, `font-weight` ≥ 800（章节显式 px ≤ 160） |
+| Section title / hero numbers | ≥ 52px |
 | Body / list primary copy | ≥ 28px, `font-weight` ≥ 500 |
 | Auxiliary labels (kicker, caption) | ≥ 22px |
 | Main content panel / card | width ≥ 55% of stage (~1056px), or full-width with stage padding |
+| Stage bounds | **All content inside 1920×1080** — no width/min-width >1920, no cut-off edges |
 | Type hierarchy | hero : title : body ≈ 3 : 2 : 1 |
 
 - Primary copy: `--text` or `--text-2` only — never `--text-mute` / `--text-faint`.
 - Do not default to `var(--t-body)` for primary text; use `--t-projection-body` (28px) or larger.
+- Prefer `max-width: 100%` / `%` / `min()` — never fixed px wider than the stage.
 - Large keynote panels encouraged; avoid small decorative border cards.
 - **Theme contrast**: scene bg = `--shell` / `--surface` / `--surface-2` only (no `--bg`).
   Never black-out a scene then use theme `--text` (light themes = dark ink → invisible on black).
@@ -132,7 +134,7 @@ Design for projector / far-viewing distance. Minimum sizes on the 1920×1080 sta
 
 | Reference | Hero | Title | Body | Panel width |
 |-----------|------|-------|------|-------------|
-| hook-chapter | `--t-display-1` (110–158px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
+| hook-chapter | `--t-display-1` (100–140px) | stamp `--t-h3` | caption `--t-body` | solo frame **78%** stage |
 | list-reveal | intro `--t-display-2` | slot title `--t-h2` | slot body `--t-body` | 3-col grid, `min-height: 360px` |
 | 01-example (template) | `--t-display-1` cover | `--t-h1` split | `--t-projection-body` (28px) | split panel **≥ 1056px** |
 """

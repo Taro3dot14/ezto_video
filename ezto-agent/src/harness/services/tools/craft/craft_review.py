@@ -1,4 +1,4 @@
-"""CHAPTER-CRAFT Part「完工自检」checklist — auto checks + agent attestation."""
+"""CHAPTER-CRAFT Part「核验清单」checklist — auto checks + agent attestation."""
 
 from __future__ import annotations
 
@@ -28,16 +28,16 @@ from harness.services.tools.craft.craft_precheck import (
 
 # Minimum px from presentation base.css projection tokens (fallback if file missing)
 _DEFAULT_TOKEN_MIN_PX: dict[str, int] = {
-    "--t-projection-hero": 75,
-    "--t-projection-title": 58,
+    "--t-projection-hero": 68,
+    "--t-projection-title": 52,
     "--t-projection-body": 28,
-    "--t-display-1": 84,
-    "--t-display-2": 64,
-    "--t-h1": 72,
-    "--t-h2": 48,
-    "--t-h3": 36,
+    "--t-display-1": 68,
+    "--t-display-2": 52,
+    "--t-h1": 52,
+    "--t-h2": 34,
+    "--t-h3": 26,
     "--t-body": 28,
-    "--t-cue": 28,
+    "--t-cue": 22,
 }
 
 CheckState = Literal["pass", "fail", "pending", "deferred"]
@@ -58,10 +58,15 @@ CRAFT_REVIEW_ITEMS: tuple[CraftReviewItem, ...] = (
     CraftReviewItem("VARIED_ANIMATIONS", "不同 step 的主导动作不一样", "manual"),
     CraftReviewItem(
         "PROJECTION_TYPE",
-        "index.css 投影可读性：hero ≥75px/800；正文 ≥28px/500；辅助 ≥22px（projection token 或显式 px）",
+        "index.css 投影可读性：hero ≥68px/800；正文 ≥28px/500；辅助 ≥22px；显式 hero ≤160px",
         "manual",
     ),
     CraftReviewItem("PANEL_WIDTH", "主卡片/面板宽 ≥ 舞台 55%（~1056px）或全宽留边", "manual"),
+    CraftReviewItem(
+        "STAGE_NO_OVERFLOW",
+        "所有组件布局不超出 1920×1080 舞台（无横向/竖向溢出、元素不出框）",
+        "auto",
+    ),
     CraftReviewItem("NO_MUTED_TEXT", "主文案未使用 --text-mute / --text-faint", "auto"),
     CraftReviewItem("ZOOM_READABLE", "50% 缩放仍能读出主标题 + 每张卡片核心信息", "manual"),
     CraftReviewItem("WHITESPACE_COLOR", "留白舒服、配色舒服", "manual"),
@@ -148,15 +153,29 @@ def craft_checklist_snapshot(ctx: dict[str, Any]) -> dict[str, Any]:
     items: list[dict[str, Any]] = []
     done = 0
     required = 0
-    for idx, craft in enumerate(CRAFT_REVIEW_ITEMS, 1):
+    display_idx = 0
+    for craft in CRAFT_REVIEW_ITEMS:
         entry = store.get(craft.id, {})
         state = entry.get("state", "pending")
-        if craft.mode != "deferred":
-            required += 1
-            if state == "pass":
-                done += 1
+        if craft.mode == "deferred":
+            # Keep deferred in payload for debug, but do not number/count toward review total.
+            items.append({
+                "index": 0,
+                "id": craft.id,
+                "label": craft.label,
+                "state": state,
+                "evidence": entry.get("evidence", ""),
+                "fail_reason": entry.get("fail_reason", ""),
+                "fix": entry.get("fix", ""),
+                "mode": craft.mode,
+            })
+            continue
+        required += 1
+        display_idx += 1
+        if state == "pass":
+            done += 1
         items.append({
-            "index": idx,
+            "index": display_idx,
             "id": craft.id,
             "label": craft.label,
             "state": state,
@@ -322,6 +341,7 @@ _AUTO_FAIL_DEFAULT_FIX: dict[str, str] = {
     "THEME_TOKENS": "Replace hardcoded colors with theme CSS variables in index.css",
     "NARRATIONS_SYNC": "Align narrations.ts length with screen count (code steps 0..N-1)",
     "NO_HEADER_FOOTER": "Remove header/footer chrome; keep stage content only",
+    "STAGE_NO_OVERFLOW": "Keep all content inside 1920×1080; use max-width:100%, avoid fixed widths >1920px",
 }
 
 
@@ -525,6 +545,34 @@ def _check_no_header_footer(tsx: str) -> tuple[bool, str]:
     return True, "content-only stage — no page header/footer"
 
 
+def _check_stage_overflow(css: str, tsx: str = "") -> tuple[bool, str]:
+    """Heuristic: fixed sizes beyond 1920×1080 stage or huge font-size overrides."""
+    issues: list[str] = []
+    blob = f"{css}\n{tsx}"
+
+    for prop, limit in (("width", 1920), ("min-width", 1920), ("height", 1080), ("min-height", 1400)):
+        for m in re.finditer(rf"(?<!-)\b{prop}\s*:\s*(\d+)px", blob, re.I):
+            px = int(m.group(1))
+            if px > limit:
+                issues.append(f"{prop}:{px}px>{limit}")
+
+    for m in re.finditer(r"font-size\s*:\s*(\d+)px", css, re.I):
+        px = int(m.group(1))
+        if px > 160:
+            issues.append(f"font-size:{px}px>160 (use lx-* / projection tokens)")
+
+    for m in re.finditer(r"(?:left|right|translateX)\([^)]*?(-?\d+)px", css, re.I):
+        if abs(int(m.group(1))) > 1920:
+            issues.append(f"horizontal offset {m.group(1)}px out of stage")
+
+    if re.search(r"width\s*:\s*(?:2\d{2}|[3-9]\d{2})%", css):
+        issues.append("width percentage ≥200% likely overflows")
+
+    if issues:
+        return False, "; ".join(list(dict.fromkeys(issues))[:5])
+    return True, "no fixed size beyond 1920×1080 / font ≤160px"
+
+
 def _check_code_isolation(tsx: str, css: str, chapter_id: str) -> tuple[bool, str]:
     issues: list[str] = []
     cross = re.findall(r"from\s+['\"]\.\./chapters/([^/'\"]+)", tsx)
@@ -580,6 +628,9 @@ def _register_auto_checks() -> None:
     def header(tsx: str, **_k: Any) -> tuple[bool, str]:
         return _check_no_header_footer(tsx)
 
+    def overflow(css: str, tsx: str = "", **_k: Any) -> tuple[bool, str]:
+        return _check_stage_overflow(css, tsx)
+
     def isolation(tsx: str, css: str, chapter_id: str, **_k: Any) -> tuple[bool, str]:
         return _check_code_isolation(tsx, css, chapter_id)
 
@@ -593,6 +644,7 @@ def _register_auto_checks() -> None:
         "THEME_TOKENS": tokens,
         "NO_TINY_TEXT_WALL": tiny,
         "NO_HEADER_FOOTER": header,
+        "STAGE_NO_OVERFLOW": overflow,
         "CODE_ISOLATION": isolation,
         "NARRATIONS_SYNC": narrations,
     })
@@ -925,18 +977,22 @@ def on_typecheck_pass(ctx: dict[str, Any]) -> None:
 def format_craft_checklist(ctx: dict[str, Any]) -> str:
     store = _get_store(ctx)
     items = store.get("items", {})
-    lines = ["--- CHAPTER-CRAFT 完工自检 ---"]
+    lines = ["--- CHAPTER-CRAFT 核验清单 ---"]
     done = 0
     required = sum(1 for i in CRAFT_REVIEW_ITEMS if i.mode != "deferred")
+    display_idx = 0
 
-    for idx, item in enumerate(CRAFT_REVIEW_ITEMS, 1):
+    for item in CRAFT_REVIEW_ITEMS:
+        if item.mode == "deferred":
+            continue
+        display_idx += 1
         entry = items.get(item.id, {})
         state = entry.get("state", "pending")
         evidence = entry.get("evidence", "")
 
         if state == "pass":
             mark = "✅"
-            done += 1 if item.mode != "deferred" else 0
+            done += 1
         elif state == "fail":
             mark = "❌"
         elif state == "deferred":
@@ -952,7 +1008,7 @@ def format_craft_checklist(ctx: dict[str, Any]) -> str:
                 if h:
                     hint_mark = "✅" if h.get("pass") else "⚠️"
                     suffix += f" [auto: {hint_mark} {h.get('evidence', '')}]"
-        lines.append(f"{mark} {idx:02d}. {item.label}{suffix}")
+        lines.append(f"{mark} {display_idx:02d}. {item.label}{suffix}")
 
     failed = sum(
         1 for i in CRAFT_REVIEW_ITEMS
@@ -960,7 +1016,7 @@ def format_craft_checklist(ctx: dict[str, Any]) -> str:
     )
     lines.append(f"进度: {done}/{required} 通过" + (f"，{failed} 项 ❌ 待 Repair" if failed else ""))
     if ctx.get("review_ok"):
-        lines.append("✅ 自检全部通过 — 全部 todolist_check 后可 done()")
+        lines.append("✅ 核验清单全部通过 — 全部 todolist_check 后可 done()")
     elif failed:
         lines.append("❌ 有打叉项 — 全部核查完后 done()，Repair 将修复打叉项")
     else:

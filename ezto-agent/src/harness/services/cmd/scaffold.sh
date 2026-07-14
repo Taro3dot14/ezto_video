@@ -53,6 +53,10 @@ list_themes() {
     [[ -d "$dir" ]] || continue
     local meta="$dir/theme.json"
     [[ -f "$meta" ]] || continue
+    # Skip themes marked "hidden": true (e.g. legacy dune)
+    if grep -Eq '"hidden"[[:space:]]*:[[:space:]]*true' "$meta"; then
+      continue
+    fi
     # 没有 jq，简单 grep + sed 提字段
     local id name desc
     id=$(grep -E '"id"' "$meta" | head -n1 | sed -E 's/.*"id":[[:space:]]*"([^"]+)".*/\1/')

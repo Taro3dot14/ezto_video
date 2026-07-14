@@ -34,6 +34,39 @@ def test_theme_list_entry_clay_warm():
     assert entry["family"] == "claymorphism"
 
 
+def test_theme_list_entry_dune_ridge():
+    from configs import settings
+
+    entry = theme_list_entry(Path(settings.themes_dir) / "dune-ridge")
+    assert entry is not None
+    assert entry["schema"] == "v2"
+    assert entry["family"] == "gallery-restraint"
+    assert entry["nameZh"] == "沙丘"
+
+
+def test_legacy_dune_hidden_from_list():
+    from configs import settings
+
+    assert theme_list_entry(Path(settings.themes_dir) / "dune") is None
+    legacy = theme_list_entry(Path(settings.themes_dir) / "dune", include_hidden=True)
+    assert legacy is not None
+    assert legacy["id"] == "dune"
+    assert legacy["schema"] == "v1"
+
+
+def test_apply_theme_v2_dune_ridge(tmp_path: Path):
+    ws = tmp_path
+    (ws / "presentation" / "src" / "styles").mkdir(parents=True)
+    result = apply_theme(ws, "dune-ridge")
+    assert result.schema == "v2"
+    assert result.kit_files
+    kit = (ws / "presentation" / "src" / "styles" / "theme-kit.css").read_text(encoding="utf-8")
+    assert "tk-card" in kit
+    assert "dune-ridge" in kit or "paper-lift" in kit or "hairline" in kit or ".tk-card" in kit
+    tokens = (ws / "presentation" / "src" / "styles" / "tokens.css").read_text(encoding="utf-8")
+    assert "#dcc8a5" in tokens
+
+
 def test_install_v2_kit(tmp_path: Path):
     ppt = tmp_path / "presentation"
     (ppt / "src" / "styles").mkdir(parents=True)

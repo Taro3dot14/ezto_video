@@ -126,6 +126,7 @@ build:    SceneChrome + ListGrid + GridSlot (1 active / step)
 - [ ] Every step uses `SceneChrome` + one shell
 - [ ] Primary copy uses `lx-*` roles — no raw font-size
 - [ ] Body text ≤ 42ch wide
+- [ ] Content stays inside 1920×1080 — no overflow / cut-off
 - [ ] List items: one `GridSlot` active per step
 - [ ] Icons: inline SVG — no emoji
 - [ ] **No italic** — no `serif-it`, no `font-style: italic` (use `.display-en-soft`)

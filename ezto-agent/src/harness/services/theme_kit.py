@@ -176,13 +176,19 @@ def load_component_kit_guide(workspace_root: Path, *, max_chars: int = 14000) ->
     return text
 
 
-def theme_list_entry(theme_dir_path: Path) -> dict[str, Any] | None:
+def theme_list_entry(
+    theme_dir_path: Path,
+    *,
+    include_hidden: bool = False,
+) -> dict[str, Any] | None:
     meta_file = theme_dir_path / "theme.json"
     if not meta_file.is_file():
         return None
     try:
         meta = json.loads(meta_file.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
+        return None
+    if meta.get("hidden") and not include_hidden:
         return None
     return {
         "id": meta.get("id", theme_dir_path.name),

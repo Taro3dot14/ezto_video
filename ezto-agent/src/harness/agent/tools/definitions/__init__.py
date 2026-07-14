@@ -134,7 +134,7 @@ ALL_TOOL_SPECS: tuple[ToolSpec, ...] = (
     ),
     ToolSpec(
         name="craft_review_status",
-        description="Show CHAPTER-CRAFT 完工自检 checklist progress (20 items from Part 完工自检).",
+        description="Show CHAPTER-CRAFT 核验清单 progress (required items; TSC is verify-phase deferred).",
         input_schema={"type": "object", "properties": {}},
         handler="craft_review_status",
     ),

@@ -495,15 +495,21 @@ function ChecklistCheckbox({ state }: { state: ChecklistBoxState }) {
 }
 
 function CraftChecklistPanel({ craft }: { craft: CraftChecklistSnapshot }) {
-  const pct = craft.total > 0 ? Math.round((craft.done / craft.total) * 100) : 0;
-  const visibleItems = craft.items.filter((i) => i.mode !== "deferred" || i.state !== "deferred");
+  // Deferred items (e.g. TSC_PASS) are verified in verify phase — never count in this panel.
+  const visibleItems = craft.items.filter((i) => i.mode !== "deferred");
+  const total = craft.total > 0 ? craft.total : visibleItems.length;
+  const done =
+    craft.total > 0
+      ? craft.done
+      : visibleItems.filter((i) => i.state === "pass").length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
     <div className="wf-exec-checklist wf-exec-checklist--review">
       <div className="wf-exec-checklist-head">
-        <span className="wf-exec-checklist-title">完工自检</span>
+        <span className="wf-exec-checklist-title">核验清单</span>
         <span className={`wf-exec-checklist-progress is-review${craft.review_ok ? " is-ok" : ""}`}>
-          {craft.done}/{craft.total}
+          {done}/{total}
         </span>
       </div>
       <div className="wf-exec-checklist-bar is-review" aria-hidden="true">
@@ -511,7 +517,7 @@ function CraftChecklistPanel({ craft }: { craft: CraftChecklistSnapshot }) {
       </div>
       <div className="wf-exec-checklist-scroll wf-clay-scroll">
         <ul className="wf-exec-checklist-list">
-          {visibleItems.map((item) => (
+          {visibleItems.map((item, idx) => (
             <li
               key={item.id}
               className={`wf-exec-checklist-item is-${item.state}`}
@@ -519,7 +525,7 @@ function CraftChecklistPanel({ craft }: { craft: CraftChecklistSnapshot }) {
               <ChecklistCheckbox state={item.state} />
               <span className="wf-exec-checklist-item-body">
                 <span className="wf-exec-checklist-label">
-                  <span className="wf-exec-checklist-num">{String(item.index).padStart(2, "0")}</span>
+                  <span className="wf-exec-checklist-num">{String(idx + 1).padStart(2, "0")}</span>
                   {item.label}
                 </span>
                 {item.state === "fail" && item.evidence ? (
@@ -582,7 +588,7 @@ function ChecklistPanelsRow({
     <div
       className={`wf-exec-checklists${review ? " is-review-only" : ""}`}
       role="group"
-      aria-label={review ? "完工自检进度" : "章节构建进度"}
+      aria-label={review ? "核验清单进度" : "章节构建进度"}
     >
       {showBuild && <TodoPanel todo={build!} />}
       {review && <CraftChecklistPanel craft={review} />}

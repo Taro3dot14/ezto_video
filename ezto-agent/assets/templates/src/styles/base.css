@@ -44,18 +44,18 @@ body {
  * ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Type scale (defaults for layouts.css lx-* roles + primitive classes) ── */
-  --t-display-1:   clamp(110px, 9vw, 158px);
-  --t-display-2:   clamp(75px, 6.3vw, 110px);
-  --t-h1:          clamp(58px, 4.8vw, 75px);
-  --t-h2:          clamp(38px, 3.1vw, 58px);
-  --t-h3:          clamp(28px, 2.5vw, 38px);
+  --t-display-1:   clamp(100px, 8.2vw, 140px);
+  --t-display-2:   clamp(68px, 5.6vw, 100px);
+  --t-h1:          clamp(52px, 4.3vw, 68px);
+  --t-h2:          clamp(34px, 2.8vw, 52px);
+  --t-h3:          clamp(26px, 2.2vw, 34px);
   --t-body:        28px;
   --t-cue:         22px;
   --t-micro:       12px;
 
   /* ── Projection readability tokens (chapters SHOULD use for primary copy) ── */
-  --t-projection-hero:    clamp(75px, 6.3vw, 110px);
-  --t-projection-title:   clamp(58px, 4.8vw, 75px);
+  --t-projection-hero:    clamp(68px, 5.6vw, 100px);
+  --t-projection-title:   clamp(52px, 4.3vw, 68px);
   --t-projection-body:    28px;
   --t-projection-caption: 22px;
   --card-min-width:       min(1056px, 100%);

@@ -1,0 +1,254 @@
+/* dune-ridge Theme Kit components (tk-*)
+ * Gallery restraint -- hairline borders + paper-lift, not chunky clay.
+ * Layout shells remain lx-* -- combine: className="lx-split-panel tk-card" */
+
+.tk-surface {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+}
+
+.tk-surface-inset {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-3);
+  box-shadow: var(--tk-shadow-inset);
+}
+
+.tk-surface-pressed {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-pressed);
+}
+
+.tk-card {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-lg);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+  padding: var(--space-7);
+  min-width: var(--card-min-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.tk-card--accent {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--tk-border));
+  box-shadow:
+    var(--tk-shadow-raised),
+    inset 0 0 0 1px var(--accent-soft);
+}
+
+.tk-card__kicker {
+  margin: 0;
+}
+
+.tk-badge,
+.tk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 14px;
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--t-projection-caption);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: transparent;
+  box-shadow: none;
+}
+
+.tk-badge--accent {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--tk-border));
+  background: var(--accent-soft);
+}
+
+.tk-chip {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-family: var(--font-body);
+  font-weight: 500;
+  border-radius: var(--tk-r-sm);
+  background: var(--surface-3);
+}
+
+.tk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: 0 var(--space-7);
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-sm);
+  font-family: var(--font-display-en);
+  font-size: var(--t-projection-body);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+  cursor: pointer;
+  transition:
+    transform var(--dur-tk-press) var(--ease-tk),
+    box-shadow var(--dur-tk-press) var(--ease-tk),
+    background var(--dur-quick) var(--ease-tk);
+}
+
+.tk-button--primary {
+  color: var(--surface);
+  background: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 75%, #1f1a14);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--accent) 50%, #1f1a14),
+    0 14px 32px var(--accent-glow);
+}
+
+.tk-button.is-pressed,
+.tk-button--primary.is-pressed {
+  transform: translateY(1px);
+  box-shadow: var(--tk-shadow-pressed);
+}
+
+.tk-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.tk-stat__value {
+  font-family: var(--hero-num-font);
+  font-size: var(--t-display-2);
+  font-weight: var(--hero-num-weight, 300);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: var(--hero-num-track);
+}
+
+.tk-stat__label {
+  font-family: var(--font-mono);
+  font-size: var(--t-projection-caption);
+  color: var(--text-mute);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tk-icon-tile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.tk-icon-tile svg {
+  width: 26px;
+  height: 26px;
+}
+
+.tk-callout {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: none;
+  padding: var(--space-6);
+  border-left: 2px solid var(--accent);
+  max-width: 48ch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tk-callout--tip { border-left-color: var(--accent-2); }
+.tk-callout--warn { border-left-color: #b08958; }
+
+.tk-progress {
+  width: min(480px, 100%);
+  height: 6px;
+  border: none;
+  border-radius: 0;
+  background: var(--surface-3);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.tk-progress__fill {
+  height: 100%;
+  border-radius: 0;
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.tk-window {
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+  overflow: hidden;
+  min-width: min(960px, 100%);
+}
+
+.tk-window__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--tk-border-w) solid var(--tk-border);
+  background: var(--surface-3);
+}
+
+.tk-window__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--tk-border);
+  background: var(--surface-2);
+}
+
+.tk-window__dot--close { background: #c4a090; }
+.tk-window__dot--min   { background: #d4b896; }
+.tk-window__dot--max   { background: #a8b89a; }
+
+.tk-window__body {
+  padding: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--t-projection-caption);
+  color: var(--text-2);
+  background: var(--surface-3);
+  box-shadow: var(--tk-shadow-inset);
+}
+
+.lx-slot-ghost.tk-slot,
+.tk-slot.lx-slot-ghost {
+  border: var(--tk-border-w) dashed var(--tk-border);
+  border-radius: var(--tk-r-md);
+  background: transparent;
+  box-shadow: none;
+}
+
+.lx-slot-active.tk-slot,
+.tk-slot.lx-slot-active {
+  border: var(--tk-border-w) solid var(--accent);
+  border-radius: var(--tk-r-md);
+  background: var(--surface-2);
+  box-shadow: var(--tk-shadow-raised);
+}
+
+.lx-slot-past.tk-slot,
+.tk-slot.lx-slot-past {
+  opacity: 0.5;
+  border-radius: var(--tk-r-md);
+}

@@ -106,7 +106,7 @@ def check_tool_guard(
     if tool_name == "typecheck":
         if not review_ok:
             return (
-                "❌ BLOCKED: complete CHAPTER-CRAFT 完工自检 — "
+                "❌ BLOCKED: complete CHAPTER-CRAFT 核验清单 — "
                 "Reviewer 用 review_chapter_bundle + todolist_check 逐项勾选."
             )
         missing = []
@@ -141,7 +141,7 @@ def check_tool_guard(
         hits = [n for n in names if n in REVIEWER_ONLY_TODO_IDS]
         if hits and profile != "reviewer":
             return (
-                f"❌ BLOCKED: CHAPTER-CRAFT 自检 todolist 仅 Reviewer 可勾选: {', '.join(hits)}"
+                f"❌ BLOCKED: CHAPTER-CRAFT 核验清单 todolist 仅 Reviewer 可勾选: {', '.join(hits)}"
             )
 
     if tool_name == "check_vite":

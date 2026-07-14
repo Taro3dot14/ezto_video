@@ -72,7 +72,8 @@
 | `indigo-porcelain`   | 靛蓝瓷 —— **靛蓝当墨**（不是 accent，是字色本身）+ 瓷白纸。Playfair Display italic + Noto Serif SC + IBM Plex Sans 正文。学术 / 研究气质，像一本当代思想期刊。无装饰 —— 纯粹。慢速（1.55s）。                       |
 | `forest-ink`         | 森林墨 —— **森林绿当墨** + 象牙暖纸。Source Serif 正文 + Playfair Display。旧版《国家地理》感，沉稳、文献感。faint warm grain。慢速（1.65s）。                                                                  |
 | `kraft-paper`        | 牛皮纸 —— **深棕当墨** + 牛皮米。Fraunces + Source Serif + 紫铜 accent。老笔记本 / 老信封感。**粗暖纸纹**是签名。慢速 tactile（1.55s）。                                                                       |
-| `dune`               | 沙丘 —— **炭褐当墨** + 沙底 + 几乎无 accent（muted clay）。Inter display + Source Serif 正文。**无装饰 + 极宽 padding（140×100）**是签名。建筑手册 / 画廊感。最慢节奏（1.75s）。                                |
+| `dune-ridge`         | 沙丘（v2）—— **炭褐当墨** + 沙底 + muted clay accent。Inter + Source Serif。**hairline + paper-lift `tk-*` kit**、极宽 padding（140×100）、画廊感。最慢节奏（1.75s）。旧版 `dune` 已隐藏。                |
+| `dune` *(hidden)*    | （旧版 v1）已被 `dune-ridge` 取代；磁盘保留，picker / scaffold 列表不展示。                                                                                                                              |
 | `swiss-ikb`          | 瑞士国际主义。**极细 200 weight Inter / Helvetica** + 净暖白底 + IKB 克莱因蓝 + **1px 发丝网格 (64px)**。`r-card: 0` 直角。Massimo Vignelli / Helvetica Forever 能量。punchy + linear（400/650ms）。           |
 
 
@@ -240,7 +241,7 @@ CSS"领域 —— 在那里解决，别扩主题契约。
 | 学术 / 研究 / 中国当代文化              | `indigo-porcelain`    |
 | 自然 / 可持续 / 户外 / 纪录             | `forest-ink`          |
 | 文学 / 怀旧 / 书评 / 手工艺             | `kraft-paper`         |
-| 建筑 / 艺术展览 / 高端画廊              | `dune`                |
+| 建筑 / 艺术展览 / 高端画廊              | `dune-ridge`          |
 | 瑞士国际主义 / Helvetica / 信息驱动设计 | `swiss-ikb`           |
 
 ```bash

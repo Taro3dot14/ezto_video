@@ -66,7 +66,7 @@ def test_review_chapter_bundle_with_review(tmp_path):
     content, ok = review_chapter_bundle(state, workspace_root=ws, chapter_id="chapter_1", ctx=ctx)
     assert "narrations.ts" in content
     assert "chapters.ts" in content
-    assert "完工自检" in content
+    assert "完工自检" in content or "核验清单" in content
     report_missing_assets(state, chapter_id="chapter_1", items=[], note="")
     ctx.setdefault("workflow_state", state)
     ctx.setdefault("chapter_id", "chapter_1")
@@ -94,4 +94,4 @@ def test_tool_guard_typecheck_requires_review(tmp_path):
     (ch / "index.tsx").write_text("export default function X() { return null; }\n", encoding="utf-8")
     ctx = {"review_ok": False, "typecheck_ok": False}
     msg = check_tool_guard("typecheck", {}, ppt=ppt, chapter_id="chapter_1", ctx=ctx)
-    assert msg and "完工自检" in msg
+    assert msg and ("完工自检" in msg or "核验清单" in msg)

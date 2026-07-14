@@ -314,7 +314,7 @@ def review_chapter_bundle(
 
     review_ctx["review_ok"] = False
 
-    parts.append("--- CHAPTER-CRAFT 完工自检 ---\n❌ 先修复上方 structural errors")
+    parts.append("--- CHAPTER-CRAFT 核验清单 ---\n❌ 先修复上方 structural errors")
 
     return "\n\n".join(parts), False
 

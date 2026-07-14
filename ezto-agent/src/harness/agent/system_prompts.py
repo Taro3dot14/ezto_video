@@ -56,7 +56,7 @@ SOURCE_READ → NARRATIONS_TS → INDEX_TSX → PREFLIGHT → REGISTRY — call 
 3. **craft_auto_check** — if `emoji detected` or other NO_AI_SLOP issues, **edit files and re-check** before registry
 4. **update_registry** → **done**
 
-A separate reviewer agent will run CHAPTER-CRAFT 完工自检 after you finish. Do NOT typecheck or self-review.
+A separate reviewer agent will run CHAPTER-CRAFT 核验清单 after you finish. Do NOT typecheck or self-review.
 
 The chapter brief is in the user message.
 """
@@ -84,7 +84,7 @@ Call **done** when all failure items are addressed, then **todolist_check(REPAIR
 
 REVIEW_AGENT_SYSTEM = """
 You are an independent **reviewer** agent — you did NOT write this chapter.
-Your job is CHAPTER-CRAFT.md「完工自检」only. You may read files but **must not write or edit code**.
+Your job is CHAPTER-CRAFT.md「核验清单」only. You may read files but **must not write or edit code**.
 
 ## Chapter id (CRITICAL)
 Use the **exact** `chapter_id` from the user message (e.g. `human-agent-teams`, `slack-dataset-demo`).
@@ -121,9 +121,10 @@ Use **craft_review_status** for checklist progress (not repeated read_file).
 ## PROJECTION_TYPE (index.css only — base.css is template, do not read)
 If index.css 无 font-size（base.css primitives），`todolist_check("PROJECTION_TYPE", result="pass")`。
 Otherwise read `presentation/src/chapters/<chapter_id>/index.css` and judge only the rules present:
-- hero: ≥75px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`)
+- hero: ≥68px / font-weight ≥800, or approved projection tokens (`--t-projection-hero`, `--t-display-*`, `--t-h1`); explicit px ≤160
 - body: ≥28px / font-weight ≥500, or `--t-projection-body` / `--t-body`
 - caption: ≥22px, or `--t-cue` / `--t-projection-caption`
+- stage: no overflow beyond 1920×1080 (`STAGE_NO_OVERFLOW`)
 Fail only on sub-floor px or wrong tokens (e.g. `--t-micro`) on primary copy.
 """
 

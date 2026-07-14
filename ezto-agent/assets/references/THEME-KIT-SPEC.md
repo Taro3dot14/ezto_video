@@ -95,9 +95,14 @@ themes/<id>/
 - `chapter_brief` 通用提示：存在 kit 时优先 `tk-*`
 - CHAPTER-CRAFT.md **不变**
 
-## 首个 v2 主题
+## 已有 v2 主题
 
-`clay-warm` — claymorphism，厚边框 + 双阴影 + 暖陶配色。
+| id | family | 材质 |
+|---|---|---|
+| `clay-warm` | claymorphism | 厚边框 + 双阴影 + 暖陶 |
+| `dune-ridge` | gallery-restraint | 细线 + paper-lift + 沙丘画廊（替代隐藏的 v1 `dune`） |
+
+隐藏旧主题：在旧版 `theme.json` 设 `"hidden": true`（可选 `"replacedBy": "<new-id>"`）。`list_themes` / scaffold `/api/themes` 会跳过。
 
 ## 新增主题 checklist
 

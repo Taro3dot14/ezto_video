@@ -385,6 +385,8 @@ def wv_checkpoint_plan_node(state: VideoWorkflowState) -> dict:
             if meta_file.exists():
                 try:
                     meta = json.loads(meta_file.read_text(encoding="utf-8"))
+                    if meta.get("hidden"):
+                        continue
                     recommendations.append({
                         "id": meta.get("id", td.name),
                         "name": meta.get("name", ""),

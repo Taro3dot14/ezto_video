@@ -1,0 +1,49 @@
+{
+  "id": "dune-ridge",
+  "schema": "v2",
+  "name": "Dune Ridge",
+  "nameZh": "沙丘",
+  "family": "gallery-restraint",
+  "description": "Charcoal-brown ink on desert sand — gallery-brochure restraint with a refined tk-* kit. Hairline rules, paper-lift panels, quiet motion. Architecture portfolios, exhibition films, design-first explainers.",
+  "descriptionZh": "炭褐墨 + 沙色底，建筑手册 / 画廊气质的 v2 主题。细线 + 纸抬起阴影 + 克制 tk-* 组件，极宽留白，最慢节奏。",
+  "mood": [
+    "light",
+    "dune",
+    "sand",
+    "muted",
+    "architecture",
+    "gallery",
+    "restraint"
+  ],
+  "bestFor": [
+    "建筑 / 室内 / 空间",
+    "艺术展览 / 画廊手册",
+    "设计师 / 创意作品集",
+    "时尚 / 高端品牌",
+    "审美优先的长解说"
+  ],
+  "kit": {
+    "components": "kit/components.css",
+    "presets": "kit/presets.css",
+    "fonts": "kit/fonts.css",
+    "guide": "kit/COMPONENT-KIT.md"
+  },
+  "capabilities": [
+    "tk-card",
+    "tk-badge",
+    "tk-button",
+    "tk-stat",
+    "tk-icon-tile",
+    "tk-chip",
+    "tk-callout",
+    "tk-window",
+    "tk-progress",
+    "grid-slot-skin"
+  ],
+  "preview": {
+    "shell": "#dcc8a5",
+    "surface": "#f0e6d2",
+    "text": "#1f1a14",
+    "accent": "#8c6a48"
+  }
+}

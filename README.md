@@ -13,16 +13,23 @@
 <br/>
 
 <p align="center">
-  <img src="docs/figures/teaser.svg" alt="流程总览" width="100%"/>
+  <img src="docs/figures/teaser.png" alt="架构总览" width="100%"/>
 </p>
 
 ---
 
 ## 项目说明
 
-用户上传一篇文章后，系统会按固定流程把它做成点击驱动的 16:9 React 演示网页。关键步骤会停下来交给人审核；内容和代码都会按事先定好的规范 / 清单反复检查、修改，直到达标。
+面向「演示网站」生成的 **Agent Harness**。
 
-实现上是一套 LangGraph 工作流，外面是 FastAPI + React 控制台。规范源头在 `skills/web-video-presentation/`。
+用户上传一篇文章，系统按流程做成可点击的 React 演示网页。关键节点等待用户确认；内容和代码按既定规范反复检查、修改，直到达标。
+
+演示网页支持 23 套主题。详见 [主题一览](docs/themes.md)。
+
+Harness分层设计：
+
+- ⚙️ **Workflow** — 确定性逻辑
+- 🤖 **Agent** — 动态决策
 
 ---
 
@@ -47,16 +54,23 @@
 根据上传的文章拆分章节，生成逐章节的脚本和大纲。大模型会按规范要求不断检测、修改，直到达标，再交给用户审核。
 
 <p align="center">
-  <img src="docs/figures/ui-checkpoint-plan.svg" alt="审核脚本大纲" width="100%"/>
+  <img src="docs/figures/ui-outline.png" alt="大纲自动优化" width="100%"/>
 </p>
 <p align="center"><sub>用户审核脚本 / 大纲</sub></p>
+<p align="center">
+  <img src="docs/figures/ui-checkpoint-plan.gif" alt="核对清单" width="100%"/>
+</p>
+<p align="center"><sub>核对清单（脚本 / 大纲 / 主题 / 素材 / 开发模式）</sub></p>
 
 ### 第二阶段：搭建第一章
 
 多个 sub-agent 根据第一章大纲搭建对应的演示网页（React）。开发和自检清单是提前规定好的：改代码、跑通网页、再检查，循环到清单里的要求都完成，再交给用户确认。
 
 <p align="center">
-  <img src="docs/figures/ui-chapter-build.png" alt="搭建网页" width="100%"/>
+  <img src="docs/figures/ui-chapter-build-1.png" alt="搭建网页" width="100%"/>
+</p>
+<p align="center">
+  <img src="docs/figures/ui-chapter-build-2.png" alt="搭建网页" width="100%"/>
 </p>
 <p align="center"><sub>搭建过程</sub></p>
 
@@ -84,40 +98,8 @@
 </p>
 <p align="center"><sub>主题</sub></p>
 
-之后还可以选做音频合成（TTS）和录屏指引，不是主流程的必经步骤。
+计划后续做音频合成（TTS）和录屏。暂未开发相关功能
 
-<p align="center">
-  <img src="docs/figures/ui-audio.svg" alt="音频" width="100%"/>
-</p>
-<p align="center"><sub>音频（可选）</sub></p>
-
----
-
-## 架构
-
-<p align="center">
-  <img src="docs/figures/architecture.svg" alt="架构图" width="100%"/>
-</p>
-
-```text
-React 前端  ← REST / SSE →  FastAPI (:8001)
-                                │
-                                ▼
-                         LangGraph 工作流
-                                │
-                                ▼
-                    presentation/（Vite + React 演示页）
-```
-
-流程图也可以看 [`docs/graph-cn.png`](docs/graph-cn.png)。
-
-演示页本身的约定：
-
-- 内容按 1920×1080 写，再缩放适配视口
-- 用全局的 `(章节, 步骤)` 控制进度，点一下走一步
-- `narrations.ts` 的长度和步骤数一致
-- 播放模式：手动 / 带音频 / 自动推进
-- 23 套主题，用 CSS 变量切换，章节代码里不写死颜色
 
 ---
 
@@ -142,11 +124,15 @@ ezto_video/
 ### 后端（WSL + conda）
 
 ```bash
+# 首次执行时需创建环境：
 conda create -n ezto python=3.12 -y && conda activate ezto
 cd ezto-agent && pip install -e .
 cp .env.example .env   # 填写 DEEPSEEK_API_KEY 等
+cd ..
 
-cd src
+# 启动服务
+cd ezto-agent/src
+conda activate ezto
 uvicorn backend.api.server:app --reload --port 8001
 ```
 
@@ -159,13 +145,6 @@ cd ezto-agent/src/frontend
 npm install && npm run dev   # http://localhost:5173
 ```
 
-### 生成后的演示项目
-
-```bash
-cd presentation
-npm run dev                  # 默认 :5202
-npx tsc --noEmit
-```
 
 <details>
 <summary>API</summary>
@@ -188,4 +167,3 @@ npx tsc --noEmit
 
 - [`skills/web-video-presentation/SKILL.md`](skills/web-video-presentation/SKILL.md) — 完整规范
 - [`docs/web_video_graph_guide.md`](docs/web_video_graph_guide.md) — 图结构说明
-- [`docs/figures/`](docs/figures/) — 截图目录

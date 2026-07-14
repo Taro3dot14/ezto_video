@@ -1,0 +1,66 @@
+/* Theme: dune-ridge (v2)
+ * Gallery / architecture brochure restraint. Warm desert sand canvas,
+ * charcoal-brown ink, muted clay accent. Inter display + Source Serif body.
+ * SIGNATURE: hairline rules, paper-lift shadows, generous stage padding,
+ * NO dense pattern / NO vignette -- dusk purity.
+ */
+:root {
+  --shell:        #dcc8a5;
+  --surface:      #f0e6d2;
+  --surface-2:    #f6ecd9;
+  --surface-3:    #e3d7bf;
+  --text:         #1f1a14;
+  --text-2:       #2d2620;
+  --text-mute:    #6b5c46;
+  --text-faint:   #9a8c70;
+  --rule:         #c4b496;
+  --accent:       #8c6a48;
+  --accent-soft:  rgba(140, 106, 72, 0.10);
+  --accent-glow:  rgba(140, 106, 72, 0.22);
+  --accent-2:     #a88962;
+
+  --font-display-cn: "Noto Sans SC", "Source Han Sans SC", -apple-system, sans-serif;
+  --font-display-en: "Inter", "Helvetica Neue", "Helvetica", sans-serif;
+  --font-body:       "Source Serif 4", "Source Serif Pro", "Noto Serif SC", serif;
+  --font-mono:       "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --font-features:   "ss01", "ss02", "cv02", "tnum";
+
+  --tk-border-w:     1px;
+  --tk-r-sm:         4px;
+  --tk-r-md:         8px;
+  --tk-r-lg:         12px;
+  --tk-lift:         1px;
+  --tk-border:       var(--rule);
+  --tk-shadow:       rgba(60, 40, 20, 0.10);
+  --tk-shadow-raised:
+    0 1px 0 var(--tk-border),
+    0 18px 44px var(--tk-shadow);
+  --tk-shadow-pressed:
+    inset 0 1px 3px rgba(60, 40, 20, 0.08),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.35);
+  --tk-shadow-inset:
+    inset 0 -2px 8px rgba(60, 40, 20, 0.04),
+    inset 0 2px 6px rgba(255, 255, 255, 0.45);
+
+  --dur-quick:       320ms;
+  --dur-base:        780ms;
+  --dur-slow:        1250ms;
+  --dur-cinematic:   1750ms;
+  --dur-tk-press:    280ms;
+  --ease-tk:         cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --r-card:        var(--tk-r-sm);
+  --r-stage:       0;
+  --rule-w:        1px;
+  --rule-style:    solid;
+  --hero-num-font:    var(--font-display-en);
+  --hero-num-style:   normal;
+  --hero-num-weight:  300;
+  --hero-num-track:   -0.04em;
+  --stage-pad-x:   140px;
+  --stage-pad-y:   100px;
+  --card-shadow:   var(--tk-shadow-raised);
+  --shadow-stage:
+    0 60px 160px rgba(60, 40, 20, 0.30),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}

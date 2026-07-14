@@ -321,7 +321,7 @@ def test_review_chapter_bundle_includes_craft_checklist(tmp_path):
     ctx: dict = {}
     state: dict = {"workspace_root": str(ws)}
     content, ok = review_chapter_bundle(state, workspace_root=ws, chapter_id="chapter_1", ctx=ctx)
-    assert "CHAPTER-CRAFT 完工自检" in content
+    assert "CHAPTER-CRAFT 核验清单" in content
     assert "视觉演示" in content
     assert "ITEM_ID checklist" in content
     assert ok is False
@@ -361,11 +361,21 @@ def test_craft_checklist_snapshot_for_frontend(tmp_path):
     init_craft_checklist(ctx, workspace_root=ws, chapter_id="chapter_1")
     run_craft_auto_checks(ctx, workspace_root=ws, chapter_id="chapter_1")
     snap = craft_checklist_snapshot(ctx)
-    assert snap["total"] == 19
+    assert snap["total"] == 20
     assert snap["done"] < snap["total"]
-    assert len(snap["items"]) == len(CRAFT_REVIEW_ITEMS)
-    assert snap["items"][0]["id"] == "VISUAL_DEMOS"
-    assert snap["items"][0]["state"] in ("pass", "fail", "pending", "deferred")
+    assert len([i for i in snap["items"] if i["mode"] != "deferred"]) == 20
+    assert any(i["id"] == "STAGE_NO_OVERFLOW" for i in snap["items"])
+
+
+def test_stage_no_overflow_fails_huge_width(tmp_path):
+    from harness.services.tools.craft.craft_review import _check_stage_overflow
+
+    ok, ev = _check_stage_overflow(".x { width: 2400px; }", "")
+    assert ok is False
+    assert "2400" in ev
+
+    ok2, _ = _check_stage_overflow(".x { max-width: 100%; width: 80%; }", "")
+    assert ok2 is True
 
 
 def test_no_ai_slop_fails_italic(tmp_path):

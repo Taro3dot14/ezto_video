@@ -1,0 +1,38 @@
+/* dune-ridge Theme Kit motion presets (mot-tk-*)
+ * Quiet gallery pace -- soft rise / fade, no spring bounce. */
+
+.mot-tk-pop {
+  animation: dune-tk-fade-in var(--dur-base) var(--ease-tk) both;
+}
+
+.mot-tk-rise {
+  animation: dune-tk-rise var(--dur-slow) var(--ease-tk) both;
+}
+
+.mot-tk-press {
+  animation: dune-tk-press var(--dur-tk-press) var(--ease-tk) both;
+}
+
+@keyframes dune-tk-fade-in {
+  0%   { opacity: 0; filter: blur(4px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+@keyframes dune-tk-rise {
+  0%   { transform: translateY(16px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes dune-tk-press {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(1px); box-shadow: var(--tk-shadow-pressed); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mot-tk-pop,
+  .mot-tk-rise,
+  .mot-tk-press {
+    animation: fade-in var(--dur-quick) ease both;
+  }
+}

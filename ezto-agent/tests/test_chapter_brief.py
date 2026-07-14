@@ -79,7 +79,7 @@ def test_format_brief():
     assert "beat one" in prompt
     assert "read_chapter_context" in prompt
     assert "Projection readability" in prompt
-    assert "75px" in prompt
+    assert "68px" in prompt
     assert "hook-chapter" in prompt
     assert "Steps: outline labels vs code" in prompt
     assert "ZERO emoji" in prompt or "never emoji" in prompt.lower()
