@@ -26,6 +26,11 @@
 
 演示网页支持 23 套主题。详见 [主题一览](docs/themes.md)。
 
+<p align="center">
+  <img src="docs/figures/result-presentation.gif" alt="产出网页示例" width="100%"/>
+</p>
+<p align="center"><sub>产出网页示例</sub></p>
+
 Harness分层设计：
 
 - ⚙️ **Workflow** — 确定性逻辑
@@ -84,21 +89,11 @@ Harness分层设计：
 后面的章节参照第一章进行开发，直到整份 slide 网页做完。
 
 <p align="center">
-  <img src="docs/figures/result-presentation.svg" alt="演示页" width="100%"/>
+  <img src="docs/figures/result-presentation.gif" alt="产出网页示例" width="100%"/>
 </p>
-<p align="center"><sub>演示页</sub></p>
+<p align="center"><sub>演示页面示例</sub></p>
 
-<p align="center">
-  <img src="docs/figures/result-steps.svg" alt="逐步点击" width="100%"/>
-</p>
-<p align="center"><sub>逐步点击</sub></p>
-
-<p align="center">
-  <img src="docs/figures/result-themes.svg" alt="主题" width="100%"/>
-</p>
-<p align="center"><sub>主题</sub></p>
-
-计划后续做音频合成（TTS）和录屏。暂未开发相关功能
+| 计划后续做音频合成（TTS）和录屏。暂未开发相关功能
 
 
 ---
@@ -166,4 +161,5 @@ npm install && npm run dev   # http://localhost:5173
 ## 相关文档
 
 - [`skills/web-video-presentation/SKILL.md`](skills/web-video-presentation/SKILL.md) — 完整规范
+- [`docs/themes.md`](docs/themes.md) — 23 套主题一览
 - [`docs/web_video_graph_guide.md`](docs/web_video_graph_guide.md) — 图结构说明
